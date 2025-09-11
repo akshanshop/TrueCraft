@@ -31,6 +31,9 @@ class DataManager:
                 # Ensure datetime columns are properly typed
                 if 'created_at' in df.columns:
                     df['created_at'] = pd.to_datetime(df['created_at'])
+                # Ensure price is numeric
+                if 'price' in df.columns:
+                    df['price'] = pd.to_numeric(df['price'], errors='coerce')
                 return df
             else:
                 # Return empty DataFrame with expected columns

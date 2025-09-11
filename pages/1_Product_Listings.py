@@ -79,8 +79,11 @@ if page_mode == "Create New Product":
         if 'price_suggestion' in st.session_state:
             suggestion = st.session_state.price_suggestion
             st.info("**AI Price Analysis:**")
-            st.write(f"**Suggested Price Range:** ${suggestion['min_price']:.2f} - ${suggestion['max_price']:.2f}")
-            st.write(f"**Reasoning:** {suggestion['reasoning']}")
+            min_price = suggestion.get('min_price', 0)
+            max_price = suggestion.get('max_price', 0)
+            reasoning = suggestion.get('reasoning', 'No reasoning provided')
+            st.write(f"**Suggested Price Range:** ${min_price:.2f} - ${max_price:.2f}")
+            st.write(f"**Reasoning:** {reasoning}")
     
     # Product Creation Form
     with st.form("product_form"):
