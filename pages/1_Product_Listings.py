@@ -17,6 +17,135 @@ db_manager = get_database_manager()
 ai_assistant = AIAssistant()
 image_handler = ImageHandler()
 
+# Star Rating Components
+def display_star_rating(rating, max_stars=5):
+    """Display star rating with filled and empty stars"""
+    filled_stars = int(rating)
+    half_star = rating - filled_stars >= 0.5
+    empty_stars = max_stars - filled_stars - (1 if half_star else 0)
+    
+    star_display = "⭐" * filled_stars
+    if half_star:
+        star_display += "⭐"  # Using full star for simplicity, could use ½ star
+    star_display += "☆" * empty_stars
+    
+    return star_display
+
+def star_rating_input(key, default_rating=0):
+    """Interactive star rating input component"""
+    # Store rating in session state
+    session_key = f"rating_{key}"
+    if session_key not in st.session_state:
+        st.session_state[session_key] = default_rating
+    
+    with st.container():
+        st.write("**Rating:**")
+        rating_cols = st.columns(5)
+        
+        for i in range(5):
+            with rating_cols[i]:
+                if st.button("⭐" if i < st.session_state[session_key] else "☆", 
+                           key=f"{key}_star_{i}", 
+                           help=f"{i+1} star{'s' if i > 0 else ''}"):
+                    st.session_state[session_key] = i + 1
+    
+    return st.session_state[session_key]
+
+def display_reviews_section(product_id, product_name):
+    """Display reviews section with existing reviews and submission form"""
+    st.subheader("💬 Customer Reviews")
+    
+    # Get reviews and rating data
+    reviews = db_manager.get_product_reviews(product_id)
+    rating_data = db_manager.get_average_rating(product_id)
+    
+    # Display average rating summary
+    col1, col2 = st.columns([1, 2])
+    with col1:
+        if rating_data['total_reviews'] > 0:
+            avg_rating = rating_data['average_rating']
+            st.metric("Average Rating", f"{avg_rating:.1f} ⭐", f"{rating_data['total_reviews']} reviews")
+            
+            # Rating breakdown
+            st.write("**Rating Breakdown:**")
+            for star in range(5, 0, -1):
+                count = rating_data['rating_distribution'].get(str(star), 0)
+                percentage = (count / rating_data['total_reviews']) * 100 if rating_data['total_reviews'] > 0 else 0
+                st.write(f"{star}⭐: {count} ({percentage:.0f}%)")
+        else:
+            st.info("No reviews yet. Be the first to review!")
+    
+    with col2:
+        # Review submission form
+        with st.expander("✍️ Write a Review", expanded=False):
+            with st.form(f"review_form_{product_id}"):
+                customer_name = st.text_input("Your Name*", placeholder="Enter your name")
+                customer_email = st.text_input("Email (optional)", placeholder="your.email@example.com")
+                
+                # Star rating input
+                rating = star_rating_input(f"review_{product_id}")
+                
+                comment = st.text_area(
+                    "Your Review*", 
+                    placeholder="Share your experience with this product...",
+                    max_chars=1000,
+                    help="Maximum 1000 characters"
+                )
+                
+                submitted = st.form_submit_button("📝 Submit Review")
+                
+                if submitted:
+                    if customer_name and rating > 0 and comment:
+                        review_data = {
+                            'product_id': product_id,
+                            'customer_name': customer_name,
+                            'customer_email': customer_email or None,
+                            'rating': rating,
+                            'comment': comment,
+                            'approved': True  # Auto-approve for demo purposes
+                        }
+                        
+                        success = db_manager.add_review(review_data)
+                        if success:
+                            st.success("Thank you for your review! 🎉")
+                            st.rerun()
+                        else:
+                            st.error("Failed to submit review. Please try again.")
+                    else:
+                        st.error("Please fill in your name, select a rating, and write a comment.")
+    
+    # Display existing reviews
+    if reviews:
+        st.subheader(f"Reviews ({len(reviews)})")
+        
+        # Sort reviews by most recent
+        reviews_sorted = sorted(reviews, key=lambda x: x['created_at'], reverse=True)
+        
+        for review in reviews_sorted:
+            with st.container():
+                col1, col2 = st.columns([3, 1])
+                
+                with col1:
+                    st.write(f"**{review['customer_name']}**")
+                    st.write(display_star_rating(review['rating']))
+                    st.write(review['comment'])
+                
+                with col2:
+                    st.write(f"_{review['created_at'].strftime('%B %d, %Y')}_")
+                
+                st.divider()
+    else:
+        st.info("No reviews yet for this product.")
+
+def get_product_rating_summary(product_id):
+    """Get a brief rating summary for product cards"""
+    rating_data = db_manager.get_average_rating(product_id)
+    if rating_data['total_reviews'] > 0:
+        avg_rating = rating_data['average_rating']
+        total_reviews = rating_data['total_reviews']
+        return f"{display_star_rating(avg_rating)} ({total_reviews} review{'s' if total_reviews != 1 else ''})"
+    return "No reviews yet"
+
 st.set_page_config(
     page_title="Product Listings - ArtisanAI",
     page_icon="📝",
@@ -264,6 +393,10 @@ elif page_mode == "Browse Products":
                             st.write(f"Category: {product['category']}")
                             st.write(f"👁️ {product['views']} views | ❤️ {product['favorites']} favorites")
                             
+                            # Display rating summary
+                            rating_summary = get_product_rating_summary(product['id'])
+                            st.write(f"⭐ {rating_summary}")
+                            
                             if st.button(f"View Details", key=f"view_{i}"):
                                 # Increment view count
                                 db_manager.increment_views(product['id'])
@@ -280,6 +413,10 @@ elif page_mode == "Browse Products":
                                     st.write(f"**Processing Time:** {product['processing_time']}")
                                     if product['tags']:
                                         st.write(f"**Tags:** {product['tags']}")
+                                    
+                                    # Add Reviews Section
+                                    st.divider()
+                                    display_reviews_section(product['id'], product['name'])
                 
                 # Second product
                 with col2:
@@ -293,6 +430,10 @@ elif page_mode == "Browse Products":
                             st.write(f"**${product['price']:.2f}**")
                             st.write(f"Category: {product['category']}")
                             st.write(f"👁️ {product['views']} views | ❤️ {product['favorites']} favorites")
+                            
+                            # Display rating summary
+                            rating_summary = get_product_rating_summary(product['id'])
+                            st.write(f"⭐ {rating_summary}")
                             
                             if st.button(f"View Details", key=f"view_{i+1}"):
                                 # Increment view count
@@ -310,6 +451,10 @@ elif page_mode == "Browse Products":
                                     st.write(f"**Processing Time:** {product['processing_time']}")
                                     if product['tags']:
                                         st.write(f"**Tags:** {product['tags']}")
+                                    
+                                    # Add Reviews Section
+                                    st.divider()
+                                    display_reviews_section(product['id'], product['name'])
 
 elif page_mode == "Manage Listings":
     st.subheader("⚙️ Manage Your Listings")
