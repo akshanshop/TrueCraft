@@ -38,7 +38,7 @@ st.markdown("*Empowering local artisans with AI-powered tools for online success
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Welcome section
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
@@ -57,6 +57,19 @@ with col2:
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col3:
+    st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
+    st.subheader("💬 Messages")
+    # Get unread message count
+    unread_count = db_manager.get_unread_message_count()
+    if unread_count > 0:
+        st.write(f"Manage buyer-seller communications. **{unread_count} unread messages**")
+    else:
+        st.write("Manage buyer-seller communications and customer inquiries with integrated messaging.")
+    if st.button("View Messages", use_container_width=True):
+        st.switch_page("pages/4_Messages.py")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with col4:
     st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
     st.subheader("📊 Analytics")
     st.write("Track your product performance with detailed analytics and insights.")
@@ -81,8 +94,8 @@ with col3:
     avg_price = products_df['price'].mean() if not products_df.empty else 0
     st.metric("Average Price", f"${avg_price:.2f}")
 with col4:
-    total_views = products_df['views'].sum() if not products_df.empty else 0
-    st.metric("Total Views", total_views)
+    total_messages = db_manager.get_unread_message_count()
+    st.metric("Unread Messages", total_messages)
 
 # Recent activity
 if not products_df.empty:

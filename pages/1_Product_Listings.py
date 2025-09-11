@@ -417,6 +417,58 @@ elif page_mode == "Browse Products":
                                     # Add Reviews Section
                                     st.divider()
                                     display_reviews_section(product['id'], product['name'])
+                                    
+                                    # Add Contact Seller Section
+                                    st.divider()
+                                    st.subheader("💬 Contact Seller")
+                                    
+                                    with st.form(f"contact_seller_{i}"):
+                                        col_a, col_b = st.columns(2)
+                                        with col_a:
+                                            buyer_name = st.text_input("Your Name*", key=f"buyer_name_{i}")
+                                            buyer_email = st.text_input("Your Email*", key=f"buyer_email_{i}")
+                                        with col_b:
+                                            subject = st.text_input(
+                                                "Subject*", 
+                                                value=f"Inquiry about {product['name']}",
+                                                key=f"subject_{i}"
+                                            )
+                                            message_type = st.selectbox(
+                                                "Message Type", 
+                                                ["General Inquiry", "Customization Request", "Bulk Order", "Shipping Question", "Other"],
+                                                key=f"msg_type_{i}"
+                                            )
+                                        
+                                        message_content = st.text_area(
+                                            "Your Message*", 
+                                            placeholder="Hi! I'm interested in this product. Could you please provide more information about...",
+                                            key=f"message_{i}",
+                                            height=100
+                                        )
+                                        
+                                        col_send, col_msg = st.columns([1, 3])
+                                        with col_send:
+                                            send_message = st.form_submit_button("📤 Send Message")
+                                        
+                                        if send_message:
+                                            if buyer_name and buyer_email and subject and message_content:
+                                                message_data = {
+                                                    'sender_type': 'buyer',
+                                                    'sender_name': buyer_name,
+                                                    'sender_email': buyer_email,
+                                                    'product_id': product['id'],
+                                                    'subject': subject,
+                                                    'message_content': f"**Message Type:** {message_type}\n\n{message_content}"
+                                                }
+                                                
+                                                message_id = db_manager.send_message(message_data)
+                                                if message_id:
+                                                    st.success("✅ Message sent successfully! The seller will respond soon.")
+                                                    st.info("💡 You can check your messages in the Messages page.")
+                                                else:
+                                                    st.error("Failed to send message. Please try again.")
+                                            else:
+                                                st.error("Please fill in all required fields (marked with *).")
                 
                 # Second product
                 with col2:
@@ -455,6 +507,58 @@ elif page_mode == "Browse Products":
                                     # Add Reviews Section
                                     st.divider()
                                     display_reviews_section(product['id'], product['name'])
+                                    
+                                    # Add Contact Seller Section
+                                    st.divider()
+                                    st.subheader("💬 Contact Seller")
+                                    
+                                    with st.form(f"contact_seller_{i+1}"):
+                                        col_a, col_b = st.columns(2)
+                                        with col_a:
+                                            buyer_name = st.text_input("Your Name*", key=f"buyer_name_{i+1}")
+                                            buyer_email = st.text_input("Your Email*", key=f"buyer_email_{i+1}")
+                                        with col_b:
+                                            subject = st.text_input(
+                                                "Subject*", 
+                                                value=f"Inquiry about {product['name']}",
+                                                key=f"subject_{i+1}"
+                                            )
+                                            message_type = st.selectbox(
+                                                "Message Type", 
+                                                ["General Inquiry", "Customization Request", "Bulk Order", "Shipping Question", "Other"],
+                                                key=f"msg_type_{i+1}"
+                                            )
+                                        
+                                        message_content = st.text_area(
+                                            "Your Message*", 
+                                            placeholder="Hi! I'm interested in this product. Could you please provide more information about...",
+                                            key=f"message_{i+1}",
+                                            height=100
+                                        )
+                                        
+                                        col_send, col_msg = st.columns([1, 3])
+                                        with col_send:
+                                            send_message = st.form_submit_button("📤 Send Message")
+                                        
+                                        if send_message:
+                                            if buyer_name and buyer_email and subject and message_content:
+                                                message_data = {
+                                                    'sender_type': 'buyer',
+                                                    'sender_name': buyer_name,
+                                                    'sender_email': buyer_email,
+                                                    'product_id': product['id'],
+                                                    'subject': subject,
+                                                    'message_content': f"**Message Type:** {message_type}\n\n{message_content}"
+                                                }
+                                                
+                                                message_id = db_manager.send_message(message_data)
+                                                if message_id:
+                                                    st.success("✅ Message sent successfully! The seller will respond soon.")
+                                                    st.info("💡 You can check your messages in the Messages page.")
+                                                else:
+                                                    st.error("Failed to send message. Please try again.")
+                                            else:
+                                                st.error("Please fill in all required fields (marked with *).")
 
 elif page_mode == "Manage Listings":
     st.subheader("⚙️ Manage Your Listings")
