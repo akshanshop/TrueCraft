@@ -43,7 +43,7 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate product description: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     def suggest_pricing(self, name, category, materials, dimensions=None):
         """Provide AI-powered pricing suggestions based on product details"""
@@ -83,7 +83,7 @@ class AIAssistant:
             content = response.choices[0].message.content
             return json.loads(content) if content else {}
         except Exception as e:
-            raise Exception(f"Failed to generate pricing suggestion: {str(e)}")
+            return {"min_price": 0, "max_price": 0, "reasoning": "AI assistance temporarily unavailable."}
     
     def generate_artist_bio(self, name, craft_type, experience, inspiration, unique_aspect):
         """Generate compelling artist bios and stories"""
@@ -118,7 +118,7 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate artist bio: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     def generate_social_media_post(self, topic, platform, tone):
         """Generate social media content for artisans"""
@@ -156,7 +156,7 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate social media post: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     def generate_custom_content(self, content_type, context, specific_request):
         """Generate custom content based on user specifications"""
@@ -188,7 +188,7 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate custom content: {str(e)}")
+            return f"AI assistance temporarily unavailable. Please try again later."
     
     def analyze_product_image(self, image_data):
         """Analyze product images to suggest improvements or generate descriptions"""
@@ -224,3 +224,246 @@ class AIAssistant:
             return content.strip() if content else ""
         except Exception as e:
             raise Exception(f"Failed to analyze product image: {str(e)}")
+    
+    def generate_message_template(self, message_type, product_name=None, context=None):
+        """Generate message templates for buyer-seller communications"""
+        
+        product_context = f" about {product_name}" if product_name else ""
+        additional_context = f"Additional context: {context}" if context else ""
+        
+        templates = {
+            "inquiry": "professional inquiry asking for product details, customization options, or availability",
+            "custom_order": "request for custom product modifications or personalized items",
+            "shipping": "question about shipping costs, delivery times, and packaging options", 
+            "payment": "discussion about payment methods, pricing, or invoicing",
+            "follow_up": "follow-up message after initial contact or order placement",
+            "thank_you": "appreciation message after purchase or interaction",
+            "complaint": "professional complaint or concern about product or service",
+            "general": "general business inquiry or introduction"
+        }
+        
+        template_description = templates.get(message_type, templates["general"])
+        
+        prompt = f"""
+        Create a professional, friendly message template for {message_type} communication{product_context}.
+        
+        The message should be a {template_description}.
+        
+        {additional_context}
+        
+        Requirements:
+        - Professional yet warm and personal tone
+        - Clear and concise language
+        - Include placeholders [like this] where users can customize
+        - Appropriate for artisan/handmade product context
+        - Show respect for craftsmanship and quality
+        - 2-4 sentences maximum
+        
+        Make it ready-to-use with minimal editing needed.
+        """
+        
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=200,
+                temperature=0.7
+            )
+            content = response.choices[0].message.content
+            return content.strip() if content else ""
+        except Exception as e:
+            raise Exception(f"Failed to generate message template: {str(e)}")
+    
+    def improve_text(self, original_text, improvement_type="general"):
+        """Improve existing text content for better clarity and impact"""
+        
+        improvement_types = {
+            "grammar": "Correct grammar, spelling, and punctuation while maintaining the original tone and meaning",
+            "clarity": "Improve clarity and readability while keeping the core message intact", 
+            "professional": "Make the text more professional while maintaining a personal touch",
+            "engaging": "Make the text more engaging and compelling for potential customers",
+            "concise": "Make the text more concise without losing important information",
+            "general": "Improve overall quality including grammar, clarity, and engagement"
+        }
+        
+        instruction = improvement_types.get(improvement_type, improvement_types["general"])
+        
+        prompt = f"""
+        Please improve this text by focusing on: {instruction}
+        
+        Original text:
+        "{original_text}"
+        
+        Requirements:
+        - Maintain the original meaning and intent
+        - Keep the personal, artisan-friendly tone
+        - Make it suitable for handmade/craft business context
+        - Preserve any specific details or technical information
+        - Don't make it overly formal or corporate
+        
+        Provide only the improved text without additional commentary.
+        """
+        
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=300,
+                temperature=0.3
+            )
+            content = response.choices[0].message.content
+            return content.strip() if content else ""
+        except Exception as e:
+            raise Exception(f"Failed to improve text: {str(e)}")
+    
+    def generate_support_ticket(self, issue_type, description, urgency="medium"):
+        """Generate well-structured support ticket content"""
+        
+        prompt = f"""
+        Help create a clear, professional support ticket for this issue:
+        
+        Issue Type: {issue_type}
+        Description: {description}
+        Urgency: {urgency}
+        
+        Create a well-structured support ticket that includes:
+        - Clear, descriptive subject line
+        - Detailed problem description
+        - Steps already taken (if applicable)
+        - Expected outcome
+        - Professional but friendly tone
+        
+        Format the response as:
+        **Subject:** [subject line]
+        **Description:** [detailed description]
+        
+        Make it clear and actionable for support staff to understand and resolve quickly.
+        """
+        
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=300,
+                temperature=0.5
+            )
+            content = response.choices[0].message.content
+            return content.strip() if content else ""
+        except Exception as e:
+            raise Exception(f"Failed to generate support ticket: {str(e)}")
+    
+    def generate_review_response(self, review_text, rating, response_type="thank_you"):
+        """Generate professional responses to customer reviews"""
+        
+        response_types = {
+            "thank_you": "grateful response acknowledging positive feedback",
+            "address_concern": "professional response addressing concerns or issues raised",
+            "neutral": "balanced response to neutral feedback",
+            "encourage_contact": "response encouraging further communication or future business"
+        }
+        
+        response_description = response_types.get(response_type, response_types["thank_you"])
+        
+        prompt = f"""
+        Create a professional response to this customer review:
+        
+        Review: "{review_text}"
+        Rating: {rating}/5 stars
+        
+        Generate a {response_description}.
+        
+        Requirements:
+        - Personal and authentic tone (from the artisan)
+        - Show appreciation for the feedback
+        - Address specific points mentioned in the review
+        - Keep it concise (1-2 sentences)
+        - Maintain professional standards
+        - Reflect the handmade/artisan business values
+        
+        Make it sound genuine and caring, not generic.
+        """
+        
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=150,
+                temperature=0.7
+            )
+            content = response.choices[0].message.content
+            return content.strip() if content else ""
+        except Exception as e:
+            raise Exception(f"Failed to generate review response: {str(e)}")
+    
+    def generate_review_template(self, product_category, rating=5):
+        """Generate thoughtful review templates for customers"""
+        
+        prompt = f"""
+        Create a thoughtful review template for a {product_category} product with {rating} stars.
+        
+        The review should:
+        - Include specific aspects customers typically evaluate (quality, craftsmanship, delivery, etc.)
+        - Use placeholders [like this] for customizable details
+        - Sound authentic and helpful to other buyers
+        - Be appropriate for handmade/artisan products
+        - Mention the personal touch of working with an artisan
+        - Be 2-3 sentences with genuine appreciation
+        
+        Make it a template that customers can easily customize with their specific experience.
+        """
+        
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=200,
+                temperature=0.7
+            )
+            content = response.choices[0].message.content
+            return content.strip() if content else ""
+        except Exception as e:
+            raise Exception(f"Failed to generate review template: {str(e)}")
+    
+    def quick_improve_suggestions(self, text, field_type="general"):
+        """Provide quick, actionable suggestions for improving text"""
+        
+        field_contexts = {
+            "product_name": "product title that needs to be catchy and descriptive",
+            "description": "product description that should highlight benefits and features", 
+            "bio": "artisan bio that should be personal and engaging",
+            "message": "business message that should be professional yet friendly",
+            "general": "general text content"
+        }
+        
+        context = field_contexts.get(field_type, field_contexts["general"])
+        
+        prompt = f"""
+        Analyze this {context} and provide 2-3 quick, specific suggestions for improvement:
+        
+        Text: "{text}"
+        
+        Provide suggestions in this format:
+        • [Specific actionable suggestion]
+        • [Another specific suggestion]
+        • [Third suggestion if applicable]
+        
+        Focus on:
+        - Making it more compelling for customers
+        - Improving clarity and impact
+        - Adding artisan/handmade appeal
+        - Practical improvements that are easy to implement
+        
+        Keep suggestions brief and actionable.
+        """
+        
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=200,
+                temperature=0.5
+            )
+            content = response.choices[0].message.content
+            return content.strip() if content else ""
+        except Exception as e:
+            raise Exception(f"Failed to generate improvement suggestions: {str(e)}")

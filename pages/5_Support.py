@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 from utils.database_manager import DatabaseManager
+from utils.ai_assistant import AIAssistant
+from utils.ai_ui_components import AIUIComponents
 
 # Initialize database manager
 @st.cache_resource
@@ -9,6 +11,8 @@ def get_database_manager():
     return DatabaseManager()
 
 db_manager = get_database_manager()
+ai_assistant = AIAssistant()
+ai_ui = AIUIComponents()
 
 st.set_page_config(
     page_title="Support - ArtisanAI",
@@ -278,6 +282,69 @@ with tab2:
     
     st.divider()
     
+    # AI-Powered Support Ticket Assistant
+    ai_ui.ai_powered_form_section(
+        "🤖 AI Support Ticket Assistant", 
+        "Get intelligent assistance for writing clear, effective support tickets that get faster responses!"
+    )
+    
+    # AI Support Ticket Helper (outside form)
+    with st.expander("✨ AI Support Ticket Helper", expanded=False):
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("**🚀 Quick Ticket Templates**")
+            template_type = st.selectbox("Choose ticket type:", [
+                "Technical Issue", "Account Problem", "Product Listing Help", 
+                "Payment/Order Issue", "Feature Request", "General Question", "Bug Report"
+            ], key="ticket_template_type")
+            
+            if st.button("Generate Ticket Template", key="gen_ticket_btn"):
+                try:
+                    with st.spinner("Creating ticket template..."):
+                        ticket_content = ai_assistant.generate_support_ticket(
+                            template_type, 
+                            f"Help with {template_type.lower()}", 
+                            "medium"
+                        )
+                        st.session_state['generated_ticket'] = ticket_content
+                        st.success("Ticket template generated!")
+                        st.rerun()
+                except:
+                    st.error("AI unavailable")
+        
+        with col2:
+            st.markdown("**🔧 Improve Your Ticket**")
+            if 'current_ticket_desc' in st.session_state and st.session_state.current_ticket_desc:
+                if st.button("✨ Improve Description", key="improve_ticket_btn"):
+                    try:
+                        with st.spinner("Improving ticket..."):
+                            improved = ai_assistant.improve_text(st.session_state.current_ticket_desc, "professional")
+                            st.session_state['improved_ticket'] = improved
+                            st.success("Description improved!")
+                            st.rerun()
+                    except:
+                        st.error("AI unavailable")
+                
+                if st.button("💡 Get Writing Tips", key="ticket_tips_btn"):
+                    try:
+                        with st.spinner("Getting tips..."):
+                            tips = ai_assistant.quick_improve_suggestions(st.session_state.current_ticket_desc, "general")
+                            st.info(tips)
+                    except:
+                        st.error("Tips unavailable")
+            else:
+                st.info("Write your ticket description first to get improvement suggestions")
+        
+        # Display generated/improved content
+        if 'generated_ticket' in st.session_state:
+            st.markdown("**Generated Ticket Template:**")
+            st.success(st.session_state['generated_ticket'])
+        
+        if 'improved_ticket' in st.session_state:
+            st.markdown("**Improved Description:**")
+            st.text_area("Copy this improved description:", st.session_state['improved_ticket'], height=100, key="improved_desc_display")
+    
     # Support ticket form
     st.subheader("📝 Submit Support Ticket")
     
@@ -300,13 +367,26 @@ with tab2:
                 "Urgent - Critical issue"
             ])
         
-        subject = st.text_input("Subject*", placeholder="Brief description of your issue")
+        subject = st.text_input("Subject*", 
+                               value=st.session_state.get('ticket_subject', ''),
+                               placeholder="Brief description of your issue",
+                               key="subject_input")
+        st.session_state['ticket_subject'] = subject
         
         description = st.text_area(
             "Detailed Description*", 
+            value=st.session_state.get('current_ticket_desc', ''),
             placeholder="Please provide as much detail as possible about your issue, including steps to reproduce if it's a technical problem...",
-            height=150
+            height=150,
+            key="description_input"
         )
+        st.session_state['current_ticket_desc'] = description
+        
+        # Character count for description
+        if description:
+            char_count = len(description)
+            color = "green" if char_count > 100 else "orange" if char_count > 50 else "red"
+            st.markdown(f"<small style='color: {color}'>{char_count} characters (aim for 100+ for detailed support)</small>", unsafe_allow_html=True)
         
         # Attachment info
         st.info("📎 For files or screenshots, please mention them in your description and we'll follow up with secure upload instructions.")

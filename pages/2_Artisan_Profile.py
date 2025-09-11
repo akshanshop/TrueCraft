@@ -3,6 +3,7 @@ from datetime import datetime
 from utils.ai_assistant import AIAssistant
 from utils.database_manager import DatabaseManager
 from utils.image_handler import ImageHandler
+from utils.ai_ui_components import AIUIComponents
 
 # Initialize components
 @st.cache_resource
@@ -13,6 +14,7 @@ db_manager = get_database_manager()
 
 ai_assistant = AIAssistant()
 image_handler = ImageHandler()
+ai_ui = AIUIComponents()
 
 st.set_page_config(
     page_title="Artisan Profile - ArtisanAI", 
@@ -37,6 +39,12 @@ with st.sidebar:
 
 if profile_mode in ["Create Profile", "Edit Profile"]:
     st.subheader("✏️ " + ("Edit" if current_profile else "Create") + " Your Profile")
+    
+    # AI-Powered Profile Creation Assistant
+    ai_ui.ai_powered_form_section(
+        "🤖 AI-Powered Profile Assistant", 
+        "Get intelligent assistance for your bio, business descriptions, and social media content!"
+    )
     
     with st.form("profile_form"):
         col1, col2 = st.columns([2, 1])
@@ -82,14 +90,19 @@ if profile_mode in ["Create Profile", "Edit Profile"]:
                 help="Upload a professional photo of yourself or your workshop"
             )
         
-        # Bio section
+        # AI-Enhanced Bio Section
         st.subheader("Your Story")
-        bio = st.text_area(
+        bio = ai_ui.ai_text_field(
             "Artist Bio/Story*",
-            value=current_profile['bio'] if current_profile is not None else "",
-            placeholder="Tell your story... How did you get started? What inspires your work?",
+            ai_assistant.generate_artist_bio,
+            "artisan_bio",
+            help_text="Share your journey, inspiration, and what makes your craft unique",
             height=200,
-            help="Share your journey, inspiration, and what makes your craft unique"
+            name=artisan_name or "your artisan business",
+            craft_type=", ".join(specialties) if specialties else "your craft",
+            experience=f"{years_experience} years" if years_experience else "beginner",
+            inspiration="your creative inspiration",
+            unique_aspect="what makes your work special"
         )
         
         # Contact and social
@@ -132,22 +145,37 @@ if profile_mode in ["Create Profile", "Edit Profile"]:
         
         # Additional details
         with st.expander("Additional Details"):
-            education = st.text_area(
+            education = ai_ui.ai_text_field(
                 "Education/Training",
-                value=current_profile['education'] if current_profile is not None else "",
-                placeholder="Relevant education, workshops, or training"
+                ai_assistant.generate_custom_content,
+                "education_section",
+                help_text="List relevant education, workshops, or training",
+                height=100,
+                content_type="education and training background",
+                context=f"artisan specializing in {', '.join(specialties) if specialties else 'handmade crafts'}",
+                specific_request="professional education and training summary"
             )
             
-            awards = st.text_area(
+            awards = ai_ui.ai_text_field(
                 "Awards/Recognition",
-                value=current_profile['awards'] if current_profile is not None else "",
-                placeholder="Any awards, features, or recognition you've received"
+                ai_assistant.generate_custom_content,
+                "awards_section",
+                help_text="List awards, features, or recognition you've received",
+                height=100,
+                content_type="achievements and recognition",
+                context=f"artisan with {years_experience} years experience in {', '.join(specialties) if specialties else 'crafts'}",
+                specific_request="professional achievements and recognition summary"
             )
             
-            inspiration = st.text_area(
+            inspiration = ai_ui.ai_text_field(
                 "Inspiration/Influences",
-                value=current_profile['inspiration'] if current_profile is not None else "",
-                placeholder="What or who inspires your work?"
+                ai_assistant.generate_custom_content,
+                "inspiration_section",
+                help_text="Describe what or who inspires your work",
+                height=100,
+                content_type="creative inspiration and influences",
+                context=f"artisan creating {', '.join(specialties) if specialties else 'handmade items'}",
+                specific_request="description of creative inspiration and artistic influences"
             )
         
         # Submit button

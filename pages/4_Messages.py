@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 from utils.database_manager import DatabaseManager
+from utils.ai_assistant import AIAssistant
+from utils.ai_ui_components import AIUIComponents
 
 # Initialize database manager
 @st.cache_resource
@@ -9,6 +11,8 @@ def get_database_manager():
     return DatabaseManager()
 
 db_manager = get_database_manager()
+ai_assistant = AIAssistant()
+ai_ui = AIUIComponents()
 
 st.set_page_config(
     page_title="Messages - ArtisanAI",
@@ -120,14 +124,63 @@ with st.sidebar:
 
 # Main content area
 if st.session_state.current_conversation == "new":
-    # New message form
+    # AI-Enhanced New Message Form
     st.subheader("📝 Send New Message")
+    
+    # AI-Powered Message Assistant
+    ai_ui.ai_powered_form_section(
+        "🤖 AI Message Assistant", 
+        "Get intelligent assistance for professional communication with templates and content improvement!"
+    )
     
     with st.container():
         st.markdown('<div class="contact-form-container">', unsafe_allow_html=True)
         
         # Get products for selection
         products_df = db_manager.get_products()
+        
+        # Initialize variables with default values
+        if not products_df.empty:
+            product_options = ["General Inquiry"] + [f"{row['name']} (${row['price']:.2f})" for _, row in products_df.iterrows()]
+            selected_product_idx = 0  # Default to General Inquiry
+        else:
+            product_options = ["General Inquiry"]
+            selected_product_idx = 0
+        
+        # Initialize form variables in session state
+        recipient_name = st.session_state.get('recipient_name', '')
+        subject = st.session_state.get('message_subject', '')
+        
+        # Message Templates Section
+        with st.expander("📝 Quick Message Templates", expanded=False):
+            template_col1, template_col2 = st.columns(2)
+            
+            with template_col1:
+                ai_ui.message_templates_widget(
+                    message_type="inquiry",
+                    product_name=product_options[selected_product_idx] if selected_product_idx < len(product_options) else None
+                )
+            
+            with template_col2:
+                st.markdown("**Quick Template Actions:**")
+                if st.button("✨ Generate Custom Message", key="custom_msg_btn"):
+                    if recipient_name and subject:
+                        try:
+                            with st.spinner("Creating message..."):
+                                custom_msg = ai_assistant.generate_custom_content(
+                                    "business message",
+                                    f"Message from {st.session_state.user_type} to {recipient_name} about {subject}",
+                                    f"Professional {st.session_state.user_type} inquiry"
+                                )
+                                st.session_state['generated_message'] = custom_msg
+                                st.success("Message generated!")
+                        except:
+                            st.error("AI unavailable")
+                    else:
+                        st.warning("Please fill in recipient name and subject first.")
+                
+                if 'generated_message' in st.session_state:
+                    st.text_area("Generated Message:", st.session_state['generated_message'], height=80, key="gen_msg_display")
         
         with st.form("new_message_form"):
             col1, col2 = st.columns(2)
@@ -143,14 +196,39 @@ if st.session_state.current_conversation == "new":
                 else:
                     st.info("No products available")
                     selected_product_id = None
+                    product_options = ["General Inquiry"]
+                    selected_product_idx = 0
                 
                 recipient_type = "seller" if st.session_state.user_type == "buyer" else "buyer"
-                recipient_name = st.text_input("Recipient Name", placeholder=f"Enter {recipient_type} name")
+                recipient_name = st.text_input("Recipient Name", 
+                                              value=st.session_state.get('recipient_name', ''),
+                                              placeholder=f"Enter {recipient_type} name",
+                                              key="recipient_name_input")
+                st.session_state['recipient_name'] = recipient_name
+                
                 recipient_email = st.text_input("Recipient Email", placeholder=f"Enter {recipient_type} email")
             
             with col2:
-                subject = st.text_input("Subject", placeholder="Enter message subject")
-                message_content = st.text_area("Message", placeholder="Type your message here...", height=100)
+                subject = st.text_input("Subject", 
+                                      value=st.session_state.get('message_subject', ''),
+                                      placeholder="Enter message subject",
+                                      key="subject_input")
+                st.session_state['message_subject'] = subject
+                
+                # AI suggestions for subjects
+                if subject and len(subject) > 5:
+                    ai_ui.ai_suggestions_panel(subject, "message")
+                
+                # AI-Enhanced Message Content
+                product_name = product_options[selected_product_idx] if selected_product_idx < len(product_options) else None
+                message_content = st.text_area(
+                    "Message*", 
+                    value=st.session_state.get('message_content', ''),
+                    placeholder="Type your message here...",
+                    height=120,
+                    key="message_content_input"
+                )
+                st.session_state['message_content'] = message_content
             
             if st.form_submit_button("📤 Send Message", use_container_width=True):
                 if recipient_name and recipient_email and subject and message_content:
@@ -238,12 +316,46 @@ elif st.session_state.current_conversation:
     else:
         st.info("No messages in this conversation yet.")
     
-    # Reply form
+    # AI-Enhanced Reply Section
     st.divider()
     st.subheader("📝 Reply")
     
+    # AI Reply Assistant (outside form)
+    with st.expander("🤖 AI Reply Assistant", expanded=False):
+        col1, col2 = st.columns(2)
+        with col1:
+            ai_ui.message_templates_widget(
+                message_type="follow_up",
+                product_name=conversation.get('product_name', 'General')
+            )
+        
+        with col2:
+            if st.button("✨ Generate Professional Reply", key="gen_reply_btn"):
+                try:
+                    with st.spinner("Generating reply..."):
+                        reply_context = f"Reply to {conversation['sender_name']} about {conversation.get('product_name', 'inquiry')}"
+                        generated_reply = ai_assistant.generate_custom_content(
+                            "professional reply message",
+                            reply_context,
+                            f"Courteous {st.session_state.user_type} response"
+                        )
+                        st.session_state['generated_reply'] = generated_reply
+                        st.success("Reply generated!")
+                        st.rerun()
+                except:
+                    st.error("AI unavailable")
+            
+            if 'generated_reply' in st.session_state:
+                st.text_area("Generated Reply:", st.session_state['generated_reply'], height=80, key="gen_reply_display")
+    
+    # Reply form
     with st.form("reply_form"):
-        reply_message = st.text_area("Your Reply", placeholder="Type your reply here...", height=100)
+        reply_message = st.text_area("Your Reply", 
+                                   value=st.session_state.get('reply_text', ''),
+                                   placeholder="Type your reply here...", 
+                                   height=100,
+                                   key="reply_input")
+        st.session_state['reply_text'] = reply_message
         
         col1, col2 = st.columns([3, 1])
         with col2:

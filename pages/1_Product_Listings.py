@@ -6,6 +6,7 @@ import io
 from utils.ai_assistant import AIAssistant
 from utils.database_manager import DatabaseManager
 from utils.image_handler import ImageHandler
+from utils.ai_ui_components import AIUIComponents
 
 # Initialize components
 @st.cache_resource
@@ -16,6 +17,7 @@ db_manager = get_database_manager()
 
 ai_assistant = AIAssistant()
 image_handler = ImageHandler()
+ai_ui = AIUIComponents()
 
 # Star Rating Components
 def display_star_rating(rating, max_stars=5):
@@ -32,24 +34,29 @@ def display_star_rating(rating, max_stars=5):
     return star_display
 
 def star_rating_input(key, default_rating=0):
-    """Interactive star rating input component"""
+    """Interactive star rating input component (form-safe version)"""
     # Store rating in session state
     session_key = f"rating_{key}"
     if session_key not in st.session_state:
         st.session_state[session_key] = default_rating
     
-    with st.container():
-        st.write("**Rating:**")
-        rating_cols = st.columns(5)
-        
-        for i in range(5):
-            with rating_cols[i]:
-                if st.button("⭐" if i < st.session_state[session_key] else "☆", 
-                           key=f"{key}_star_{i}", 
-                           help=f"{i+1} star{'s' if i > 0 else ''}"):
-                    st.session_state[session_key] = i + 1
+    # Use a slider instead of buttons for form compatibility
+    rating = st.slider(
+        "Rating (stars)",
+        min_value=1,
+        max_value=5,
+        value=st.session_state[session_key] if st.session_state[session_key] > 0 else 1,
+        step=1,
+        help="Select your rating from 1 to 5 stars",
+        key=f"{key}_slider"
+    )
     
-    return st.session_state[session_key]
+    # Display stars visually
+    star_display = "⭐" * rating + "☆" * (5 - rating)
+    st.markdown(f"**Your Rating:** {star_display}")
+    
+    st.session_state[session_key] = rating
+    return rating
 
 def display_reviews_section(product_id, product_name):
     """Display reviews section with existing reviews and submission form"""
@@ -78,6 +85,41 @@ def display_reviews_section(product_id, product_name):
     with col2:
         # Review submission form
         with st.expander("✍️ Write a Review", expanded=False):
+            # AI Review Assistance (outside form)
+            st.subheader("🤖 AI Writing Assistant")
+            
+            # Current review text management
+            current_text = st.session_state.get(f'review_draft_{product_id}', '')
+            
+            # AI assistance buttons (outside form)
+            if current_text and len(current_text) > 20:
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.button("✨ Improve Review", key=f"improve_review_btn_{product_id}"):
+                        try:
+                            with st.spinner("Improving..."):
+                                improved = ai_assistant.improve_text(current_text, "general")
+                                st.session_state[f'review_draft_{product_id}'] = improved
+                                st.success("Review improved! ✨")
+                                st.rerun()
+                        except:
+                            st.error("AI unavailable")
+                with col2:
+                    if st.button("💡 Get Tips", key=f"review_tips_btn_{product_id}"):
+                        try:
+                            with st.spinner("Getting tips..."):
+                                tips = ai_assistant.quick_improve_suggestions(current_text, "general")
+                                st.info(tips)
+                        except:
+                            st.error("Tips unavailable")
+            
+            # Add AI review helper widget (outside form)
+            with st.expander("🎯 AI Review Template Helper", expanded=False):
+                ai_ui.review_assistance_widget(product_name, 5)  # Default rating for template
+            
+            st.divider()
+            
+            # Form with only form-compatible inputs
             with st.form(f"review_form_{product_id}"):
                 customer_name = st.text_input("Your Name*", placeholder="Enter your name")
                 customer_email = st.text_input("Email (optional)", placeholder="your.email@example.com")
@@ -85,12 +127,17 @@ def display_reviews_section(product_id, product_name):
                 # Star rating input
                 rating = star_rating_input(f"review_{product_id}")
                 
+                # Review text area (synced with draft)
                 comment = st.text_area(
                     "Your Review*", 
+                    value=st.session_state.get(f'review_draft_{product_id}', ''),
                     placeholder="Share your experience with this product...",
                     max_chars=1000,
-                    help="Maximum 1000 characters"
+                    help="Maximum 1000 characters",
+                    key=f"review_text_input_{product_id}"
                 )
+                # Update draft in session state
+                st.session_state[f'review_draft_{product_id}'] = comment
                 
                 submitted = st.form_submit_button("📝 Submit Review")
                 
@@ -108,6 +155,8 @@ def display_reviews_section(product_id, product_name):
                         success = db_manager.add_review(review_data)
                         if success:
                             st.success("Thank you for your review! 🎉")
+                            # Clear the draft after successful submission
+                            st.session_state[f'review_draft_{product_id}'] = ''
                             st.rerun()
                         else:
                             st.error("Failed to submit review. Please try again.")
@@ -163,66 +212,28 @@ with st.sidebar:
 if page_mode == "Create New Product":
     st.subheader("🆕 Create New Product Listing")
     
-    # AI Assistance Section (outside form)
-    with st.expander("🤖 AI Writing Assistant", expanded=False):
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            ai_product_name = st.text_input("Product Name (for AI)", key="ai_name", placeholder="e.g., Handcrafted Ceramic Mug")
-            ai_category = st.text_input("Category (for AI)", key="ai_category", placeholder="Pottery & Ceramics")
-            ai_materials = st.text_input("Materials (for AI)", key="ai_materials", placeholder="Clay, Glaze, Natural fibers")
-            ai_dimensions = st.text_input("Dimensions (for AI)", key="ai_dimensions", placeholder="4\" x 3\" x 3\"")
-            
-        with col2:
-            st.write("**Generate AI Content:**")
-            if st.button("✨ Generate Description", use_container_width=True):
-                if ai_product_name and ai_category and ai_materials:
-                    with st.spinner("Generating description..."):
-                        try:
-                            generated_desc = ai_assistant.generate_product_description(
-                                ai_product_name, ai_category, ai_materials, 25.00
-                            )
-                            st.session_state.generated_description = generated_desc
-                            st.success("Description generated! Copy it to the form below.")
-                        except Exception as e:
-                            st.error(f"Failed to generate description: {str(e)}")
-                else:
-                    st.warning("Please fill in product name, category, and materials first.")
-            
-            if st.button("💰 Get Price Suggestion", use_container_width=True):
-                if ai_product_name and ai_category and ai_materials:
-                    with st.spinner("Analyzing pricing..."):
-                        try:
-                            price_suggestion = ai_assistant.suggest_pricing(
-                                ai_product_name, ai_category, ai_materials, ai_dimensions
-                            )
-                            st.session_state.price_suggestion = price_suggestion
-                            st.success("Price analysis complete!")
-                        except Exception as e:
-                            st.error(f"Failed to get price suggestion: {str(e)}")
-                else:
-                    st.warning("Please fill in product details first.")
-        
-        # Display generated content
-        if 'generated_description' in st.session_state:
-            st.info("**AI Generated Description:**")
-            st.write(st.session_state.generated_description)
-        
-        if 'price_suggestion' in st.session_state:
-            suggestion = st.session_state.price_suggestion
-            st.info("**AI Price Analysis:**")
-            min_price = suggestion.get('min_price', 0)
-            max_price = suggestion.get('max_price', 0)
-            reasoning = suggestion.get('reasoning', 'No reasoning provided')
-            st.write(f"**Suggested Price Range:** ${min_price:.2f} - ${max_price:.2f}")
-            st.write(f"**Reasoning:** {reasoning}")
+    # AI-Powered Product Creation Assistant
+    ai_ui.ai_powered_form_section(
+        "🤖 AI-Powered Product Creation", 
+        "Get intelligent assistance for product names, descriptions, pricing, and more!"
+    )
     
     # Product Creation Form
     with st.form("product_form"):
         col1, col2 = st.columns([1, 1])
         
         with col1:
-            product_name = st.text_input("Product Name*", placeholder="e.g., Handcrafted Ceramic Mug")
+            # Product name with AI assistance
+            product_name = st.text_input("Product Name*", 
+                                       value=st.session_state.get('product_name', ''),
+                                       placeholder="e.g., Handcrafted Ceramic Mug",
+                                       key="product_name_input")
+            st.session_state['product_name'] = product_name
+            
+            # Quick AI suggestions for product names
+            if product_name and len(product_name) > 5:
+                ai_ui.ai_suggestions_panel(product_name, "product_name")
+            
             category = st.selectbox("Category*", [
                 "Pottery & Ceramics",
                 "Jewelry & Accessories", 
@@ -233,11 +244,22 @@ if page_mode == "Create New Product":
                 "Home Decor",
                 "Other"
             ])
+            
             price = st.number_input("Price ($)*", min_value=0.01, value=25.00, step=0.01)
             
         with col2:
-            materials = st.text_input("Materials Used", placeholder="e.g., Clay, Glaze, Natural fibers")
-            dimensions = st.text_input("Dimensions", placeholder="e.g., 4\" x 3\" x 3\"")
+            materials = st.text_input("Materials Used", 
+                                    value=st.session_state.get('materials', ''),
+                                    placeholder="e.g., Clay, Glaze, Natural fibers",
+                                    key="materials_input")
+            st.session_state['materials'] = materials
+            
+            dimensions = st.text_input("Dimensions", 
+                                     value=st.session_state.get('dimensions', ''),
+                                     placeholder="e.g., 4\" x 3\" x 3\"",
+                                     key="dimensions_input")
+            st.session_state['dimensions'] = dimensions
+            
             weight = st.text_input("Weight", placeholder="e.g., 0.5 lbs")
         
         # Image upload
@@ -248,12 +270,18 @@ if page_mode == "Create New Product":
             type=['png', 'jpg', 'jpeg']
         )
         
-        # Product description
+        # AI-Enhanced Product Description
         st.subheader("📄 Product Description")
-        description = st.text_area(
-            "Product Description", 
-            placeholder="Describe your product... (Use AI Assistant above to generate)",
-            height=150
+        description = ai_ui.ai_text_field(
+            "Product Description*",
+            ai_assistant.generate_product_description,
+            "product_description",
+            help_text="Describe your handcrafted product in detail",
+            height=150,
+            name=product_name or "your product",
+            category=category,
+            materials=st.session_state.get('materials', ''),
+            price=price
         )
         
         # Additional details
@@ -307,11 +335,10 @@ if page_mode == "Create New Product":
                 if success:
                     st.success("🎉 Product listing created successfully!")
                     st.balloons()
-                    # Clear any stored AI suggestions
-                    if 'generated_description' in st.session_state:
-                        del st.session_state.generated_description
-                    if 'price_suggestion' in st.session_state:
-                        del st.session_state.price_suggestion
+                    # Clear form session state
+                    for key in ['product_name', 'materials', 'dimensions', 'product_description']:
+                        if key in st.session_state:
+                            del st.session_state[key]
                 else:
                     st.error("Failed to create product listing. Please try again.")
             else:
