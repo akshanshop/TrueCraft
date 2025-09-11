@@ -1,10 +1,13 @@
 import streamlit as st
 import pandas as pd
-from utils.data_manager import DataManager
+from utils.database_manager import DatabaseManager
 
-# Initialize data manager
-if 'data_manager' not in st.session_state:
-    st.session_state.data_manager = DataManager()
+# Initialize database manager
+@st.cache_resource
+def get_database_manager():
+    return DatabaseManager()
+
+db_manager = get_database_manager()
 
 st.set_page_config(
     page_title="ArtisanAI Marketplace Assistant",
@@ -66,8 +69,8 @@ st.divider()
 st.subheader("📈 Quick Overview")
 
 # Get current data
-products_df = st.session_state.data_manager.get_products()
-profiles_df = st.session_state.data_manager.get_profiles()
+products_df = db_manager.get_products()
+profiles_df = db_manager.get_profiles()
 
 col1, col2, col3, col4 = st.columns(4)
 with col1:

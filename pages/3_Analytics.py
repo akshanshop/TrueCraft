@@ -3,11 +3,14 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
-from utils.data_manager import DataManager
+from utils.database_manager import DatabaseManager
 
 # Initialize components
-if 'data_manager' not in st.session_state:
-    st.session_state.data_manager = DataManager()
+@st.cache_resource
+def get_database_manager():
+    return DatabaseManager()
+
+db_manager = get_database_manager()
 
 st.set_page_config(
     page_title="Analytics - ArtisanAI",
@@ -19,8 +22,8 @@ st.title("📊 Analytics Dashboard")
 st.markdown("Track your product performance and engagement metrics")
 
 # Get data
-products_df = st.session_state.data_manager.get_products()
-profiles_df = st.session_state.data_manager.get_profiles()
+products_df = db_manager.get_products()
+profiles_df = db_manager.get_profiles()
 
 if products_df.empty:
     st.info("No products found. Create some product listings to see analytics!")

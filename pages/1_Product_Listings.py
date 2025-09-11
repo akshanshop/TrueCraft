@@ -4,12 +4,15 @@ from datetime import datetime
 import base64
 import io
 from utils.ai_assistant import AIAssistant
-from utils.data_manager import DataManager
+from utils.database_manager import DatabaseManager
 from utils.image_handler import ImageHandler
 
 # Initialize components
-if 'data_manager' not in st.session_state:
-    st.session_state.data_manager = DataManager()
+@st.cache_resource
+def get_database_manager():
+    return DatabaseManager()
+
+db_manager = get_database_manager()
 
 ai_assistant = AIAssistant()
 image_handler = ImageHandler()
@@ -171,7 +174,7 @@ if page_mode == "Create New Product":
                 }
                 
                 # Save product
-                success = st.session_state.data_manager.add_product(product_data)
+                success = db_manager.add_product(product_data)
                 if success:
                     st.success("🎉 Product listing created successfully!")
                     st.balloons()
@@ -189,7 +192,7 @@ elif page_mode == "Browse Products":
     st.subheader("🛍️ Product Catalog")
     
     # Get all products
-    products_df = st.session_state.data_manager.get_products()
+    products_df = db_manager.get_products()
     
     if products_df.empty:
         st.info("No products available. Create your first product listing!")
@@ -263,7 +266,7 @@ elif page_mode == "Browse Products":
                             
                             if st.button(f"View Details", key=f"view_{i}"):
                                 # Increment view count
-                                st.session_state.data_manager.increment_views(product.name)
+                                db_manager.increment_views(product['id'])
                                 
                                 # Show product details
                                 with st.expander(f"Details - {product['name']}", expanded=True):
@@ -293,7 +296,7 @@ elif page_mode == "Browse Products":
                             
                             if st.button(f"View Details", key=f"view_{i+1}"):
                                 # Increment view count
-                                st.session_state.data_manager.increment_views(product.name)
+                                db_manager.increment_views(product['id'])
                                 
                                 # Show product details
                                 with st.expander(f"Details - {product['name']}", expanded=True):
@@ -311,7 +314,7 @@ elif page_mode == "Browse Products":
 elif page_mode == "Manage Listings":
     st.subheader("⚙️ Manage Your Listings")
     
-    products_df = st.session_state.data_manager.get_products()
+    products_df = db_manager.get_products()
     
     if products_df.empty:
         st.info("No products to manage. Create your first product listing!")
@@ -387,6 +390,10 @@ elif page_mode == "Manage Listings":
         if products_to_delete:
             if st.button("🗑️ Delete Selected Products", type="secondary"):
                 for product_name in products_to_delete:
-                    st.session_state.data_manager.delete_product(product_name)
+                    # Find the product ID from the name
+                    product_row = products_df[products_df['name'] == product_name]
+                    if not product_row.empty:
+                        product_id = product_row.iloc[0]['id']
+                        db_manager.delete_product(product_id)
                 st.success(f"Deleted {len(products_to_delete)} products")
                 st.rerun()

@@ -1,12 +1,15 @@
 import streamlit as st
 from datetime import datetime
 from utils.ai_assistant import AIAssistant
-from utils.data_manager import DataManager
+from utils.database_manager import DatabaseManager
 from utils.image_handler import ImageHandler
 
 # Initialize components
-if 'data_manager' not in st.session_state:
-    st.session_state.data_manager = DataManager()
+@st.cache_resource
+def get_database_manager():
+    return DatabaseManager()
+
+db_manager = get_database_manager()
 
 ai_assistant = AIAssistant()
 image_handler = ImageHandler()
@@ -21,7 +24,7 @@ st.title("👤 Artisan Profile")
 st.markdown("Create and manage your artisan profile with AI-powered writing assistance")
 
 # Get existing profile
-profiles_df = st.session_state.data_manager.get_profiles()
+profiles_df = db_manager.get_profiles()
 current_profile = profiles_df.iloc[0] if not profiles_df.empty else None
 
 # Sidebar
@@ -185,10 +188,11 @@ if profile_mode in ["Create Profile", "Edit Profile"]:
                 
                 # Save profile
                 if current_profile is not None:
-                    success = st.session_state.data_manager.update_profile(profile_data)
+                    profile_id = current_profile['id']
+                    success = db_manager.update_profile(profile_id, profile_data)
                     message = "Profile updated successfully!"
                 else:
-                    success = st.session_state.data_manager.add_profile(profile_data)
+                    success = db_manager.add_profile(profile_data)
                     message = "Profile created successfully!"
                 
                 if success:
@@ -268,7 +272,7 @@ elif profile_mode == "View Profile":
                 st.write(content)
         
         # Profile statistics
-        products_df = st.session_state.data_manager.get_products()
+        products_df = db_manager.get_products()
         if not products_df.empty:
             st.subheader("Your Products")
             col1, col2, col3 = st.columns(3)
