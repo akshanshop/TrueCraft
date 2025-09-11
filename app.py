@@ -37,8 +37,9 @@ st.title("🎨 ArtisanAI Marketplace Assistant")
 st.markdown("*Empowering local artisans with AI-powered tools for online success*")
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Welcome section
-col1, col2, col3, col4 = st.columns(4)
+# Welcome section - Main Features
+st.subheader("🚀 Main Features")
+col1, col2, col3 = st.columns(3)
 
 with col1:
     st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
@@ -69,12 +70,33 @@ with col3:
         st.switch_page("pages/4_Messages.py")
     st.markdown('</div>', unsafe_allow_html=True)
 
-with col4:
+# Additional Tools
+st.subheader("📊 Tools & Support")
+col1, col2, col3 = st.columns(3)
+
+with col1:
     st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
     st.subheader("📊 Analytics")
     st.write("Track your product performance with detailed analytics and insights.")
     if st.button("View Analytics", use_container_width=True):
         st.switch_page("pages/3_Analytics.py")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with col2:
+    st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
+    st.subheader("🆘 Customer Support")
+    st.write("Get help with FAQ, troubleshooting guides, and contact our support team for assistance.")
+    if st.button("Get Support", use_container_width=True):
+        st.switch_page("pages/5_Support.py")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with col3:
+    # Placeholder for future feature or additional info
+    st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
+    st.subheader("📚 Quick Tips")
+    st.write("New to ArtisanAI? Check out our getting started guide and platform tips.")
+    if st.button("View Help", use_container_width=True):
+        st.switch_page("pages/5_Support.py")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # Quick stats
