@@ -31,6 +31,58 @@ with st.sidebar:
 if page_mode == "Create New Product":
     st.subheader("🆕 Create New Product Listing")
     
+    # AI Assistance Section (outside form)
+    with st.expander("🤖 AI Writing Assistant", expanded=False):
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            ai_product_name = st.text_input("Product Name (for AI)", key="ai_name", placeholder="e.g., Handcrafted Ceramic Mug")
+            ai_category = st.text_input("Category (for AI)", key="ai_category", placeholder="Pottery & Ceramics")
+            ai_materials = st.text_input("Materials (for AI)", key="ai_materials", placeholder="Clay, Glaze, Natural fibers")
+            ai_dimensions = st.text_input("Dimensions (for AI)", key="ai_dimensions", placeholder="4\" x 3\" x 3\"")
+            
+        with col2:
+            st.write("**Generate AI Content:**")
+            if st.button("✨ Generate Description", use_container_width=True):
+                if ai_product_name and ai_category and ai_materials:
+                    with st.spinner("Generating description..."):
+                        try:
+                            generated_desc = ai_assistant.generate_product_description(
+                                ai_product_name, ai_category, ai_materials, 25.00
+                            )
+                            st.session_state.generated_description = generated_desc
+                            st.success("Description generated! Copy it to the form below.")
+                        except Exception as e:
+                            st.error(f"Failed to generate description: {str(e)}")
+                else:
+                    st.warning("Please fill in product name, category, and materials first.")
+            
+            if st.button("💰 Get Price Suggestion", use_container_width=True):
+                if ai_product_name and ai_category and ai_materials:
+                    with st.spinner("Analyzing pricing..."):
+                        try:
+                            price_suggestion = ai_assistant.suggest_pricing(
+                                ai_product_name, ai_category, ai_materials, ai_dimensions
+                            )
+                            st.session_state.price_suggestion = price_suggestion
+                            st.success("Price analysis complete!")
+                        except Exception as e:
+                            st.error(f"Failed to get price suggestion: {str(e)}")
+                else:
+                    st.warning("Please fill in product details first.")
+        
+        # Display generated content
+        if 'generated_description' in st.session_state:
+            st.info("**AI Generated Description:**")
+            st.write(st.session_state.generated_description)
+        
+        if 'price_suggestion' in st.session_state:
+            suggestion = st.session_state.price_suggestion
+            st.info("**AI Price Analysis:**")
+            st.write(f"**Suggested Price Range:** ${suggestion['min_price']:.2f} - ${suggestion['max_price']:.2f}")
+            st.write(f"**Reasoning:** {suggestion['reasoning']}")
+    
+    # Product Creation Form
     with st.form("product_form"):
         col1, col2 = st.columns([1, 1])
         
@@ -63,59 +115,11 @@ if page_mode == "Create New Product":
         
         # Product description
         st.subheader("📄 Product Description")
-        col1, col2 = st.columns([3, 1])
-        
-        with col1:
-            description = st.text_area(
-                "Product Description", 
-                placeholder="Describe your product...",
-                height=150
-            )
-        
-        with col2:
-            st.write("**AI Assistance**")
-            if st.button("✨ Generate Description", use_container_width=True):
-                if product_name and category and materials:
-                    with st.spinner("Generating description..."):
-                        try:
-                            generated_desc = ai_assistant.generate_product_description(
-                                product_name, category, materials, price
-                            )
-                            st.session_state.generated_description = generated_desc
-                            st.success("Description generated! It will appear below.")
-                        except Exception as e:
-                            st.error(f"Failed to generate description: {str(e)}")
-                else:
-                    st.warning("Please fill in product name, category, and materials first.")
-            
-            if st.button("💰 Get Price Suggestion", use_container_width=True):
-                if product_name and category and materials:
-                    with st.spinner("Analyzing pricing..."):
-                        try:
-                            price_suggestion = ai_assistant.suggest_pricing(
-                                product_name, category, materials, dimensions
-                            )
-                            st.session_state.price_suggestion = price_suggestion
-                            st.success("Price analysis complete!")
-                        except Exception as e:
-                            st.error(f"Failed to get price suggestion: {str(e)}")
-                else:
-                    st.warning("Please fill in product details first.")
-        
-        # Display generated content
-        if 'generated_description' in st.session_state:
-            st.info("**AI Generated Description:**")
-            st.write(st.session_state.generated_description)
-            if st.button("Use Generated Description"):
-                description = st.session_state.generated_description
-                del st.session_state.generated_description
-                st.rerun()
-        
-        if 'price_suggestion' in st.session_state:
-            suggestion = st.session_state.price_suggestion
-            st.info("**AI Price Analysis:**")
-            st.write(f"**Suggested Price Range:** ${suggestion['min_price']:.2f} - ${suggestion['max_price']:.2f}")
-            st.write(f"**Reasoning:** {suggestion['reasoning']}")
+        description = st.text_area(
+            "Product Description", 
+            placeholder="Describe your product... (Use AI Assistant above to generate)",
+            height=150
+        )
         
         # Additional details
         with st.expander("Additional Details"):
@@ -194,10 +198,17 @@ elif page_mode == "Browse Products":
         with col2:
             category_filter = st.selectbox("Filter by Category", ["All"] + products_df['category'].unique().tolist())
         with col3:
+            min_price = float(products_df['price'].min())
+            max_price = float(products_df['price'].max())
+            
+            # Handle case where all products have the same price
+            if min_price == max_price:
+                max_price = min_price + 0.01
+            
             price_range = st.slider("Price Range ($)", 
-                                  min_value=float(products_df['price'].min()), 
-                                  max_value=float(products_df['price'].max()),
-                                  value=(float(products_df['price'].min()), float(products_df['price'].max())))
+                                  min_value=min_price, 
+                                  max_value=max_price,
+                                  value=(min_price, max_price))
         
         # Apply filters
         filtered_df = products_df.copy()

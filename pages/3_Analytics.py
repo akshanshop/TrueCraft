@@ -102,8 +102,11 @@ if not filtered_df.empty:
     with col1:
         st.subheader("📈 Views by Product")
         
-        # Top performing products
-        top_products = filtered_df.nlargest(10, 'views')[['name', 'views', 'price']]
+        # Top performing products  
+        if len(filtered_df) > 0:
+            top_products = filtered_df.nlargest(10, 'views')[['name', 'views', 'price']]
+        else:
+            top_products = pd.DataFrame()
         
         if not top_products.empty:
             fig_views = px.bar(

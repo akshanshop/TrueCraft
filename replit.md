@@ -1,0 +1,66 @@
+# ArtisanAI Marketplace Assistant
+
+## Overview
+
+ArtisanAI Marketplace Assistant is a Streamlit-based web application designed to empower local artisans with AI-powered tools for online marketplace success. The application provides three core functionalities: AI-assisted product listing creation, artisan profile management, and analytics dashboard for tracking product performance. The system leverages OpenAI's GPT-5 model to generate compelling product descriptions, pricing suggestions, and writing assistance for artisan profiles.
+
+## User Preferences
+
+Preferred communication style: Simple, everyday language.
+
+## System Architecture
+
+### Frontend Architecture
+- **Framework**: Streamlit-based web application with multi-page navigation
+- **Layout**: Wide layout with responsive design using Streamlit's column system
+- **Styling**: Custom CSS integrated through Streamlit's markdown functionality for warm, crafted aesthetic
+- **Page Structure**: Main app.py serving as homepage with dedicated pages for Product Listings, Artisan Profile, and Analytics
+
+### Data Management
+- **Storage**: Session-based data persistence using Streamlit's session state
+- **Data Structure**: In-memory storage with DataFrame-based data manipulation using pandas
+- **Data Models**: 
+  - Products: name, category, price, description, materials, dimensions, stock, shipping details
+  - Profiles: artisan information and business details
+  - Analytics: product views, search terms, user interactions
+
+### AI Integration
+- **AI Provider**: OpenAI API integration using the GPT-5 model
+- **Core AI Features**:
+  - Product description generation based on product details and materials
+  - Pricing suggestions with market analysis
+  - Writing assistance for artisan profiles
+- **AI Assistant Architecture**: Centralized AIAssistant class handling all OpenAI API interactions
+
+### Image Processing
+- **Image Handling**: PIL (Python Imaging Library) for image processing and optimization
+- **Storage Format**: Base64 encoding for image storage in session state
+- **Constraints**: Maximum 5MB file size, 800x600px resolution, supports PNG/JPEG/WEBP formats
+- **Processing**: Automatic format conversion, resizing, and quality optimization
+
+### Analytics System
+- **Visualization**: Plotly integration for interactive charts and graphs
+- **Metrics Tracking**: Product performance, engagement metrics, and time-based filtering
+- **Data Analysis**: Category-based filtering and time period analysis
+
+## External Dependencies
+
+### AI Services
+- **OpenAI API**: GPT-5 model for content generation and AI assistance
+- **Authentication**: API key-based authentication for OpenAI services
+
+### Python Libraries
+- **Streamlit**: Web application framework and UI components
+- **Pandas**: Data manipulation and DataFrame operations
+- **Plotly**: Interactive data visualization and charting
+- **PIL (Pillow)**: Image processing and optimization
+- **OpenAI Python Client**: Official OpenAI API client library
+
+### Data Storage
+- **Session State**: Streamlit's built-in session state for temporary data persistence
+- **JSON Serialization**: Data conversion for session state compatibility
+
+### Development Tools
+- **Base64**: Image encoding for web display and storage
+- **IO**: In-memory file operations for image processing
+- **Datetime**: Time-based operations and filtering
