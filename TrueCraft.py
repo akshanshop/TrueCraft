@@ -1,13 +1,20 @@
 import streamlit as st
 import pandas as pd
 from utils.database_manager import DatabaseManager
+from utils.auth_manager import AuthManager
 
 # Initialize database manager
 @st.cache_resource
 def get_database_manager():
     return DatabaseManager()
 
+# Initialize authentication manager
+@st.cache_resource
+def get_auth_manager():
+    return AuthManager()
+
 db_manager = get_database_manager()
+auth_manager = get_auth_manager()
 
 st.set_page_config(
     page_title="TrueCraft Marketplace Assistant",
@@ -36,6 +43,55 @@ st.markdown('<div class="main-header">', unsafe_allow_html=True)
 st.title("🎨 TrueCraft Marketplace Assistant")
 st.markdown("*Empowering local artisans with AI-powered tools for online success*")
 st.markdown('</div>', unsafe_allow_html=True)
+
+# Authentication Section
+with st.sidebar:
+    st.header("👤 Account")
+    
+    if auth_manager.is_authenticated():
+        # Show user profile in sidebar
+        user = auth_manager.get_current_user()
+        st.success(f"Welcome, {user['name']}!")
+        
+        if user['avatar_url']:
+            st.image(user['avatar_url'], width=60)
+        
+        st.write(f"📧 {user['email']}")
+        st.write(f"🔗 {user['oauth_provider'].title()}")
+        
+        if st.button("🚪 Sign Out", use_container_width=True):
+            auth_manager.logout_user()
+            st.success("Successfully logged out!")
+            st.rerun()
+            
+        st.divider()
+        st.markdown("**🎨 Your TrueCraft Data**")
+        st.write("All your listings and data are saved to your account.")
+        
+    else:
+        st.warning("Sign in to save your data!")
+        st.markdown("Connect with your social account to:")
+        st.markdown("• Save product listings")
+        st.markdown("• Keep artisan profiles")
+        st.markdown("• Access message history")
+        st.markdown("• View analytics")
+        
+        if st.button("🔐 Sign In", use_container_width=True, type="primary"):
+            st.session_state['show_login'] = True
+            st.rerun()
+
+# Show login modal if requested
+if st.session_state.get('show_login', False):
+    with st.container():
+        st.markdown("---")
+        auth_manager.show_login_form()
+        
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col2:
+            if st.button("❌ Cancel", use_container_width=True):
+                st.session_state['show_login'] = False
+                st.rerun()
+        st.markdown("---")
 
 # Platform Navigation - Organized in Two Rows
 st.subheader("🚀 TrueCraft Tools & Features")
