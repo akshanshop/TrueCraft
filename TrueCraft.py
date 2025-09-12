@@ -78,7 +78,7 @@ col4, col5, col6 = st.columns(3)
 with col4:
     st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
     st.subheader("📊 Analytics & Reports")
-    st.write("Track your product performance with detailed analytics and insights for growth.")
+    st.write("Get detailed analytics and performance insights for your products.")
     if st.button("View Analytics", use_container_width=True):
         st.switch_page("pages/3_Analytics.py")
     st.markdown('</div>', unsafe_allow_html=True)
@@ -86,7 +86,7 @@ with col4:
 with col5:
     st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
     st.subheader("🆘 Customer Support")
-    st.write("Get help with FAQ, troubleshooting guides, and contact our support team.")
+    st.write("Get help with FAQ, troubleshooting guides, and support contact.")
     if st.button("Get Support", use_container_width=True):
         st.switch_page("pages/5_Support.py")
     st.markdown('</div>', unsafe_allow_html=True)
@@ -94,7 +94,7 @@ with col5:
 with col6:
     st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
     st.subheader("📚 Platform Guides")
-    st.write("New to TrueCraft? Check out our getting started guide and platform tips.")
+    st.write("Get started with TrueCraft using our comprehensive help guides.")
     if st.button("View Help", use_container_width=True):
         st.switch_page("pages/5_Support.py")
     st.markdown('</div>', unsafe_allow_html=True)
