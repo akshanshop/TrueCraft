@@ -118,6 +118,54 @@ with st.sidebar:
     st.page_link("pages/5_Support.py", label="🆘 Support", icon="🆘")
 
 
+# Main Navigation Section
+st.subheader("🚀 TrueCraft Tools & Features")
+
+# Navigation Grid - 2 rows of 3 columns
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.subheader("🏠 Home")
+    st.markdown("Main dashboard with overview of your TrueCraft marketplace activity.")
+    if st.button("Go to Home", use_container_width=True, type="primary"):
+        st.switch_page("TrueCraft.py")
+
+with col2:
+    st.subheader("📝 Product Listings")
+    st.markdown("Create and manage your product listings with AI-generated descriptions.")
+    if st.button("Manage Products", use_container_width=True):
+        st.switch_page("pages/1_Product_Listings.py")
+
+with col3:
+    st.subheader("👤 Artisan Profile")
+    st.markdown("Build your professional artisan profile and showcase your story.")
+    if st.button("Manage Profile", use_container_width=True):
+        st.switch_page("pages/2_Artisan_Profile.py")
+
+# Second row
+col4, col5, col6 = st.columns(3)
+
+with col4:
+    st.subheader("📊 Analytics")
+    st.markdown("Get detailed performance insights and track your sales trends.")
+    if st.button("View Analytics", use_container_width=True):
+        st.switch_page("pages/3_Analytics.py")
+
+with col5:
+    st.subheader("💬 Messages")
+    unread_count = db_manager.get_unread_message_count()
+    if unread_count > 0:
+        st.markdown(f"Manage customer communications. **{unread_count} unread messages**")
+    else:
+        st.markdown("Manage all your customer communications in one place.")
+    if st.button("View Messages", use_container_width=True):
+        st.switch_page("pages/4_Messages.py")
+
+with col6:
+    st.subheader("🆘 Support")
+    st.markdown("Get help, access guides, and troubleshoot any issues.")
+    if st.button("Get Support", use_container_width=True):
+        st.switch_page("pages/5_Support.py")
 
 # Quick stats
 st.divider()
