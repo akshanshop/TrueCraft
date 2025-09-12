@@ -65,9 +65,9 @@ with col3:
     # Get unread message count
     unread_count = db_manager.get_unread_message_count()
     if unread_count > 0:
-        st.write(f"Manage buyer-seller communications. **{unread_count} unread messages**")
+        st.write(f"Manage buyer-seller communications with integrated messaging. **{unread_count} unread messages**")
     else:
-        st.write("Manage buyer-seller communications and customer inquiries with integrated messaging.")
+        st.write("Manage buyer-seller communications with integrated messaging and customer inquiries.")
     if st.button("View Messages", use_container_width=True):
         st.switch_page("pages/4_Messages.py")
     st.markdown('</div>', unsafe_allow_html=True)
