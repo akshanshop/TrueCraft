@@ -85,15 +85,6 @@ with st.sidebar:
             # Scroll to sign-in section on main page
             st.info("Please use the sign-in buttons on the main page above.")
     
-    st.divider()
-    st.markdown("### 🧭 Quick Navigation")
-    st.page_link("TrueCraft.py", label="🏠 Home", icon="🏠")
-    st.page_link("pages/1_Product_Listings.py", label="📝 Product Listings", icon="📝")
-    st.page_link("pages/2_Artisan_Profile.py", label="👤 Artisan Profile", icon="👤")
-    st.page_link("pages/3_Analytics.py", label="📊 Analytics", icon="📊")
-    st.page_link("pages/4_Messages.py", label="💬 Messages", icon="💬")
-    st.page_link("pages/5_Support.py", label="🆘 Support", icon="🆘")
-
 
 # Main Navigation Section
 st.subheader("🚀 TrueCraft Tools & Features")
