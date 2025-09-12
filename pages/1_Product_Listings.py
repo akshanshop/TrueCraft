@@ -15,7 +15,17 @@ def get_database_manager():
 
 db_manager = get_database_manager()
 
-ai_assistant = AIAssistant()
+# Initialize AI components safely
+def get_ai_assistant():
+    """Get AI assistant with error handling"""
+    try:
+        if 'ai_assistant' not in st.session_state:
+            st.session_state.ai_assistant = AIAssistant()
+        return st.session_state.ai_assistant
+    except Exception as e:
+        st.warning("AI features are currently unavailable. Some functionality may be limited.")
+        return None
+
 image_handler = ImageHandler()
 ai_ui = AIUIComponents()
 
@@ -98,18 +108,26 @@ def display_reviews_section(product_id, product_name):
                     if st.button("✨ Improve Review", key=f"improve_review_btn_{product_id}"):
                         try:
                             with st.spinner("Improving..."):
-                                improved = ai_assistant.improve_text(current_text, "general")
-                                st.session_state[f'review_draft_{product_id}'] = improved
-                                st.success("Review improved! ✨")
-                                st.rerun()
+                                ai_assistant = get_ai_assistant()
+                                if ai_assistant:
+                                    improved = ai_assistant.improve_text(current_text, "general")
+                                    st.session_state[f'review_draft_{product_id}'] = improved
+                                    st.success("Review improved! ✨")
+                                    st.rerun()
+                                else:
+                                    st.error("AI text improvement unavailable")
                         except:
                             st.error("AI unavailable")
                 with col2:
                     if st.button("💡 Get Tips", key=f"review_tips_btn_{product_id}"):
                         try:
                             with st.spinner("Getting tips..."):
-                                tips = ai_assistant.quick_improve_suggestions(current_text, "general")
-                                st.info(tips)
+                                ai_assistant = get_ai_assistant()
+                                if ai_assistant:
+                                    tips = ai_assistant.quick_improve_suggestions(current_text, "general")
+                                    st.info(tips)
+                                else:
+                                    st.error("AI suggestions unavailable")
                         except:
                             st.error("Tips unavailable")
             
@@ -272,17 +290,29 @@ if page_mode == "Create New Product":
         
         # AI-Enhanced Product Description
         st.subheader("📄 Product Description")
-        description = ai_ui.ai_text_field(
-            "Product Description*",
-            ai_assistant.generate_product_description,
-            "product_description",
-            help_text="Describe your handcrafted product in detail",
-            height=150,
-            name=product_name or "your product",
-            category=category,
-            materials=st.session_state.get('materials', ''),
-            price=price
-        )
+        # Get AI assistant safely
+        ai_assistant = get_ai_assistant()
+        if ai_assistant:
+            description = ai_ui.ai_text_field(
+                "Product Description*",
+                ai_assistant.generate_product_description,
+                "product_description",
+                help_text="Describe your handcrafted product in detail",
+                height=150,
+                name=product_name or "your product",
+                category=category,
+                materials=st.session_state.get('materials', ''),
+                price=price
+            )
+        else:
+            description = st.text_area(
+                "Product Description*",
+                value=st.session_state.get('product_description', ''),
+                placeholder="Describe your handcrafted product in detail",
+                height=150,
+                key="product_description_fallback"
+            )
+            st.session_state['product_description'] = description
         
         # Additional details
         with st.expander("Additional Details"):

@@ -12,7 +12,17 @@ def get_database_manager():
 
 db_manager = get_database_manager()
 
-ai_assistant = AIAssistant()
+# Initialize AI components safely
+def get_ai_assistant():
+    """Get AI assistant with error handling"""
+    try:
+        if 'ai_assistant' not in st.session_state:
+            st.session_state.ai_assistant = AIAssistant()
+        return st.session_state.ai_assistant
+    except Exception as e:
+        st.warning("AI features are currently unavailable. Some functionality may be limited.")
+        return None
+
 image_handler = ImageHandler()
 ai_ui = AIUIComponents()
 
@@ -92,9 +102,12 @@ if profile_mode in ["Create Profile", "Edit Profile"]:
         
         # AI-Enhanced Bio Section
         st.subheader("Your Story")
-        bio = ai_ui.ai_text_field(
-            "Artist Bio/Story*",
-            ai_assistant.generate_artist_bio,
+        # Get AI assistant safely
+        ai_assistant = get_ai_assistant()
+        if ai_assistant:
+            bio = ai_ui.ai_text_field(
+                "Artist Bio/Story*",
+                ai_assistant.generate_artist_bio,
             "artisan_bio",
             help_text="Share your journey, inspiration, and what makes your craft unique",
             height=200,
@@ -104,6 +117,15 @@ if profile_mode in ["Create Profile", "Edit Profile"]:
             inspiration="your creative inspiration",
             unique_aspect="what makes your work special"
         )
+        else:
+            bio = st.text_area(
+                "Artist Bio/Story*",
+                value=st.session_state.get('artisan_bio', ''),
+                placeholder="Share your journey, inspiration, and what makes your craft unique",
+                height=200,
+                key="artisan_bio_fallback"
+            )
+            st.session_state['artisan_bio'] = bio
         
         # Contact and social
         st.subheader("Contact & Social Media")
@@ -145,9 +167,12 @@ if profile_mode in ["Create Profile", "Edit Profile"]:
         
         # Additional details
         with st.expander("Additional Details"):
-            education = ai_ui.ai_text_field(
-                "Education/Training",
-                ai_assistant.generate_custom_content,
+            # Get AI assistant safely for education section
+            ai_assistant = get_ai_assistant()
+            if ai_assistant:
+                education = ai_ui.ai_text_field(
+                    "Education/Training",
+                    ai_assistant.generate_custom_content,
                 "education_section",
                 help_text="List relevant education, workshops, or training",
                 height=100,
@@ -155,28 +180,59 @@ if profile_mode in ["Create Profile", "Edit Profile"]:
                 context=f"artisan specializing in {', '.join(specialties) if specialties else 'handmade crafts'}",
                 specific_request="professional education and training summary"
             )
+            else:
+                education = st.text_area(
+                    "Education/Training",
+                    value=st.session_state.get('education_section', ''),
+                    placeholder="List relevant education, workshops, or training",
+                    height=100,
+                    key="education_fallback"
+                )
+                st.session_state['education_section'] = education
             
-            awards = ai_ui.ai_text_field(
-                "Awards/Recognition",
-                ai_assistant.generate_custom_content,
-                "awards_section",
-                help_text="List awards, features, or recognition you've received",
-                height=100,
-                content_type="achievements and recognition",
-                context=f"artisan with {years_experience} years experience in {', '.join(specialties) if specialties else 'crafts'}",
-                specific_request="professional achievements and recognition summary"
-            )
+            ai_assistant = get_ai_assistant()
+            if ai_assistant:
+                awards = ai_ui.ai_text_field(
+                    "Awards/Recognition",
+                    ai_assistant.generate_custom_content,
+                    "awards_section",
+                    help_text="List awards, features, or recognition you've received",
+                    height=100,
+                    content_type="achievements and recognition",
+                    context=f"artisan with {years_experience} years experience in {', '.join(specialties) if specialties else 'crafts'}",
+                    specific_request="professional achievements and recognition summary"
+                )
+            else:
+                awards = st.text_area(
+                    "Awards/Recognition",
+                    value=st.session_state.get('awards_section', ''),
+                    placeholder="List awards, features, or recognition you've received",
+                    height=100,
+                    key="awards_fallback"
+                )
+                st.session_state['awards_section'] = awards
             
-            inspiration = ai_ui.ai_text_field(
-                "Inspiration/Influences",
-                ai_assistant.generate_custom_content,
-                "inspiration_section",
-                help_text="Describe what or who inspires your work",
-                height=100,
-                content_type="creative inspiration and influences",
-                context=f"artisan creating {', '.join(specialties) if specialties else 'handmade items'}",
-                specific_request="description of creative inspiration and artistic influences"
-            )
+            ai_assistant = get_ai_assistant()
+            if ai_assistant:
+                inspiration = ai_ui.ai_text_field(
+                    "Inspiration/Influences",
+                    ai_assistant.generate_custom_content,
+                    "inspiration_section",
+                    help_text="Describe what or who inspires your work",
+                    height=100,
+                    content_type="creative inspiration and influences",
+                    context=f"artisan creating {', '.join(specialties) if specialties else 'handmade items'}",
+                    specific_request="description of creative inspiration and artistic influences"
+                )
+            else:
+                inspiration = st.text_area(
+                    "Inspiration/Influences",
+                    value=st.session_state.get('inspiration_section', ''),
+                    placeholder="Describe what or who inspires your work",
+                    height=100,
+                    key="inspiration_fallback"
+                )
+                st.session_state['inspiration_section'] = inspiration
         
         # Submit button
         submitted = st.form_submit_button(
@@ -345,14 +401,18 @@ elif profile_mode == "AI Writing Assistant":
             
             if st.button("✨ Generate Bio"):
                 if name and craft_type:
-                    with st.spinner("Generating your bio..."):
-                        try:
-                            bio = ai_assistant.generate_artist_bio(
-                                name, craft_type, experience, inspiration, unique_aspect
-                            )
-                            st.session_state.generated_bio = bio
-                        except Exception as e:
-                            st.error(f"Failed to generate bio: {str(e)}")
+                    ai_assistant = get_ai_assistant()
+                    if ai_assistant:
+                        with st.spinner("Generating your bio..."):
+                            try:
+                                bio = ai_assistant.generate_artist_bio(
+                                    name, craft_type, experience, inspiration, unique_aspect
+                                )
+                                st.session_state.generated_bio = bio
+                            except Exception as e:
+                                st.error(f"Failed to generate bio: {str(e)}")
+                    else:
+                        st.error("AI features are currently unavailable. Please try again later.")
         
         elif writing_type == "Product Description":
             st.write("**Provide product details for an enhanced description:**")
@@ -364,14 +424,18 @@ elif profile_mode == "AI Writing Assistant":
             
             if st.button("✨ Enhance Description"):
                 if product_name and materials:
-                    with st.spinner("Creating description..."):
-                        try:
-                            description = ai_assistant.generate_product_description(
-                                product_name, category, materials, features
-                            )
-                            st.session_state.generated_content = description
-                        except Exception as e:
-                            st.error(f"Failed to generate description: {str(e)}")
+                    ai_assistant = get_ai_assistant()
+                    if ai_assistant:
+                        with st.spinner("Creating description..."):
+                            try:
+                                description = ai_assistant.generate_product_description(
+                                    product_name, category, materials, features
+                                )
+                                st.session_state.generated_content = description
+                            except Exception as e:
+                                st.error(f"Failed to generate description: {str(e)}")
+                    else:
+                        st.error("AI features are currently unavailable. Please try again later.")
         
         elif writing_type == "Social Media Post":
             st.write("**Create engaging social media content:**")
@@ -382,14 +446,18 @@ elif profile_mode == "AI Writing Assistant":
             
             if st.button("✨ Create Post"):
                 if post_topic:
-                    with st.spinner("Creating post..."):
-                        try:
-                            post = ai_assistant.generate_social_media_post(
-                                post_topic, platform, tone
-                            )
-                            st.session_state.generated_content = post
-                        except Exception as e:
-                            st.error(f"Failed to generate post: {str(e)}")
+                    ai_assistant = get_ai_assistant()
+                    if ai_assistant:
+                        with st.spinner("Creating post..."):
+                            try:
+                                post = ai_assistant.generate_social_media_post(
+                                    post_topic, platform, tone
+                                )
+                                st.session_state.generated_content = post
+                            except Exception as e:
+                                st.error(f"Failed to generate post: {str(e)}")
+                    else:
+                        st.error("AI features are currently unavailable. Please try again later.")
         
         else:
             st.write("**Describe what you need help writing:**")
@@ -398,14 +466,18 @@ elif profile_mode == "AI Writing Assistant":
             
             if st.button("✨ Get Writing Help"):
                 if context and specific_request:
-                    with st.spinner("Creating content..."):
-                        try:
-                            content = ai_assistant.generate_custom_content(
-                                writing_type, context, specific_request
-                            )
-                            st.session_state.generated_content = content
-                        except Exception as e:
-                            st.error(f"Failed to generate content: {str(e)}")
+                    ai_assistant = get_ai_assistant()
+                    if ai_assistant:
+                        with st.spinner("Creating content..."):
+                            try:
+                                content = ai_assistant.generate_custom_content(
+                                    writing_type, context, specific_request
+                                )
+                                st.session_state.generated_content = content
+                            except Exception as e:
+                                st.error(f"Failed to generate content: {str(e)}")
+                    else:
+                        st.error("AI features are currently unavailable. Please try again later.")
     
     with col2:
         st.write("**Tips for Better Results:**")

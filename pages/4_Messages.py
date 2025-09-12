@@ -11,7 +11,18 @@ def get_database_manager():
     return DatabaseManager()
 
 db_manager = get_database_manager()
-ai_assistant = AIAssistant()
+
+# Initialize AI components safely
+def get_ai_assistant():
+    """Get AI assistant with error handling"""
+    try:
+        if 'ai_assistant' not in st.session_state:
+            st.session_state.ai_assistant = AIAssistant()
+        return st.session_state.ai_assistant
+    except Exception as e:
+        st.warning("AI features are currently unavailable. Some functionality may be limited.")
+        return None
+
 ai_ui = AIUIComponents()
 
 st.set_page_config(
@@ -165,17 +176,21 @@ if st.session_state.current_conversation == "new":
                 st.markdown("**Quick Template Actions:**")
                 if st.button("✨ Generate Custom Message", key="custom_msg_btn"):
                     if recipient_name and subject:
-                        try:
-                            with st.spinner("Creating message..."):
-                                custom_msg = ai_assistant.generate_custom_content(
-                                    "business message",
-                                    f"Message from {st.session_state.user_type} to {recipient_name} about {subject}",
-                                    f"Professional {st.session_state.user_type} inquiry"
-                                )
-                                st.session_state['generated_message'] = custom_msg
-                                st.success("Message generated!")
-                        except:
-                            st.error("AI unavailable")
+                        ai_assistant = get_ai_assistant()
+                        if ai_assistant:
+                            try:
+                                with st.spinner("Creating message..."):
+                                    custom_msg = ai_assistant.generate_custom_content(
+                                        "business message",
+                                        f"Message from {st.session_state.user_type} to {recipient_name} about {subject}",
+                                        f"Professional {st.session_state.user_type} inquiry"
+                                    )
+                                    st.session_state['generated_message'] = custom_msg
+                                    st.success("Message generated!")
+                            except:
+                                st.error("AI unavailable")
+                        else:
+                            st.error("AI features are currently unavailable.")
                     else:
                         st.warning("Please fill in recipient name and subject first.")
                 
@@ -331,19 +346,23 @@ elif st.session_state.current_conversation:
         
         with col2:
             if st.button("✨ Generate Professional Reply", key="gen_reply_btn"):
-                try:
-                    with st.spinner("Generating reply..."):
-                        reply_context = f"Reply to {conversation['sender_name']} about {conversation.get('product_name', 'inquiry')}"
-                        generated_reply = ai_assistant.generate_custom_content(
-                            "professional reply message",
-                            reply_context,
-                            f"Courteous {st.session_state.user_type} response"
-                        )
-                        st.session_state['generated_reply'] = generated_reply
-                        st.success("Reply generated!")
-                        st.rerun()
-                except:
-                    st.error("AI unavailable")
+                ai_assistant = get_ai_assistant()
+                if ai_assistant:
+                    try:
+                        with st.spinner("Generating reply..."):
+                            reply_context = f"Reply to {conversation['sender_name']} about {conversation.get('product_name', 'inquiry')}"
+                            generated_reply = ai_assistant.generate_custom_content(
+                                "professional reply message",
+                                reply_context,
+                                f"Courteous {st.session_state.user_type} response"
+                            )
+                            st.session_state['generated_reply'] = generated_reply
+                            st.success("Reply generated!")
+                            st.rerun()
+                    except:
+                        st.error("AI unavailable")
+                else:
+                    st.error("AI features are currently unavailable.")
             
             if 'generated_reply' in st.session_state:
                 st.text_area("Generated Reply:", st.session_state['generated_reply'], height=80, key="gen_reply_display")

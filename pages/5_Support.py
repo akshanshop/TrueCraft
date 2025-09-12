@@ -11,7 +11,18 @@ def get_database_manager():
     return DatabaseManager()
 
 db_manager = get_database_manager()
-ai_assistant = AIAssistant()
+
+# Initialize AI components safely
+def get_ai_assistant():
+    """Get AI assistant with error handling"""
+    try:
+        if 'ai_assistant' not in st.session_state:
+            st.session_state.ai_assistant = AIAssistant()
+        return st.session_state.ai_assistant
+    except Exception as e:
+        st.warning("AI features are currently unavailable. Some functionality may be limited.")
+        return None
+
 ai_ui = AIUIComponents()
 
 st.set_page_config(
@@ -300,39 +311,51 @@ with tab2:
             ], key="ticket_template_type")
             
             if st.button("Generate Ticket Template", key="gen_ticket_btn"):
-                try:
-                    with st.spinner("Creating ticket template..."):
-                        ticket_content = ai_assistant.generate_support_ticket(
-                            template_type, 
-                            f"Help with {template_type.lower()}", 
-                            "medium"
-                        )
-                        st.session_state['generated_ticket'] = ticket_content
-                        st.success("Ticket template generated!")
-                        st.rerun()
-                except:
-                    st.error("AI unavailable")
+                ai_assistant = get_ai_assistant()
+                if ai_assistant:
+                    try:
+                        with st.spinner("Creating ticket template..."):
+                            ticket_content = ai_assistant.generate_support_ticket(
+                                template_type, 
+                                f"Help with {template_type.lower()}", 
+                                "medium"
+                            )
+                            st.session_state['generated_ticket'] = ticket_content
+                            st.success("Ticket template generated!")
+                            st.rerun()
+                    except:
+                        st.error("AI unavailable")
+                else:
+                    st.error("AI features are currently unavailable.")
         
         with col2:
             st.markdown("**🔧 Improve Your Ticket**")
             if 'current_ticket_desc' in st.session_state and st.session_state.current_ticket_desc:
                 if st.button("✨ Improve Description", key="improve_ticket_btn"):
-                    try:
-                        with st.spinner("Improving ticket..."):
-                            improved = ai_assistant.improve_text(st.session_state.current_ticket_desc, "professional")
-                            st.session_state['improved_ticket'] = improved
-                            st.success("Description improved!")
-                            st.rerun()
-                    except:
-                        st.error("AI unavailable")
+                    ai_assistant = get_ai_assistant()
+                    if ai_assistant:
+                        try:
+                            with st.spinner("Improving ticket..."):
+                                improved = ai_assistant.improve_text(st.session_state.current_ticket_desc, "professional")
+                                st.session_state['improved_ticket'] = improved
+                                st.success("Description improved!")
+                                st.rerun()
+                        except:
+                            st.error("AI unavailable")
+                    else:
+                        st.error("AI features are currently unavailable.")
                 
                 if st.button("💡 Get Writing Tips", key="ticket_tips_btn"):
-                    try:
-                        with st.spinner("Getting tips..."):
-                            tips = ai_assistant.quick_improve_suggestions(st.session_state.current_ticket_desc, "general")
-                            st.info(tips)
-                    except:
-                        st.error("Tips unavailable")
+                    ai_assistant = get_ai_assistant()
+                    if ai_assistant:
+                        try:
+                            with st.spinner("Getting tips..."):
+                                tips = ai_assistant.quick_improve_suggestions(st.session_state.current_ticket_desc, "general")
+                                st.info(tips)
+                        except:
+                            st.error("Tips unavailable")
+                    else:
+                        st.error("AI features are currently unavailable.")
             else:
                 st.info("Write your ticket description first to get improvement suggestions")
         
