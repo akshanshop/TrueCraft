@@ -90,18 +90,6 @@ with st.sidebar:
             
             st.divider()
             
-            # Quick actions in sidebar
-            if st.button("⚙️ Profile Settings", use_container_width=True):
-                st.switch_page("pages/2_Artisan_Profile.py")
-            
-            if st.button("📊 Analytics", use_container_width=True):
-                st.switch_page("pages/3_Analytics.py")
-            
-            if st.button("💬 Messages", use_container_width=True):
-                st.switch_page("pages/4_Messages.py")
-            
-            st.divider()
-            
             if st.button("🚪 Sign Out", use_container_width=True, type="secondary"):
                 auth_manager.logout_user()
                 st.success("Successfully logged out!")
@@ -123,76 +111,6 @@ with st.sidebar:
     st.page_link("pages/4_Messages.py", label="💬 Messages", icon="💬")
     st.page_link("pages/5_Support.py", label="🆘 Support", icon="🆘")
 
-# Account & Profile Section at Top
-st.markdown("---")
-if auth_manager.is_authenticated():
-    # Show user profile prominently at top
-    user = auth_manager.get_current_user()
-    if user:
-        col1, col2, col3, col4 = st.columns([1, 3, 2, 1])
-        
-        with col1:
-            if user.get('avatar_url'):
-                st.image(user['avatar_url'], width=80)
-            else:
-                st.markdown("👤")
-        
-        with col2:
-            st.markdown(f"### Welcome back, **{user['name']}**!")
-            st.write(f"📧 {user['email']} | 🔗 Connected via {user['oauth_provider'].title()}")
-            st.write("🎨 *All your TrueCraft data is automatically saved to your account*")
-        
-        with col3:
-            st.markdown("### Account Settings")
-            if st.button("⚙️ Profile Settings", use_container_width=True):
-                st.switch_page("pages/2_Artisan_Profile.py")
-            if st.button("📊 View Analytics", use_container_width=True):
-                st.switch_page("pages/3_Analytics.py")
-        
-        with col4:
-            st.markdown("### Actions")
-            if st.button("🚪 Sign Out", use_container_width=True, type="secondary"):
-                auth_manager.logout_user()
-                st.success("Successfully logged out!")
-                st.rerun()
-    else:
-        st.error("Authentication error. Please sign in again.")
-        auth_manager.logout_user()
-else:
-    # Show sign-in prompt at top for non-authenticated users
-    col1, col2, col3 = st.columns([1, 2, 1])
-    
-    with col2:
-        st.warning("🔐 **Sign in to save your data and access all TrueCraft features!**")
-        st.markdown("Connect with your social account to save listings, profiles, and analytics.")
-        
-        # Compact sign-in buttons
-        sign_col1, sign_col2, sign_col3, sign_col4 = st.columns(4)
-        
-        with sign_col1:
-            if st.button("🔴 Google", use_container_width=True):
-                if auth_manager.handle_oauth_callback('google', 'demo_code'):
-                    st.success("Logged in with Google!")
-                    st.rerun()
-        
-        with sign_col2:
-            if st.button("🔵 Facebook", use_container_width=True):
-                if auth_manager.handle_oauth_callback('facebook', 'demo_code'):
-                    st.success("Logged in with Facebook!")
-                    st.rerun()
-        
-        with sign_col3:
-            if st.button("🔗 LinkedIn", use_container_width=True):
-                if auth_manager.handle_oauth_callback('linkedin', 'demo_code'):
-                    st.success("Logged in with LinkedIn!")
-                    st.rerun()
-        
-        with sign_col4:
-            if st.button("🐦 Twitter", use_container_width=True):
-                if auth_manager.handle_oauth_callback('twitter', 'demo_code'):
-                    st.success("Logged in with Twitter!")
-                    st.rerun()
-st.markdown("---")
 
 # Platform Navigation - Organized in Two Rows
 st.subheader("🚀 TrueCraft Tools & Features")
@@ -201,17 +119,29 @@ st.subheader("🚀 TrueCraft Tools & Features")
 st.markdown("""
 <style>
 /* Scope to features grid */
-#features-grid [data-testid="column"] > div { display: flex; }
-#features-grid [data-testid="column"] > div > div { 
-    display: flex; flex-direction: column; 
-    height: 100%; border-radius: 10px; padding: 1.5rem; 
+#features-grid [data-testid="column"] > div { 
+    display: flex; 
+    flex-direction: column; 
+    height: 100%; 
+}
+#features-grid [data-testid="column"] [data-testid="stVerticalBlock"] { 
+    display: flex; 
+    flex-direction: column; 
+    height: 100%; 
+    padding: 1.5rem; 
+    border-radius: 10px; 
     background: var(--secondary-background-color);
     margin: 1rem 0;
 }
 /* Normalize description height */
-#features-grid .feature-desc { min-height: 4rem; }
+#features-grid .feature-desc { 
+    min-height: 4rem; 
+    flex-grow: 1;
+}
 /* Pin the call-to-action to the bottom */
-#features-grid [data-testid="column"] .stButton { margin-top: auto; }
+#features-grid [data-testid="column"] .stButton { 
+    margin-top: auto; 
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -222,25 +152,25 @@ st.markdown('<div id="features-grid">', unsafe_allow_html=True)
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.subheader("📝 Product Listings")
-    st.markdown('<div class="feature-desc">Create compelling product listings with AI-generated descriptions and smart pricing suggestions.</div>', unsafe_allow_html=True)
+    st.subheader("📝 Product Listings<br>& Smart Pricing")
+    st.markdown('<div class="feature-desc">Create compelling product listings with AI-generated descriptions.<br>Get smart pricing suggestions for your handcrafted items.<br>Optimize your marketplace presence and boost sales.</div>', unsafe_allow_html=True)
     if st.button("Create Listing", use_container_width=True):
         st.switch_page("pages/1_Product_Listings.py")
 
 with col2:
-    st.subheader("👤 Artisan Profile")
-    st.markdown('<div class="feature-desc">Build your artisan profile and showcase your story with AI-powered writing assistance.</div>', unsafe_allow_html=True)
+    st.subheader("👤 Artisan Profile<br>& Your Story")
+    st.markdown('<div class="feature-desc">Build your professional artisan profile and showcase your unique story.<br>Use AI-powered writing assistance to craft compelling descriptions.<br>Connect with customers through authentic storytelling.</div>', unsafe_allow_html=True)
     if st.button("Manage Profile", use_container_width=True):
         st.switch_page("pages/2_Artisan_Profile.py")
 
 with col3:
-    st.subheader("💬 Messages")
+    st.subheader("💬 Customer Messages<br>& Communication")
     # Get unread message count
     unread_count = db_manager.get_unread_message_count()
     if unread_count > 0:
-        st.markdown(f'<div class="feature-desc">Manage buyer-seller communications with integrated messaging. <strong>{unread_count} unread messages</strong></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="feature-desc">Manage all buyer-seller communications in one place.<br>Integrated messaging system for customer inquiries.<br><strong>{unread_count} unread messages waiting for response.</strong></div>', unsafe_allow_html=True)
     else:
-        st.markdown('<div class="feature-desc">Manage buyer-seller communications with integrated messaging and customer inquiries.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-desc">Manage all buyer-seller communications in one place.<br>Integrated messaging system for customer inquiries.<br>Stay connected with your customers effortlessly.</div>', unsafe_allow_html=True)
     if st.button("View Messages", use_container_width=True):
         st.switch_page("pages/4_Messages.py")
 
@@ -248,20 +178,20 @@ with col3:
 col4, col5, col6 = st.columns(3)
 
 with col4:
-    st.subheader("📊 Analytics & Reports")
-    st.markdown('<div class="feature-desc">Get detailed analytics and performance insights for your products.</div>', unsafe_allow_html=True)
+    st.subheader("📊 Analytics")
+    st.markdown('<div class="feature-desc">Get detailed performance insights for your products.<br>Track sales trends and customer engagement metrics.</div>', unsafe_allow_html=True)
     if st.button("View Analytics", use_container_width=True):
         st.switch_page("pages/3_Analytics.py")
 
 with col5:
-    st.subheader("🆘 Customer Support")
-    st.markdown('<div class="feature-desc">Get help with FAQ, troubleshooting guides, and support contact.</div>', unsafe_allow_html=True)
+    st.subheader("🆘 Support")
+    st.markdown('<div class="feature-desc">Get help with frequently asked questions.<br>Access troubleshooting guides and contact support.</div>', unsafe_allow_html=True)
     if st.button("Get Support", use_container_width=True):
         st.switch_page("pages/5_Support.py")
 
 with col6:
-    st.subheader("📚 TrueCraft Platform Guide")
-    st.markdown('<div class="feature-desc">Get help with guides, tutorials.<br>Access knowledge base and instructions.</div>', unsafe_allow_html=True)
+    st.subheader("📚 Platform Guide")
+    st.markdown('<div class="feature-desc">Access comprehensive guides and tutorials.<br>Learn platform features and best practices.</div>', unsafe_allow_html=True)
     if st.button("View Help", use_container_width=True):
         st.switch_page("pages/5_Support.py")
 
