@@ -197,64 +197,76 @@ st.markdown("---")
 # Platform Navigation - Organized in Two Rows
 st.subheader("🚀 TrueCraft Tools & Features")
 
+# Add robust CSS for perfect button alignment
+st.markdown("""
+<style>
+/* Scope to features grid */
+#features-grid [data-testid="column"] > div { display: flex; }
+#features-grid [data-testid="column"] > div > div { 
+    display: flex; flex-direction: column; 
+    height: 100%; border-radius: 10px; padding: 1.5rem; 
+    background: var(--secondary-background-color);
+    margin: 1rem 0;
+}
+/* Normalize description height */
+#features-grid .feature-desc { min-height: 4rem; }
+/* Pin the call-to-action to the bottom */
+#features-grid [data-testid="column"] .stButton { margin-top: auto; }
+</style>
+""", unsafe_allow_html=True)
+
+# Start features grid
+st.markdown('<div id="features-grid">', unsafe_allow_html=True)
+
 # First Row - Main Features
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
     st.subheader("📝 Product Listings")
-    st.write("Create compelling product listings with AI-generated descriptions and smart pricing suggestions.")
+    st.markdown('<div class="feature-desc">Create compelling product listings with AI-generated descriptions and smart pricing suggestions.</div>', unsafe_allow_html=True)
     if st.button("Create Listing", use_container_width=True):
         st.switch_page("pages/1_Product_Listings.py")
-    st.markdown('</div>', unsafe_allow_html=True)
 
 with col2:
-    st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
     st.subheader("👤 Artisan Profile")
-    st.write("Build your artisan profile and showcase your story with AI-powered writing assistance.")
+    st.markdown('<div class="feature-desc">Build your artisan profile and showcase your story with AI-powered writing assistance.</div>', unsafe_allow_html=True)
     if st.button("Manage Profile", use_container_width=True):
         st.switch_page("pages/2_Artisan_Profile.py")
-    st.markdown('</div>', unsafe_allow_html=True)
 
 with col3:
-    st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
     st.subheader("💬 Messages")
     # Get unread message count
     unread_count = db_manager.get_unread_message_count()
     if unread_count > 0:
-        st.write(f"Manage buyer-seller communications with integrated messaging. **{unread_count} unread messages**")
+        st.markdown(f'<div class="feature-desc">Manage buyer-seller communications with integrated messaging. <strong>{unread_count} unread messages</strong></div>', unsafe_allow_html=True)
     else:
-        st.write("Manage buyer-seller communications with integrated messaging and customer inquiries.")
+        st.markdown('<div class="feature-desc">Manage buyer-seller communications with integrated messaging and customer inquiries.</div>', unsafe_allow_html=True)
     if st.button("View Messages", use_container_width=True):
         st.switch_page("pages/4_Messages.py")
-    st.markdown('</div>', unsafe_allow_html=True)
 
 # Second Row - Tools & Support
 col4, col5, col6 = st.columns(3)
 
 with col4:
-    st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
     st.subheader("📊 Analytics & Reports")
-    st.write("Get detailed analytics and performance insights for your products.")
+    st.markdown('<div class="feature-desc">Get detailed analytics and performance insights for your products.</div>', unsafe_allow_html=True)
     if st.button("View Analytics", use_container_width=True):
         st.switch_page("pages/3_Analytics.py")
-    st.markdown('</div>', unsafe_allow_html=True)
 
 with col5:
-    st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
     st.subheader("🆘 Customer Support")
-    st.write("Get help with FAQ, troubleshooting guides, and support contact.")
+    st.markdown('<div class="feature-desc">Get help with FAQ, troubleshooting guides, and support contact.</div>', unsafe_allow_html=True)
     if st.button("Get Support", use_container_width=True):
         st.switch_page("pages/5_Support.py")
-    st.markdown('</div>', unsafe_allow_html=True)
 
 with col6:
-    st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
     st.subheader("📚 TrueCraft Platform Guide")
-    st.write("Get help with guides, tutorials.\nAccess knowledge base and instructions.")
+    st.markdown('<div class="feature-desc">Get help with guides, tutorials.<br>Access knowledge base and instructions.</div>', unsafe_allow_html=True)
     if st.button("View Help", use_container_width=True):
         st.switch_page("pages/5_Support.py")
-    st.markdown('</div>', unsafe_allow_html=True)
+
+# End features grid
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Quick stats
 st.divider()
