@@ -28,16 +28,92 @@ class DatabaseManager:
         try:
             with self.get_connection() as conn:
                 with conn.cursor() as cursor:
-                    # Ensure reviews table has updated_at column
+                    # Create users table first (referenced by other tables)
                     cursor.execute("""
-                        ALTER TABLE reviews 
-                        ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                        CREATE TABLE IF NOT EXISTS users (
+                            id SERIAL PRIMARY KEY,
+                            oauth_provider VARCHAR(50) NOT NULL,
+                            oauth_id VARCHAR(255) NOT NULL,
+                            email VARCHAR(255) UNIQUE,
+                            name VARCHAR(255) NOT NULL,
+                            avatar_url TEXT,
+                            profile_data JSONB,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            UNIQUE(oauth_provider, oauth_id)
+                        )
                     """)
                     
-                    # Create messages table if it doesn't exist
+                    # Create products table with user relationship
+                    cursor.execute("""
+                        CREATE TABLE IF NOT EXISTS products (
+                            id SERIAL PRIMARY KEY,
+                            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                            name VARCHAR(255) NOT NULL,
+                            category VARCHAR(100) NOT NULL,
+                            price DECIMAL(10,2) NOT NULL,
+                            description TEXT,
+                            materials TEXT,
+                            dimensions VARCHAR(255),
+                            weight DECIMAL(6,2),
+                            stock_quantity INTEGER DEFAULT 0,
+                            shipping_cost DECIMAL(8,2) DEFAULT 0,
+                            processing_time VARCHAR(100),
+                            tags TEXT,
+                            image_data TEXT,
+                            views INTEGER DEFAULT 0,
+                            favorites INTEGER DEFAULT 0,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                        )
+                    """)
+                    
+                    # Create profiles table with user relationship
+                    cursor.execute("""
+                        CREATE TABLE IF NOT EXISTS profiles (
+                            id SERIAL PRIMARY KEY,
+                            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                            name VARCHAR(255) NOT NULL,
+                            location VARCHAR(255),
+                            specialties TEXT,
+                            years_experience INTEGER,
+                            bio TEXT,
+                            email VARCHAR(255),
+                            phone VARCHAR(50),
+                            website VARCHAR(255),
+                            instagram VARCHAR(255),
+                            facebook VARCHAR(255),
+                            etsy VARCHAR(255),
+                            education TEXT,
+                            awards TEXT,
+                            inspiration TEXT,
+                            profile_image TEXT,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                        )
+                    """)
+                    
+                    # Create reviews table
+                    cursor.execute("""
+                        CREATE TABLE IF NOT EXISTS reviews (
+                            id SERIAL PRIMARY KEY,
+                            product_id INTEGER REFERENCES products(id) ON DELETE CASCADE,
+                            customer_name VARCHAR(255) NOT NULL,
+                            customer_email VARCHAR(255) NOT NULL,
+                            rating INTEGER CHECK (rating >= 1 AND rating <= 5),
+                            comment TEXT,
+                            approved BOOLEAN DEFAULT TRUE,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                        )
+                    """)
+                    
+                    # Create messages table with user relationship
                     cursor.execute("""
                         CREATE TABLE IF NOT EXISTS messages (
                             id SERIAL PRIMARY KEY,
+                            sender_user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
                             sender_type VARCHAR(10) NOT NULL CHECK (sender_type IN ('buyer', 'seller')),
                             sender_name VARCHAR(255) NOT NULL,
                             sender_email VARCHAR(255) NOT NULL,
@@ -50,21 +126,74 @@ class DatabaseManager:
                             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                         )
                     """)
+                    
+                    # Create analytics table
+                    cursor.execute("""
+                        CREATE TABLE IF NOT EXISTS analytics (
+                            id SERIAL PRIMARY KEY,
+                            event_type VARCHAR(100) NOT NULL,
+                            product_id INTEGER REFERENCES products(id) ON DELETE CASCADE,
+                            user_session VARCHAR(255),
+                            metadata JSONB,
+                            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                        )
+                    """)
+                    
+                    # Create orders table
+                    cursor.execute("""
+                        CREATE TABLE IF NOT EXISTS orders (
+                            id SERIAL PRIMARY KEY,
+                            customer_name VARCHAR(255) NOT NULL,
+                            customer_email VARCHAR(255) NOT NULL,
+                            customer_phone VARCHAR(50),
+                            shipping_address TEXT,
+                            total_amount DECIMAL(10,2) NOT NULL,
+                            status VARCHAR(50) DEFAULT 'pending',
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                        )
+                    """)
+                    
+                    # Create order_items table
+                    cursor.execute("""
+                        CREATE TABLE IF NOT EXISTS order_items (
+                            id SERIAL PRIMARY KEY,
+                            order_id INTEGER REFERENCES orders(id) ON DELETE CASCADE,
+                            product_id INTEGER REFERENCES products(id),
+                            quantity INTEGER NOT NULL,
+                            price_per_item DECIMAL(10,2) NOT NULL,
+                            total_price DECIMAL(10,2) NOT NULL
+                        )
+                    """)
+                    
+                    # Add indexes for performance
+                    cursor.execute("CREATE INDEX IF NOT EXISTS idx_products_user_id ON products(user_id)")
+                    cursor.execute("CREATE INDEX IF NOT EXISTS idx_profiles_user_id ON profiles(user_id)")
+                    cursor.execute("CREATE INDEX IF NOT EXISTS idx_messages_sender_user_id ON messages(sender_user_id)")
+                    cursor.execute("CREATE INDEX IF NOT EXISTS idx_users_email ON users(email) WHERE email IS NOT NULL")
+                    
                     conn.commit()
         except Exception as e:
             # Don't show error to user if it's just schema initialization
             print(f"Schema initialization note: {str(e)}")
     
     # Product Management
-    def get_products(self):
-        """Get all products as DataFrame"""
+    def get_products(self, user_id=None):
+        """Get all products as DataFrame, optionally filtered by user"""
         try:
             with self.get_connection() as conn:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
-                    cursor.execute("""
-                        SELECT * FROM products 
-                        ORDER BY created_at DESC
-                    """)
+                    if user_id:
+                        cursor.execute("""
+                            SELECT * FROM products 
+                            WHERE user_id = %s
+                            ORDER BY created_at DESC
+                        """, (user_id,))
+                    else:
+                        cursor.execute("""
+                            SELECT * FROM products 
+                            ORDER BY created_at DESC
+                        """)
                     rows = cursor.fetchall()
                     
                     if rows:
@@ -90,22 +219,23 @@ class DatabaseManager:
             st.error(f"Error loading products: {str(e)}")
             return pd.DataFrame()
     
-    def add_product(self, product_data):
+    def add_product(self, product_data, user_id=None):
         """Add a new product"""
         try:
             with self.get_connection() as conn:
                 with conn.cursor() as cursor:
+                    product_data_with_user = {**product_data, 'user_id': user_id}
                     cursor.execute("""
                         INSERT INTO products (
-                            name, category, price, description, materials, dimensions,
+                            user_id, name, category, price, description, materials, dimensions,
                             weight, stock_quantity, shipping_cost, processing_time,
                             tags, image_data, views, favorites
                         ) VALUES (
-                            %(name)s, %(category)s, %(price)s, %(description)s, %(materials)s,
+                            %(user_id)s, %(name)s, %(category)s, %(price)s, %(description)s, %(materials)s,
                             %(dimensions)s, %(weight)s, %(stock_quantity)s, %(shipping_cost)s,
                             %(processing_time)s, %(tags)s, %(image_data)s, %(views)s, %(favorites)s
                         )
-                    """, product_data)
+                    """, product_data_with_user)
                     conn.commit()
                     return True
         except Exception as e:
@@ -500,6 +630,59 @@ class DatabaseManager:
         except Exception as e:
             st.error(f"Error loading orders: {str(e)}")
             return []
+    
+    # User Management
+    def create_user(self, oauth_provider, oauth_id, email, name, avatar_url=None, profile_data=None):
+        """Create a new user from OAuth data"""
+        try:
+            with self.get_connection() as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute("""
+                        INSERT INTO users (oauth_provider, oauth_id, email, name, avatar_url, profile_data)
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                        ON CONFLICT (oauth_provider, oauth_id) 
+                        DO UPDATE SET 
+                            email = EXCLUDED.email,
+                            name = EXCLUDED.name,
+                            avatar_url = EXCLUDED.avatar_url,
+                            profile_data = EXCLUDED.profile_data,
+                            last_login = CURRENT_TIMESTAMP,
+                            updated_at = CURRENT_TIMESTAMP
+                        RETURNING id
+                    """, (oauth_provider, oauth_id, email, name, avatar_url, json.dumps(profile_data) if profile_data else None))
+                    user_id = cursor.fetchone()[0]
+                    conn.commit()
+                    return user_id
+        except Exception as e:
+            st.error(f"Error creating/updating user: {str(e)}")
+            return None
+    
+    def get_user_by_oauth(self, oauth_provider, oauth_id):
+        """Get user by OAuth provider and ID"""
+        try:
+            with self.get_connection() as conn:
+                with conn.cursor(cursor_factory=RealDictCursor) as cursor:
+                    cursor.execute("""
+                        SELECT * FROM users 
+                        WHERE oauth_provider = %s AND oauth_id = %s
+                    """, (oauth_provider, oauth_id))
+                    row = cursor.fetchone()
+                    return dict(row) if row else None
+        except Exception as e:
+            st.error(f"Error getting user: {str(e)}")
+            return None
+    
+    def get_user_by_id(self, user_id):
+        """Get user by ID"""
+        try:
+            with self.get_connection() as conn:
+                with conn.cursor(cursor_factory=RealDictCursor) as cursor:
+                    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+                    row = cursor.fetchone()
+                    return dict(row) if row else None
+        except Exception as e:
+            st.error(f"Error getting user: {str(e)}")
+            return None
     
     # Messaging System
     def send_message(self, message_data):
