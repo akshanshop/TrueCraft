@@ -59,6 +59,12 @@ st.markdown("""
         border-radius: 10px;
         margin: 1rem 0;
     }
+    /* Remove left and right padding from main content */
+    .main .block-container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        max-width: none !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -112,91 +118,6 @@ with st.sidebar:
     st.page_link("pages/5_Support.py", label="🆘 Support", icon="🆘")
 
 
-# Platform Navigation - Organized in Two Rows
-st.subheader("🚀 TrueCraft Tools & Features")
-
-# Add robust CSS for perfect button alignment
-st.markdown("""
-<style>
-/* Scope to features grid */
-#features-grid [data-testid="column"] > div { 
-    display: flex; 
-    flex-direction: column; 
-    height: 100%; 
-}
-#features-grid [data-testid="column"] [data-testid="stVerticalBlock"] { 
-    display: flex; 
-    flex-direction: column; 
-    height: 100%; 
-    padding: 1.5rem; 
-    border-radius: 10px; 
-    background: var(--secondary-background-color);
-    margin: 1rem 0;
-}
-/* Normalize description height */
-#features-grid .feature-desc { 
-    min-height: 4rem; 
-    flex-grow: 1;
-}
-/* Pin the call-to-action to the bottom */
-#features-grid [data-testid="column"] .stButton { 
-    margin-top: auto; 
-}
-</style>
-""", unsafe_allow_html=True)
-
-# Start features grid
-st.markdown('<div id="features-grid">', unsafe_allow_html=True)
-
-# First Row - Main Features
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.subheader("📝 Product Listings<br>& Smart Pricing")
-    st.markdown('<div class="feature-desc">Create compelling product listings with AI-generated descriptions.<br>Get smart pricing suggestions for your handcrafted items.<br>Optimize your marketplace presence and boost sales.</div>', unsafe_allow_html=True)
-    if st.button("Create Listing", use_container_width=True):
-        st.switch_page("pages/1_Product_Listings.py")
-
-with col2:
-    st.subheader("👤 Artisan Profile<br>& Your Story")
-    st.markdown('<div class="feature-desc">Build your professional artisan profile and showcase your unique story.<br>Use AI-powered writing assistance to craft compelling descriptions.<br>Connect with customers through authentic storytelling.</div>', unsafe_allow_html=True)
-    if st.button("Manage Profile", use_container_width=True):
-        st.switch_page("pages/2_Artisan_Profile.py")
-
-with col3:
-    st.subheader("💬 Customer Messages<br>& Communication")
-    # Get unread message count
-    unread_count = db_manager.get_unread_message_count()
-    if unread_count > 0:
-        st.markdown(f'<div class="feature-desc">Manage all buyer-seller communications in one place.<br>Integrated messaging system for customer inquiries.<br><strong>{unread_count} unread messages waiting for response.</strong></div>', unsafe_allow_html=True)
-    else:
-        st.markdown('<div class="feature-desc">Manage all buyer-seller communications in one place.<br>Integrated messaging system for customer inquiries.<br>Stay connected with your customers effortlessly.</div>', unsafe_allow_html=True)
-    if st.button("View Messages", use_container_width=True):
-        st.switch_page("pages/4_Messages.py")
-
-# Second Row - Tools & Support
-col4, col5, col6 = st.columns(3)
-
-with col4:
-    st.subheader("📊 Analytics")
-    st.markdown('<div class="feature-desc">Get detailed performance insights for your products.<br>Track sales trends and customer engagement metrics.</div>', unsafe_allow_html=True)
-    if st.button("View Analytics", use_container_width=True):
-        st.switch_page("pages/3_Analytics.py")
-
-with col5:
-    st.subheader("🆘 Support")
-    st.markdown('<div class="feature-desc">Get help with frequently asked questions.<br>Access troubleshooting guides and contact support.</div>', unsafe_allow_html=True)
-    if st.button("Get Support", use_container_width=True):
-        st.switch_page("pages/5_Support.py")
-
-with col6:
-    st.subheader("📚 Platform Guide")
-    st.markdown('<div class="feature-desc">Access comprehensive guides and tutorials.<br>Learn platform features and best practices.</div>', unsafe_allow_html=True)
-    if st.button("View Help", use_container_width=True):
-        st.switch_page("pages/5_Support.py")
-
-# End features grid
-st.markdown('</div>', unsafe_allow_html=True)
 
 # Quick stats
 st.divider()
@@ -234,7 +155,9 @@ if not products_df.empty:
                     st.write("📷 No image")
             with col2:
                 st.write(f"**{product.get('name', 'Unknown')}**")
-                st.write(f"${float(product.get('price', 0)):.2f} | {product.get('category', 'Unknown')}")
+                price = product.get('price', 0)
+                price = float(price) if price is not None else 0.0
+                st.write(f"${price:.2f} | {product.get('category', 'Unknown')}")
                 st.write(f"Views: {product.get('views', 0)}")
 else:
     st.info("Welcome to TrueCraft! Start by creating your first product listing.")
