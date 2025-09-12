@@ -6,7 +6,9 @@ class AIAssistant:
     def __init__(self):
         # the newest OpenAI model is "gpt-5" which was released August 7, 2025.
         # do not change this unless explicitly requested by the user
-        api_key = os.getenv("OPENAI_API_KEY", "your-openai-api-key-here")
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY environment variable is required")
         self.client = OpenAI(api_key=api_key)
         self.model = "gpt-5"
     

@@ -209,12 +209,12 @@ class DatabaseManager:
                         return df
                     else:
                         # Return empty DataFrame with expected columns
-                        return pd.DataFrame(columns=[
-                            'id', 'name', 'category', 'price', 'description', 'materials',
-                            'dimensions', 'weight', 'stock_quantity', 'shipping_cost',
-                            'processing_time', 'tags', 'image_data', 'views', 'favorites',
-                            'created_at', 'updated_at'
-                        ])
+                        return pd.DataFrame({
+                            'id': [], 'name': [], 'category': [], 'price': [], 'description': [], 'materials': [],
+                            'dimensions': [], 'weight': [], 'stock_quantity': [], 'shipping_cost': [],
+                            'processing_time': [], 'tags': [], 'image_data': [], 'views': [], 'favorites': [],
+                            'created_at': [], 'updated_at': []
+                        })
         except Exception as e:
             st.error(f"Error loading products: {str(e)}")
             return pd.DataFrame()
@@ -333,12 +333,12 @@ class DatabaseManager:
                         return df
                     else:
                         # Return empty DataFrame with expected columns
-                        return pd.DataFrame(columns=[
-                            'id', 'name', 'location', 'specialties', 'years_experience',
-                            'bio', 'email', 'phone', 'website', 'instagram',
-                            'facebook', 'etsy', 'education', 'awards', 'inspiration',
-                            'profile_image', 'created_at', 'updated_at'
-                        ])
+                        return pd.DataFrame({
+                            'id': [], 'name': [], 'location': [], 'specialties': [], 'years_experience': [],
+                            'bio': [], 'email': [], 'phone': [], 'website': [], 'instagram': [],
+                            'facebook': [], 'etsy': [], 'education': [], 'awards': [], 'inspiration': [],
+                            'profile_image': [], 'created_at': [], 'updated_at': []
+                        })
         except Exception as e:
             st.error(f"Error loading profiles: {str(e)}")
             return pd.DataFrame()
@@ -415,16 +415,20 @@ class DatabaseManager:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                     # Get basic metrics
                     cursor.execute("SELECT COUNT(*) as total_products FROM products")
-                    total_products = cursor.fetchone()['total_products']
+                    result = cursor.fetchone()
+                    total_products = result['total_products'] if result else 0
                     
                     cursor.execute("SELECT COALESCE(SUM(views), 0) as total_views FROM products")
-                    total_views = cursor.fetchone()['total_views']
+                    result = cursor.fetchone()
+                    total_views = result['total_views'] if result else 0
                     
                     cursor.execute("SELECT COALESCE(SUM(favorites), 0) as total_favorites FROM products")
-                    total_favorites = cursor.fetchone()['total_favorites']
+                    result = cursor.fetchone()
+                    total_favorites = result['total_favorites'] if result else 0
                     
                     cursor.execute("SELECT COALESCE(AVG(price), 0) as avg_price FROM products")
-                    avg_price = cursor.fetchone()['avg_price']
+                    result = cursor.fetchone()
+                    avg_price = result['avg_price'] if result else 0
                     
                     return {
                         'total_products': total_products,

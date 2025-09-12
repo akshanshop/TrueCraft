@@ -37,12 +37,12 @@ class DataManager:
                 return df
             else:
                 # Return empty DataFrame with expected columns
-                return pd.DataFrame(columns=[
-                    'name', 'category', 'price', 'description', 'materials',
-                    'dimensions', 'weight', 'stock_quantity', 'shipping_cost',
-                    'processing_time', 'tags', 'image_data', 'created_at',
-                    'views', 'favorites'
-                ])
+                return pd.DataFrame({
+                    'name': [], 'category': [], 'price': [], 'description': [], 'materials': [],
+                    'dimensions': [], 'weight': [], 'stock_quantity': [], 'shipping_cost': [],
+                    'processing_time': [], 'tags': [], 'image_data': [], 'created_at': [],
+                    'views': [], 'favorites': []
+                })
         except Exception as e:
             st.error(f"Error loading products: {str(e)}")
             return pd.DataFrame()
@@ -97,12 +97,12 @@ class DataManager:
                 return df
             else:
                 # Return empty DataFrame with expected columns
-                return pd.DataFrame(columns=[
-                    'name', 'location', 'specialties', 'years_experience',
-                    'bio', 'email', 'phone', 'website', 'instagram',
-                    'facebook', 'etsy', 'education', 'awards', 'inspiration',
-                    'profile_image', 'created_at', 'updated_at'
-                ])
+                return pd.DataFrame({
+                    'name': [], 'location': [], 'specialties': [], 'years_experience': [],
+                    'bio': [], 'email': [], 'phone': [], 'website': [], 'instagram': [],
+                    'facebook': [], 'etsy': [], 'education': [], 'awards': [], 'inspiration': [],
+                    'profile_image': [], 'created_at': [], 'updated_at': []
+                })
         except Exception as e:
             st.error(f"Error loading profiles: {str(e)}")
             return pd.DataFrame()
@@ -226,9 +226,9 @@ class DataManager:
             total_favorites = products_df['favorites'].sum()
             avg_price = products_df['price'].mean()
             
-            # Top categories by view count
-            category_views = products_df.groupby('category')['views'].sum().sort_values(ascending=False)
-            top_categories = category_views.head(5).to_dict()
+            # Top categories by view count  
+            category_views = products_df.groupby('category')['views'].sum()
+            top_categories = category_views.nlargest(5).to_dict()
             
             # Recent search terms
             recent_searches = st.session_state.analytics_data.get('search_terms', [])[-10:]
