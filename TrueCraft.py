@@ -37,22 +37,22 @@ st.title("🎨 TrueCraft Marketplace Assistant")
 st.markdown("*Empowering local artisans with AI-powered tools for online success*")
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Welcome section - Main Features
-st.subheader("🚀 Main Features")
-col1, col2, col3 = st.columns(3)
+# Platform Navigation - All Tools in One Row
+st.subheader("🚀 TrueCraft Tools & Features")
+col1, col2, col3, col4, col5, col6 = st.columns(6)
 
 with col1:
     st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
-    st.subheader("📝 Product Listings")
-    st.write("Create compelling product listings with AI-generated descriptions and smart pricing suggestions.")
+    st.subheader("📝 Listings")
+    st.write("Create compelling product listings with AI assistance.")
     if st.button("Create Listing", use_container_width=True):
         st.switch_page("pages/1_Product_Listings.py")
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col2:
     st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
-    st.subheader("👤 Artisan Profile")
-    st.write("Build your artisan profile and showcase your story with AI-powered writing assistance.")
+    st.subheader("👤 Profile")
+    st.write("Build and manage your artisan profile.")
     if st.button("Manage Profile", use_container_width=True):
         st.switch_page("pages/2_Artisan_Profile.py")
     st.markdown('</div>', unsafe_allow_html=True)
@@ -63,38 +63,33 @@ with col3:
     # Get unread message count
     unread_count = db_manager.get_unread_message_count()
     if unread_count > 0:
-        st.write(f"Manage buyer-seller communications. **{unread_count} unread messages**")
+        st.write(f"Communications. **{unread_count} unread**")
     else:
-        st.write("Manage buyer-seller communications and customer inquiries with integrated messaging.")
+        st.write("Manage buyer-seller communications.")
     if st.button("View Messages", use_container_width=True):
         st.switch_page("pages/4_Messages.py")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# Additional Tools
-st.subheader("📊 Tools & Support")
-col1, col2, col3 = st.columns(3)
-
-with col1:
+with col4:
     st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
     st.subheader("📊 Analytics")
-    st.write("Track your product performance with detailed analytics and insights.")
+    st.write("Track product performance and insights.")
     if st.button("View Analytics", use_container_width=True):
         st.switch_page("pages/3_Analytics.py")
     st.markdown('</div>', unsafe_allow_html=True)
 
-with col2:
+with col5:
     st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
-    st.subheader("🆘 Customer Support")
-    st.write("Get help with FAQ, troubleshooting guides, and contact our support team for assistance.")
+    st.subheader("🆘 Support")
+    st.write("Get help and troubleshooting assistance.")
     if st.button("Get Support", use_container_width=True):
         st.switch_page("pages/5_Support.py")
     st.markdown('</div>', unsafe_allow_html=True)
 
-with col3:
-    # Placeholder for future feature or additional info
+with col6:
     st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
-    st.subheader("📚 Quick Tips")
-    st.write("New to TrueCraft? Check out our getting started guide and platform tips.")
+    st.subheader("📚 Help")
+    st.write("Getting started guide and platform tips.")
     if st.button("View Help", use_container_width=True):
         st.switch_page("pages/5_Support.py")
     st.markdown('</div>', unsafe_allow_html=True)
