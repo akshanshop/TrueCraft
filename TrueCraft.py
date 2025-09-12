@@ -104,7 +104,7 @@ col1, col2, col3 = st.columns(3)
 with col1:
     st.subheader("🏠 Home")
     st.markdown("Main dashboard with overview of your TrueCraft marketplace activity.")
-    if st.button("Go to Home", use_container_width=True, type="primary"):
+    if st.button("Go to Home", use_container_width=True):
         st.switch_page("TrueCraft.py")
 
 with col2:
