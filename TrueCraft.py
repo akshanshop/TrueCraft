@@ -23,6 +23,30 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Make sidebar permanent and non-collapsible
+st.markdown("""
+<style>
+    .css-1d391kg {display: none;}
+    .css-164nlkn {display: none;}
+    .css-1rs6os {display: none;}
+    .css-17eq0hr {display: none;}
+    .css-qbe2hs {display: none;}
+    .css-1lcbmhc {display: none;}
+    .sidebar .sidebar-content {
+        transition: none;
+        margin-left: 0;
+    }
+    section[data-testid="stSidebar"] {
+        width: 300px !important;
+        min-width: 300px !important;
+    }
+    section[data-testid="stSidebar"] > div {
+        width: 300px !important;
+        min-width: 300px !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # Custom CSS for warm, crafted aesthetic using Streamlit's built-in styling
 st.markdown("""
 <style>
@@ -43,6 +67,61 @@ st.markdown('<div class="main-header">', unsafe_allow_html=True)
 st.title("🎨 TrueCraft Marketplace Assistant")
 st.markdown("*Empowering local artisans with AI-powered tools for online success*")
 st.markdown('</div>', unsafe_allow_html=True)
+
+# Sidebar with permanent user profile
+with st.sidebar:
+    # User profile at top of sidebar
+    if auth_manager.is_authenticated():
+        user = auth_manager.get_current_user()
+        if user:
+            st.markdown("### 👤 Your Account")
+            
+            # Profile picture and name
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                if user.get('avatar_url'):
+                    st.image(user['avatar_url'], width=60)
+                else:
+                    st.markdown("<div style='font-size: 40px; text-align: center;'>👤</div>", unsafe_allow_html=True)
+            
+            with col2:
+                st.markdown(f"**{user['name']}**")
+                st.caption(f"Connected via {user['oauth_provider'].title()}")
+            
+            st.divider()
+            
+            # Quick actions in sidebar
+            if st.button("⚙️ Profile Settings", use_container_width=True):
+                st.switch_page("pages/2_Artisan_Profile.py")
+            
+            if st.button("📊 Analytics", use_container_width=True):
+                st.switch_page("pages/3_Analytics.py")
+            
+            if st.button("💬 Messages", use_container_width=True):
+                st.switch_page("pages/4_Messages.py")
+            
+            st.divider()
+            
+            if st.button("🚪 Sign Out", use_container_width=True, type="secondary"):
+                auth_manager.logout_user()
+                st.success("Successfully logged out!")
+                st.rerun()
+    else:
+        st.markdown("### 🔐 Sign In Required")
+        st.info("Sign in to access your profile and saved data.")
+        
+        if st.button("🔐 Sign In", use_container_width=True, type="primary"):
+            # Scroll to sign-in section on main page
+            st.info("Please use the sign-in buttons on the main page above.")
+    
+    st.divider()
+    st.markdown("### 🧭 Quick Navigation")
+    st.page_link("TrueCraft.py", label="🏠 Home", icon="🏠")
+    st.page_link("pages/1_Product_Listings.py", label="📝 Product Listings", icon="📝")
+    st.page_link("pages/2_Artisan_Profile.py", label="👤 Artisan Profile", icon="👤")
+    st.page_link("pages/3_Analytics.py", label="📊 Analytics", icon="📊")
+    st.page_link("pages/4_Messages.py", label="💬 Messages", icon="💬")
+    st.page_link("pages/5_Support.py", label="🆘 Support", icon="🆘")
 
 # Account & Profile Section at Top
 st.markdown("---")
