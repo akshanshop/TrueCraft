@@ -127,9 +127,12 @@ if not products_df.empty:
     for _, product in recent_products.iterrows():
         with st.container():
             col1, col2 = st.columns([1, 3])
+            if recent_products.empty:
+                continue
             with col1:
-                if product['image_data'] and not pd.isna(product['image_data']):
-                    st.image(product['image_data'], width=100)
+                image_data = product['image_data']
+                if image_data is not None and not pd.isna(image_data) and str(image_data).strip():
+                    st.image(str(image_data), width=100)
                 else:
                     st.write("📷 No image")
             with col2:
