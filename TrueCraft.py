@@ -44,58 +44,76 @@ st.title("🎨 TrueCraft Marketplace Assistant")
 st.markdown("*Empowering local artisans with AI-powered tools for online success*")
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Authentication Section
-with st.sidebar:
-    st.header("👤 Account")
-    
-    if auth_manager.is_authenticated():
-        # Show user profile in sidebar
-        user = auth_manager.get_current_user()
-        if user:
-            st.success(f"Welcome, {user['name']}!")
-            
+# Account & Profile Section at Top
+st.markdown("---")
+if auth_manager.is_authenticated():
+    # Show user profile prominently at top
+    user = auth_manager.get_current_user()
+    if user:
+        col1, col2, col3, col4 = st.columns([1, 3, 2, 1])
+        
+        with col1:
             if user.get('avatar_url'):
-                st.image(user['avatar_url'], width=60)
-            
-            st.write(f"📧 {user['email']}")
-            st.write(f"🔗 {user['oauth_provider'].title()}")
-        else:
-            st.error("Authentication error. Please sign in again.")
-            auth_manager.logout_user()
+                st.image(user['avatar_url'], width=80)
+            else:
+                st.markdown("👤")
         
-        if st.button("🚪 Sign Out", use_container_width=True):
-            auth_manager.logout_user()
-            st.success("Successfully logged out!")
-            st.rerun()
-            
-        st.divider()
-        st.markdown("**🎨 Your TrueCraft Data**")
-        st.write("All your listings and data are saved to your account.")
-        
-    else:
-        st.warning("Sign in to save your data!")
-        st.markdown("Connect with your social account to:")
-        st.markdown("• Save product listings")
-        st.markdown("• Keep artisan profiles")
-        st.markdown("• Access message history")
-        st.markdown("• View analytics")
-        
-        if st.button("🔐 Sign In", use_container_width=True, type="primary"):
-            st.session_state['show_login'] = True
-            st.rerun()
-
-# Show login modal if requested
-if st.session_state.get('show_login', False):
-    with st.container():
-        st.markdown("---")
-        auth_manager.show_login_form()
-        
-        col1, col2, col3 = st.columns([1, 1, 1])
         with col2:
-            if st.button("❌ Cancel", use_container_width=True):
-                st.session_state['show_login'] = False
+            st.markdown(f"### Welcome back, **{user['name']}**!")
+            st.write(f"📧 {user['email']} | 🔗 Connected via {user['oauth_provider'].title()}")
+            st.write("🎨 *All your TrueCraft data is automatically saved to your account*")
+        
+        with col3:
+            st.markdown("### Account Settings")
+            if st.button("⚙️ Profile Settings", use_container_width=True):
+                st.switch_page("pages/2_Artisan_Profile.py")
+            if st.button("📊 View Analytics", use_container_width=True):
+                st.switch_page("pages/3_Analytics.py")
+        
+        with col4:
+            st.markdown("### Actions")
+            if st.button("🚪 Sign Out", use_container_width=True, type="secondary"):
+                auth_manager.logout_user()
+                st.success("Successfully logged out!")
                 st.rerun()
-        st.markdown("---")
+    else:
+        st.error("Authentication error. Please sign in again.")
+        auth_manager.logout_user()
+else:
+    # Show sign-in prompt at top for non-authenticated users
+    col1, col2, col3 = st.columns([1, 2, 1])
+    
+    with col2:
+        st.warning("🔐 **Sign in to save your data and access all TrueCraft features!**")
+        st.markdown("Connect with your social account to save listings, profiles, and analytics.")
+        
+        # Compact sign-in buttons
+        sign_col1, sign_col2, sign_col3, sign_col4 = st.columns(4)
+        
+        with sign_col1:
+            if st.button("🔴 Google", use_container_width=True):
+                if auth_manager.handle_oauth_callback('google', 'demo_code'):
+                    st.success("Logged in with Google!")
+                    st.rerun()
+        
+        with sign_col2:
+            if st.button("🔵 Facebook", use_container_width=True):
+                if auth_manager.handle_oauth_callback('facebook', 'demo_code'):
+                    st.success("Logged in with Facebook!")
+                    st.rerun()
+        
+        with sign_col3:
+            if st.button("🔗 LinkedIn", use_container_width=True):
+                if auth_manager.handle_oauth_callback('linkedin', 'demo_code'):
+                    st.success("Logged in with LinkedIn!")
+                    st.rerun()
+        
+        with sign_col4:
+            if st.button("🐦 Twitter", use_container_width=True):
+                if auth_manager.handle_oauth_callback('twitter', 'demo_code'):
+                    st.success("Logged in with Twitter!")
+                    st.rerun()
+st.markdown("---")
 
 # Platform Navigation - Organized in Two Rows
 st.subheader("🚀 TrueCraft Tools & Features")
@@ -189,7 +207,7 @@ if not products_df.empty:
             col1, col2 = st.columns([1, 3])
             with col1:
                 image_data = product['image_data']
-                if image_data is not None and not pd.isna(image_data) and str(image_data).strip():
+                if (image_data is not None and not pd.isna(image_data) and str(image_data).strip()):
                     st.image(str(image_data), width=100)
                 else:
                     st.write("📷 No image")
