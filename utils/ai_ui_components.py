@@ -262,6 +262,10 @@ class AIUIComponents:
         
         with col1:
             if st.button("✨ Generate", key=f"generate_{key}", help="Generate new content with AI"):
+                ai_assistant = self._get_ai_assistant()
+                if ai_assistant is None:
+                    st.error("AI generation is currently unavailable.")
+                    return text_value
                 try:
                     with st.spinner("Generating..."):
                         result = ai_function(**ai_kwargs)
@@ -276,9 +280,13 @@ class AIUIComponents:
         
         with col2:
             if text_value and st.button("🔧 Improve", key=f"improve_{key}", help="Improve existing text"):
+                ai_assistant = self._get_ai_assistant()
+                if ai_assistant is None:
+                    st.error("AI text improvement is currently unavailable.")
+                    return text_value
                 try:
                     with st.spinner("Improving..."):
-                        improved = self.ai_assistant.improve_text(text_value, "general")
+                        improved = ai_assistant.improve_text(text_value, "general")
                         if improved and improved.strip():
                             st.session_state[key] = improved
                             st.success("Improved! ✨")
@@ -288,9 +296,13 @@ class AIUIComponents:
         
         with col3:
             if text_value and st.button("💡 Tips", key=f"tips_{key}", help="Get improvement suggestions"):
+                ai_assistant = self._get_ai_assistant()
+                if ai_assistant is None:
+                    st.error("AI suggestions are currently unavailable.")
+                    return text_value
                 try:
                     with st.spinner("Analyzing..."):
-                        suggestions = self.ai_assistant.quick_improve_suggestions(text_value, "general")
+                        suggestions = ai_assistant.quick_improve_suggestions(text_value, "general")
                         st.info(suggestions)
                 except Exception as e:
                     st.error("Tips unavailable")
