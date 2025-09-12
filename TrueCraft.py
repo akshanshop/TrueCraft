@@ -23,29 +23,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Make sidebar permanent and non-collapsible
-st.markdown("""
-<style>
-    .css-1d391kg {display: none;}
-    .css-164nlkn {display: none;}
-    .css-1rs6os {display: none;}
-    .css-17eq0hr {display: none;}
-    .css-qbe2hs {display: none;}
-    .css-1lcbmhc {display: none;}
-    .sidebar .sidebar-content {
-        transition: none;
-        margin-left: 0;
-    }
-    section[data-testid="stSidebar"] {
-        width: 300px !important;
-        min-width: 300px !important;
-    }
-    section[data-testid="stSidebar"] > div {
-        width: 300px !important;
-        min-width: 300px !important;
-    }
-</style>
-""", unsafe_allow_html=True)
 
 # Custom CSS for warm, crafted aesthetic using Streamlit's built-in styling
 st.markdown("""
