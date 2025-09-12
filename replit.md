@@ -1,8 +1,8 @@
-# ArtisanAI Marketplace Assistant
+# TrueCraft Marketplace Assistant
 
 ## Overview
 
-ArtisanAI Marketplace Assistant is a Streamlit-based web application designed to empower local artisans with AI-powered tools for online marketplace success. The application provides three core functionalities: AI-assisted product listing creation, artisan profile management, and analytics dashboard for tracking product performance. The system leverages OpenAI's GPT-5 model to generate compelling product descriptions, pricing suggestions, and writing assistance for artisan profiles.
+TrueCraft Marketplace Assistant is a Streamlit-based web application designed to empower local artisans with AI-powered tools for online marketplace success. The application provides three core functionalities: AI-assisted product listing creation, artisan profile management, and analytics dashboard for tracking product performance. The system leverages OpenAI's GPT-5 model to generate compelling product descriptions, pricing suggestions, and writing assistance for artisan profiles.
 
 ## User Preferences
 

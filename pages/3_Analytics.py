@@ -13,7 +13,7 @@ def get_database_manager():
 db_manager = get_database_manager()
 
 st.set_page_config(
-    page_title="Analytics - ArtisanAI",
+    page_title="Analytics - TrueCraft",
     page_icon="📊",
     layout="wide"
 )

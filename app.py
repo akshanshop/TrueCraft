@@ -10,7 +10,7 @@ def get_database_manager():
 db_manager = get_database_manager()
 
 st.set_page_config(
-    page_title="ArtisanAI Marketplace Assistant",
+    page_title="TrueCraft Marketplace Assistant",
     page_icon="🎨",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -33,7 +33,7 @@ st.markdown("""
 
 # Main page header
 st.markdown('<div class="main-header">', unsafe_allow_html=True)
-st.title("🎨 ArtisanAI Marketplace Assistant")
+st.title("🎨 TrueCraft Marketplace Assistant")
 st.markdown("*Empowering local artisans with AI-powered tools for online success*")
 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -94,7 +94,7 @@ with col3:
     # Placeholder for future feature or additional info
     st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
     st.subheader("📚 Quick Tips")
-    st.write("New to ArtisanAI? Check out our getting started guide and platform tips.")
+    st.write("New to TrueCraft? Check out our getting started guide and platform tips.")
     if st.button("View Help", use_container_width=True):
         st.switch_page("pages/5_Support.py")
     st.markdown('</div>', unsafe_allow_html=True)
@@ -140,12 +140,12 @@ if not products_df.empty:
                 st.write(f"${product['price']:.2f} | {product['category']}")
                 st.write(f"Views: {product['views']}")
 else:
-    st.info("Welcome to ArtisanAI! Start by creating your first product listing.")
+    st.info("Welcome to TrueCraft! Start by creating your first product listing.")
 
 # Footer
 st.divider()
 st.markdown("""
 <div style="text-align: center; padding: 2rem 0; color: #666;">
-    <p>🎨 ArtisanAI Marketplace Assistant - Crafted for Artisans, Powered by AI</p>
+    <p>🎨 TrueCraft Marketplace Assistant - Crafted for Artisans, Powered by AI</p>
 </div>
 """, unsafe_allow_html=True)

@@ -15,7 +15,7 @@ ai_assistant = AIAssistant()
 ai_ui = AIUIComponents()
 
 st.set_page_config(
-    page_title="Messages - ArtisanAI",
+    page_title="Messages - TrueCraft",
     page_icon="💬",
     layout="wide"
 )

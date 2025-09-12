@@ -15,7 +15,7 @@ ai_assistant = AIAssistant()
 ai_ui = AIUIComponents()
 
 st.set_page_config(
-    page_title="Support - ArtisanAI",
+    page_title="Support - TrueCraft",
     page_icon="🆘",
     layout="wide"
 )
@@ -193,8 +193,8 @@ with tab1:
         ],
         "General": [
             {
-                "question": "What is ArtisanAI Marketplace Assistant?",
-                "answer": "ArtisanAI is an AI-powered platform designed to help local artisans create compelling product listings, manage their online presence, and connect with customers. It provides tools for description writing, pricing optimization, and marketplace management."
+                "question": "What is TrueCraft Marketplace Assistant?",
+                "answer": "TrueCraft is an AI-powered platform designed to help local artisans create compelling product listings, manage their online presence, and connect with customers. It provides tools for description writing, pricing optimization, and marketplace management."
             },
             {
                 "question": "Is there a cost to use the platform?",

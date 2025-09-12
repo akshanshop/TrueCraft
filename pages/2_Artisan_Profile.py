@@ -17,7 +17,7 @@ image_handler = ImageHandler()
 ai_ui = AIUIComponents()
 
 st.set_page_config(
-    page_title="Artisan Profile - ArtisanAI", 
+    page_title="Artisan Profile - TrueCraft", 
     page_icon="👤",
     layout="wide"
 )

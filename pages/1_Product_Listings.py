@@ -196,7 +196,7 @@ def get_product_rating_summary(product_id):
     return "No reviews yet"
 
 st.set_page_config(
-    page_title="Product Listings - ArtisanAI",
+    page_title="Product Listings - TrueCraft",
     page_icon="📝",
     layout="wide"
 )
