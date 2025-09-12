@@ -140,7 +140,7 @@ with col5:
 
 with col6:
     st.subheader("🆘 Support")
-    st.markdown("Get help, access guides, and troubleshoot any issues.")
+    st.markdown("Get help, and access guides, and troubleshoot any issues.")
     if st.button("Get Support", use_container_width=True):
         st.switch_page("pages/5_Support.py")
 
