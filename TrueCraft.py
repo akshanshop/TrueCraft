@@ -227,15 +227,15 @@ if not products_df.empty:
         with st.container():
             col1, col2 = st.columns([1, 3])
             with col1:
-                image_data = product['image_data']
-                if (image_data is not None and not pd.isna(image_data) and str(image_data).strip()):
+                image_data = product.get('image_data', '')
+                if image_data and not pd.isna(image_data) and str(image_data).strip():
                     st.image(str(image_data), width=100)
                 else:
                     st.write("📷 No image")
             with col2:
-                st.write(f"**{product['name']}**")
-                st.write(f"${product['price']:.2f} | {product['category']}")
-                st.write(f"Views: {product['views']}")
+                st.write(f"**{product.get('name', 'Unknown')}**")
+                st.write(f"${float(product.get('price', 0)):.2f} | {product.get('category', 'Unknown')}")
+                st.write(f"Views: {product.get('views', 0)}")
 else:
     st.info("Welcome to TrueCraft! Start by creating your first product listing.")
 
