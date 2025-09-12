@@ -93,8 +93,8 @@ with col5:
 
 with col6:
     st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
-    st.subheader("📚 Platform Guides")
-    st.write("Get help with guides, tutorials, and platform tips. Access our knowledge base and step-by-step instructions.")
+    st.subheader("📚 TrueCraft Guide")
+    st.write("Get help with comprehensive guides, tutorials, and platform tips.\nAccess our knowledge base and step-by-step instructions.")
     if st.button("View Help", use_container_width=True):
         st.switch_page("pages/5_Support.py")
     st.markdown('</div>', unsafe_allow_html=True)
