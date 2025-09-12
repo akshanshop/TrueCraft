@@ -152,9 +152,13 @@ class AIUIComponents:
         
         with col2:
             if st.button("Generate Template", key="generate_template_btn"):
+                ai_assistant = self._get_ai_assistant()
+                if ai_assistant is None:
+                    st.error("AI message templates are currently unavailable.")
+                    return
                 try:
                     with st.spinner("Creating template..."):
-                        template = self.ai_assistant.generate_message_template(
+                        template = ai_assistant.generate_message_template(
                             selected_type, 
                             product_name=product_name
                         )
@@ -176,9 +180,13 @@ class AIUIComponents:
             col1, col2 = st.columns(2)
             with col1:
                 if st.button("✨ Generate New", key="new_template"):
+                    ai_assistant = self._get_ai_assistant()
+                    if ai_assistant is None:
+                        st.error("AI message templates are currently unavailable.")
+                        return
                     try:
                         with st.spinner("Creating new template..."):
-                            template = self.ai_assistant.generate_message_template(
+                            template = ai_assistant.generate_message_template(
                                 selected_type,
                                 product_name=product_name
                             )
@@ -364,9 +372,13 @@ class AIUIComponents:
         
         with col1:
             if st.button("Generate Review Template", key="generate_review_template"):
+                ai_assistant = self._get_ai_assistant()
+                if ai_assistant is None:
+                    st.error("AI review templates are currently unavailable.")
+                    return
                 try:
                     with st.spinner("Creating review template..."):
-                        template = self.ai_assistant.generate_review_template(
+                        template = ai_assistant.generate_review_template(
                             product_category or "handmade product", 
                             rating
                         )
@@ -378,9 +390,13 @@ class AIUIComponents:
         with col2:
             if st.button("Improve My Review", key="improve_review"):
                 if 'current_review_text' in st.session_state and st.session_state.current_review_text:
+                    ai_assistant = self._get_ai_assistant()
+                    if ai_assistant is None:
+                        st.error("AI text improvement is currently unavailable.")
+                        return
                     try:
                         with st.spinner("Improving review..."):
-                            improved = self.ai_assistant.improve_text(
+                            improved = ai_assistant.improve_text(
                                 st.session_state.current_review_text, 
                                 "general"
                             )
