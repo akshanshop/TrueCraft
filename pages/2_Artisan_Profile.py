@@ -3,7 +3,7 @@ from datetime import datetime
 from utils.ai_assistant import AIAssistant
 from utils.database_manager import DatabaseManager
 from utils.image_handler import ImageHandler
-from utils.ai_ui_components import AIUIComponents
+from utils.ai_ui_components import AIUIComponents, render_ai_business_toolkit, render_brand_voice_analyzer, render_content_calendar_generator, render_seasonal_marketing_generator
 
 # Initialize components
 @st.cache_resource
@@ -26,28 +26,8 @@ def get_ai_assistant():
 image_handler = ImageHandler()
 ai_ui = AIUIComponents()
 
-st.set_page_config(
-    page_title="Artisan Profile - TrueCraft", 
-    page_icon="👤",
-    layout="wide"
-)
-
-st.title("👤 Artisan Profile")
-st.markdown("Create and manage your artisan profile with AI-powered writing assistance")
-
-# Get existing profile
-profiles_df = db_manager.get_profiles()
-current_profile = profiles_df.iloc[0] if not profiles_df.empty else None
-
-# Sidebar
-with st.sidebar:
-    st.subheader("Profile Actions")
-    if current_profile is not None:
-        profile_mode = st.radio("Choose Action", ["View Profile", "Edit Profile", "AI Writing Assistant"])
-    else:
-        profile_mode = st.radio("Choose Action", ["Create Profile", "AI Writing Assistant"])
-
-if profile_mode in ["Create Profile", "Edit Profile"]:
+def render_profile_create_edit(current_profile):
+    """Render the profile creation/editing form"""
     st.subheader("✏️ " + ("Edit" if current_profile else "Create") + " Your Profile")
     
     # AI-Powered Profile Creation Assistant
@@ -108,15 +88,15 @@ if profile_mode in ["Create Profile", "Edit Profile"]:
             bio = ai_ui.ai_text_field(
                 "Artist Bio/Story*",
                 ai_assistant.generate_artist_bio,
-            "artisan_bio",
-            help_text="Share your journey, inspiration, and what makes your craft unique",
-            height=200,
-            name=artisan_name or "your artisan business",
-            craft_type=", ".join(specialties) if specialties else "your craft",
-            experience=f"{years_experience} years" if years_experience else "beginner",
-            inspiration="your creative inspiration",
-            unique_aspect="what makes your work special"
-        )
+                "artisan_bio",
+                help_text="Share your journey, inspiration, and what makes your craft unique",
+                height=200,
+                name=artisan_name or "your artisan business",
+                craft_type=", ".join(specialties) if specialties else "your craft",
+                experience=f"{years_experience} years" if years_experience else "beginner",
+                inspiration="your creative inspiration",
+                unique_aspect="what makes your work special"
+            )
         else:
             bio = st.text_area(
                 "Artist Bio/Story*",
@@ -173,13 +153,13 @@ if profile_mode in ["Create Profile", "Edit Profile"]:
                 education = ai_ui.ai_text_field(
                     "Education/Training",
                     ai_assistant.generate_custom_content,
-                "education_section",
-                help_text="List relevant education, workshops, or training",
-                height=100,
-                content_type="education and training background",
-                context=f"artisan specializing in {', '.join(specialties) if specialties else 'handmade crafts'}",
-                specific_request="professional education and training summary"
-            )
+                    "education_section",
+                    help_text="List relevant education, workshops, or training",
+                    height=100,
+                    content_type="education and training background",
+                    context=f"artisan specializing in {', '.join(specialties) if specialties else 'handmade crafts'}",
+                    specific_request="professional education and training summary"
+                )
             else:
                 education = st.text_area(
                     "Education/Training",
@@ -288,90 +268,89 @@ if profile_mode in ["Create Profile", "Edit Profile"]:
             else:
                 st.error("Please fill in all required fields (marked with *).")
 
-elif profile_mode == "View Profile":
-    if current_profile is not None:
-        st.subheader("📋 Your Profile")
+def render_profile_view(current_profile):
+    """Render the profile view section"""
+    st.subheader("📋 Your Profile")
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.markdown(f"# {current_profile['name']}")
+        if current_profile['location']:
+            st.markdown(f"📍 {current_profile['location']}")
         
-        col1, col2 = st.columns([2, 1])
+        if current_profile['specialties']:
+            st.markdown(f"🎨 **Specialties:** {current_profile['specialties']}")
+        
+        st.markdown(f"📅 **Experience:** {current_profile['years_experience']} years")
+        
+        if current_profile['bio']:
+            st.subheader("About Me")
+            st.write(current_profile['bio'])
+    
+    with col2:
+        if current_profile['profile_image']:
+            st.image(current_profile['profile_image'], width=250)
+        else:
+            st.info("No profile photo uploaded")
+    
+    # Contact information
+    if any([current_profile['email'], current_profile['phone'], current_profile['website']]):
+        st.subheader("Contact Information")
+        col1, col2, col3 = st.columns(3)
         
         with col1:
-            st.markdown(f"# {current_profile['name']}")
-            if current_profile['location']:
-                st.markdown(f"📍 {current_profile['location']}")
-            
-            if current_profile['specialties']:
-                st.markdown(f"🎨 **Specialties:** {current_profile['specialties']}")
-            
-            st.markdown(f"📅 **Experience:** {current_profile['years_experience']} years")
-            
-            if current_profile['bio']:
-                st.subheader("About Me")
-                st.write(current_profile['bio'])
-        
+            if current_profile['email']:
+                st.write(f"📧 {current_profile['email']}")
         with col2:
-            if current_profile['profile_image']:
-                st.image(current_profile['profile_image'], width=250)
-            else:
-                st.info("No profile photo uploaded")
-        
-        # Contact information
-        if any([current_profile['email'], current_profile['phone'], current_profile['website']]):
-            st.subheader("Contact Information")
-            col1, col2, col3 = st.columns(3)
-            
-            with col1:
-                if current_profile['email']:
-                    st.write(f"📧 {current_profile['email']}")
-            with col2:
-                if current_profile['phone']:
-                    st.write(f"📞 {current_profile['phone']}")
-            with col3:
-                if current_profile['website']:
-                    st.write(f"🌐 {current_profile['website']}")
-        
-        # Social media
-        social_links = []
-        if current_profile['instagram']:
-            social_links.append(f"📷 Instagram: {current_profile['instagram']}")
-        if current_profile['facebook']:
-            social_links.append(f"📘 Facebook: {current_profile['facebook']}")
-        if current_profile['etsy']:
-            social_links.append(f"🛒 Etsy: {current_profile['etsy']}")
-        
-        if social_links:
-            st.subheader("Social Media")
-            for link in social_links:
-                st.write(link)
-        
-        # Additional details
-        additional_sections = [
-            ('Education/Training', current_profile['education']),
-            ('Awards/Recognition', current_profile['awards']),
-            ('Inspiration', current_profile['inspiration'])
-        ]
-        
-        for title, content in additional_sections:
-            if content:
-                st.subheader(title)
-                st.write(content)
-        
-        # Profile statistics
-        products_df = db_manager.get_products()
-        if not products_df.empty:
-            st.subheader("Your Products")
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.metric("Total Products", len(products_df))
-            with col2:
-                total_views = products_df['views'].sum()
-                st.metric("Total Views", total_views)
-            with col3:
-                avg_price = products_df['price'].mean()
-                st.metric("Average Price", f"${avg_price:.2f}")
-    else:
-        st.info("No profile found. Create your profile to get started!")
+            if current_profile['phone']:
+                st.write(f"📞 {current_profile['phone']}")
+        with col3:
+            if current_profile['website']:
+                st.write(f"🌐 {current_profile['website']}")
+    
+    # Social media
+    social_links = []
+    if current_profile['instagram']:
+        social_links.append(f"📷 Instagram: {current_profile['instagram']}")
+    if current_profile['facebook']:
+        social_links.append(f"📘 Facebook: {current_profile['facebook']}")
+    if current_profile['etsy']:
+        social_links.append(f"🛒 Etsy: {current_profile['etsy']}")
+    
+    if social_links:
+        st.subheader("Social Media")
+        for link in social_links:
+            st.write(link)
+    
+    # Additional details
+    additional_sections = [
+        ('Education/Training', current_profile['education']),
+        ('Awards/Recognition', current_profile['awards']),
+        ('Inspiration', current_profile['inspiration'])
+    ]
+    
+    for title, content in additional_sections:
+        if content:
+            st.subheader(title)
+            st.write(content)
+    
+    # Profile statistics
+    products_df = db_manager.get_products()
+    if not products_df.empty:
+        st.subheader("Your Products")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Total Products", len(products_df))
+        with col2:
+            total_views = products_df['views'].sum()
+            st.metric("Total Views", total_views)
+        with col3:
+            avg_price = products_df['price'].mean()
+            st.metric("Average Price", f"${avg_price:.2f}")
 
-elif profile_mode == "AI Writing Assistant":
+def render_profile_ai_helper():
+    """Render the AI writing assistant section"""
     st.subheader("✨ AI Writing Assistant")
     st.write("Get AI-powered help with writing compelling bios, product stories, and marketing content.")
     
@@ -516,6 +495,51 @@ elif profile_mode == "AI Writing Assistant":
                 del st.session_state.generated_content
                 st.rerun()
 
-# Profile completion reminder
-if current_profile is None:
-    st.info("💡 **Get Started:** Create your artisan profile to unlock all features and start building your online presence!")
+st.set_page_config(
+    page_title="Artisan Profile - TrueCraft", 
+    page_icon="👤",
+    layout="wide"
+)
+
+st.title("👤 Artisan Profile")
+st.markdown("Create and manage your artisan profile with comprehensive AI-powered tools and advanced branding assistance")
+
+# Add AI Business Toolkit Tab for Artisan Profile
+tab1, tab2, tab3 = st.tabs(["👤 Profile Management", "🚀 AI Business Toolkit", "🎯 Branding & Marketing AI"])
+
+with tab1:
+    # Get existing profile
+    profiles_df = db_manager.get_profiles()
+    current_profile = profiles_df.iloc[0] if not profiles_df.empty else None
+
+    # Sidebar
+    with st.sidebar:
+        st.subheader("Profile Actions")
+        if current_profile is not None:
+            profile_mode = st.radio("Choose Action", ["View Profile", "Edit Profile", "AI Writing Assistant"])
+        else:
+            profile_mode = st.radio("Choose Action", ["Create Profile", "AI Writing Assistant"])
+
+    if profile_mode in ["Create Profile", "Edit Profile"]:
+        render_profile_create_edit(current_profile)
+
+    elif profile_mode == "View Profile":
+        if current_profile is not None:
+            render_profile_view(current_profile)
+        else:
+            st.info("No profile found. Create your profile to get started!")
+
+    elif profile_mode == "AI Writing Assistant":
+        render_profile_ai_helper()
+
+    # Profile completion reminder
+    if current_profile is None:
+        st.info("💡 **Get Started:** Create your artisan profile to unlock all features and start building your online presence!")
+
+with tab2:
+    render_ai_business_toolkit()
+
+with tab3:
+    render_brand_voice_analyzer()
+    render_content_calendar_generator()
+    render_seasonal_marketing_generator()

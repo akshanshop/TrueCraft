@@ -469,3 +469,304 @@ class AIAssistant:
             return content.strip() if content else ""
         except Exception as e:
             raise Exception(f"Failed to generate improvement suggestions: {str(e)}")
+    
+    # ===== ENHANCED AI BUSINESS TOOLS =====
+    
+    def generate_seo_optimized_title(self, product_name, category, keywords=None):
+        """Generate SEO-optimized product titles"""
+        try:
+            keywords_text = f" with focus on keywords: {keywords}" if keywords else ""
+            prompt = f"""
+            Create 5 SEO-optimized product titles for a {category} product called "{product_name}"{keywords_text}.
+            
+            Make them:
+            - Search engine friendly
+            - Compelling for buyers
+            - Include relevant keywords naturally
+            - Vary in style (descriptive, benefit-focused, emotional)
+            - 50-80 characters each
+            
+            Format as a numbered list.
+            """
+            
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are an SEO and e-commerce marketing expert specializing in handmade products."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=600,
+                temperature=0.7
+            )
+            
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            raise Exception(f"Failed to generate SEO titles: {str(e)}")
+    
+    def generate_pricing_analysis(self, product_name, materials, time_hours, skill_level, category):
+        """Generate AI-powered pricing analysis and suggestions"""
+        try:
+            prompt = f"""
+            Provide pricing analysis for a handmade {category} product:
+            
+            Product: {product_name}
+            Materials: {materials}
+            Time to create: {time_hours} hours
+            Skill level: {skill_level}
+            Category: {category}
+            
+            Provide:
+            1. Suggested price range with reasoning
+            2. Cost breakdown considerations
+            3. Market positioning strategy
+            4. Value proposition highlights
+            5. Pricing psychology tips
+            
+            Be specific and actionable.
+            """
+            
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are a business consultant specializing in handmade product pricing and market strategy."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=1000,
+                temperature=0.4
+            )
+            
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            raise Exception(f"Failed to generate pricing analysis: {str(e)}")
+    
+    def generate_product_photography_tips(self, product_type, materials, setting="home"):
+        """Generate personalized product photography tips"""
+        try:
+            prompt = f"""
+            Create specific photography tips for a {product_type} made from {materials}, photographing in a {setting} setting.
+            
+            Include:
+            1. Lighting setup recommendations
+            2. Best angles and compositions
+            3. Props and styling suggestions
+            4. Background recommendations
+            5. Common mistakes to avoid
+            6. Equipment tips (phone vs camera)
+            
+            Make it practical and actionable for someone without professional equipment.
+            """
+            
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are a professional product photographer specializing in handmade crafts and e-commerce."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=800,
+                temperature=0.6
+            )
+            
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            raise Exception(f"Failed to generate photography tips: {str(e)}")
+    
+    def generate_seasonal_marketing_content(self, products_list, season_or_holiday, target_audience="general"):
+        """Generate seasonal marketing content and strategies"""
+        try:
+            prompt = f"""
+            Create seasonal marketing content for {season_or_holiday} targeting {target_audience}.
+            
+            Products: {products_list}
+            
+            Generate:
+            1. 3 social media post ideas with captions
+            2. Email marketing subject lines
+            3. Product bundling suggestions
+            4. Seasonal selling angles
+            5. Holiday-specific messaging
+            6. Promotional ideas
+            
+            Make it engaging and conversion-focused.
+            """
+            
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are a digital marketing strategist specializing in handmade products and seasonal campaigns."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=1200,
+                temperature=0.7
+            )
+            
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            raise Exception(f"Failed to generate seasonal content: {str(e)}")
+    
+    def generate_brand_voice_analysis(self, bio, products_description, target_customers):
+        """Analyze and suggest brand voice and messaging"""
+        try:
+            prompt = f"""
+            Analyze this artisan's brand and suggest voice/messaging strategy:
+            
+            Bio: {bio}
+            Products: {products_description}
+            Target customers: {target_customers}
+            
+            Provide:
+            1. Brand personality assessment
+            2. Recommended tone of voice
+            3. Key messaging themes
+            4. Unique value proposition
+            5. Content style guidelines
+            6. Communication do's and don'ts
+            
+            Make it actionable for consistent brand communication.
+            """
+            
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are a brand strategist helping artisans develop authentic and effective brand voices."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=1000,
+                temperature=0.5
+            )
+            
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            raise Exception(f"Failed to generate brand voice analysis: {str(e)}")
+    
+    def generate_content_calendar(self, business_type, posting_frequency, special_events=None):
+        """Generate a content calendar for social media and marketing"""
+        try:
+            events_text = f" considering these special events: {special_events}" if special_events else ""
+            prompt = f"""
+            Create a 4-week content calendar for a {business_type} business posting {posting_frequency}{events_text}.
+            
+            Include:
+            1. Daily post themes and ideas
+            2. Mix of content types (behind-scenes, products, tips, stories)
+            3. Engagement strategies
+            4. Optimal posting times suggestions
+            5. Hashtag recommendations
+            6. Call-to-action variations
+            
+            Format as a clear weekly breakdown.
+            """
+            
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are a social media strategist specializing in small creative businesses and artisan marketing."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=1200,
+                temperature=0.6
+            )
+            
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            raise Exception(f"Failed to generate content calendar: {str(e)}")
+    
+    def generate_customer_personas(self, products, business_info, current_customers_info=None):
+        """Generate detailed customer personas"""
+        try:
+            current_info = f" Current customers: {current_customers_info}" if current_customers_info else ""
+            prompt = f"""
+            Create 3 detailed customer personas for this handmade business:
+            
+            Products: {products}
+            Business: {business_info}{current_info}
+            
+            For each persona, include:
+            1. Demographics and psychographics
+            2. Shopping behaviors and preferences
+            3. Pain points and motivations
+            4. Preferred communication channels
+            5. Buying triggers and decision factors
+            6. Marketing message recommendations
+            
+            Make them detailed and actionable for targeted marketing.
+            """
+            
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are a market research expert specializing in consumer behavior analysis for creative businesses."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=1500,
+                temperature=0.5
+            )
+            
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            raise Exception(f"Failed to generate customer personas: {str(e)}")
+    
+    def generate_competitive_analysis(self, product_type, price_range, unique_features):
+        """Generate competitive analysis and positioning advice"""
+        try:
+            prompt = f"""
+            Provide competitive analysis for a {product_type} priced around {price_range} with these unique features: {unique_features}.
+            
+            Include:
+            1. Market positioning strategy
+            2. Competitive advantages to highlight
+            3. Differentiation opportunities
+            4. Pricing strategy vs competitors
+            5. Marketing angle recommendations
+            6. Areas for improvement or expansion
+            
+            Focus on actionable insights for a small handmade business.
+            """
+            
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are a business analyst specializing in handmade and artisan market analysis."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=1000,
+                temperature=0.4
+            )
+            
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            raise Exception(f"Failed to generate competitive analysis: {str(e)}")
+    
+    def generate_email_marketing_sequence(self, business_name, product_type, customer_journey_stage):
+        """Generate email marketing sequences for different customer stages"""
+        try:
+            prompt = f"""
+            Create a 3-email sequence for {business_name} selling {product_type} targeting customers at the {customer_journey_stage} stage.
+            
+            Generate:
+            1. Email 1: Subject line, preview text, and full email content
+            2. Email 2: Subject line, preview text, and full email content  
+            3. Email 3: Subject line, preview text, and full email content
+            
+            Include:
+            - Compelling subject lines
+            - Personal, authentic tone
+            - Clear calls-to-action
+            - Value-driven content
+            - Mobile-friendly formatting
+            
+            Make it feel personal and authentic to a handmade business.
+            """
+            
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are an email marketing specialist for creative small businesses and artisans."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=1500,
+                temperature=0.6
+            )
+            
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            raise Exception(f"Failed to generate email sequence: {str(e)}")

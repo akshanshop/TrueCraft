@@ -444,3 +444,260 @@ def display_ai_error(error_message="AI assistance temporarily unavailable"):
 def display_ai_success(message="AI content generated successfully!"):
     """Display a consistent success message for AI operations"""
     st.success(f"✨ {message}")
+
+# ===== ENHANCED AI BUSINESS TOOLKIT COMPONENTS =====
+
+def get_ai_assistant():
+    """Get AI assistant instance with error handling"""
+    try:
+        if 'ai_assistant' not in st.session_state:
+            st.session_state.ai_assistant = AIAssistant()
+        return st.session_state.ai_assistant
+    except Exception as e:
+        st.warning("AI features are currently unavailable. Please check your API key configuration.")
+        return None
+
+def render_seo_title_generator():
+    """Render SEO-optimized title generator"""
+    st.subheader("🔍 SEO Title Generator")
+    st.write("Generate search engine optimized product titles that attract buyers")
+    
+    with st.form("seo_title_generator"):
+        col1, col2 = st.columns(2)
+        with col1:
+            product_name = st.text_input("Product Name")
+            category = st.selectbox("Category", ["Jewelry", "Home Decor", "Clothing", "Art", "Pottery", "Woodwork", "Textiles", "Other"])
+        with col2:
+            keywords = st.text_input("Target Keywords (optional)", placeholder="handmade, custom, artisan")
+        
+        if st.form_submit_button("Generate SEO Titles", type="primary"):
+            if product_name and category:
+                with st.spinner("Generating SEO-optimized titles..."):
+                    try:
+                        ai = get_ai_assistant()
+                        if ai:
+                            result = ai.generate_seo_optimized_title(product_name, category, keywords)
+                            st.success("SEO titles generated!")
+                            st.markdown("**Generated SEO-Optimized Titles:**")
+                            st.write(result)
+                        else:
+                            st.error("AI features are currently unavailable. Please check your API key configuration.")
+                    except Exception as e:
+                        st.error(f"Error generating SEO titles: {str(e)}")
+            else:
+                st.warning("Please fill in all required fields")
+
+def render_pricing_analyzer():
+    """Render comprehensive pricing analysis tool"""
+    st.subheader("💰 Pricing Analysis & Strategy")
+    st.write("Get AI-powered pricing recommendations based on materials, time, and market factors")
+    
+    with st.form("pricing_analyzer"):
+        col1, col2 = st.columns(2)
+        with col1:
+            product_name = st.text_input("Product Name")
+            materials = st.text_area("Materials Used", placeholder="Sterling silver, gemstones, etc.")
+            time_hours = st.number_input("Hours to Create", min_value=0.5, step=0.5)
+        with col2:
+            skill_level = st.selectbox("Skill Level Required", ["Beginner", "Intermediate", "Advanced", "Expert"])
+            category = st.selectbox("Product Category", ["Jewelry", "Home Decor", "Clothing", "Art", "Pottery", "Woodwork", "Textiles", "Other"])
+        
+        if st.form_submit_button("Analyze Pricing", type="primary"):
+            if product_name and materials and time_hours > 0:
+                with st.spinner("Analyzing pricing strategy..."):
+                    try:
+                        ai = get_ai_assistant()
+                        if ai:
+                            result = ai.generate_pricing_analysis(product_name, materials, time_hours, skill_level, category)
+                            st.success("Pricing analysis complete!")
+                            st.markdown("**Pricing Analysis & Recommendations:**")
+                            st.write(result)
+                        else:
+                            st.error("AI features are currently unavailable. Please check your API key configuration.")
+                    except Exception as e:
+                        st.error(f"Error generating pricing analysis: {str(e)}")
+            else:
+                st.warning("Please fill in all required fields")
+
+def render_photography_tips_generator():
+    """Render personalized product photography tips generator"""
+    st.subheader("📸 Product Photography Tips")
+    st.write("Get personalized photography advice for your specific products")
+    
+    with st.form("photography_tips"):
+        col1, col2 = st.columns(2)
+        with col1:
+            product_type = st.text_input("Product Type", placeholder="e.g., handmade necklace, ceramic bowl")
+            materials = st.text_input("Main Materials", placeholder="e.g., silver, wood, fabric")
+        with col2:
+            setting = st.selectbox("Photography Setting", ["home", "studio", "outdoor", "workshop"])
+        
+        if st.form_submit_button("Get Photography Tips", type="primary"):
+            if product_type and materials:
+                with st.spinner("Generating photography tips..."):
+                    try:
+                        ai = get_ai_assistant()
+                        if ai:
+                            result = ai.generate_product_photography_tips(product_type, materials, setting)
+                            st.success("Photography tips generated!")
+                            st.markdown("**Personalized Photography Tips:**")
+                            st.write(result)
+                        else:
+                            st.error("AI features are currently unavailable. Please check your API key configuration.")
+                    except Exception as e:
+                        st.error(f"Error generating photography tips: {str(e)}")
+            else:
+                st.warning("Please fill in the product type and materials")
+
+def render_seasonal_marketing_generator():
+    """Render seasonal marketing content generator"""
+    st.subheader("🎄 Seasonal Marketing Content")
+    st.write("Create targeted seasonal marketing content for holidays and special occasions")
+    
+    with st.form("seasonal_marketing"):
+        col1, col2 = st.columns(2)
+        with col1:
+            products_list = st.text_area("Your Products", placeholder="List your main products...")
+            season_or_holiday = st.selectbox("Season/Holiday", ["Christmas", "Valentine's Day", "Mother's Day", "Halloween", "Spring", "Summer", "Fall", "Winter", "Back to School", "Wedding Season", "Other"])
+        with col2:
+            target_audience = st.selectbox("Target Audience", ["general", "gift buyers", "home decorators", "fashion enthusiasts", "collectors", "young adults", "families"])
+        
+        if st.form_submit_button("Generate Marketing Content", type="primary"):
+            if products_list:
+                with st.spinner("Creating seasonal marketing content..."):
+                    try:
+                        ai = get_ai_assistant()
+                        if ai:
+                            result = ai.generate_seasonal_marketing_content(products_list, season_or_holiday, target_audience)
+                            st.success("Seasonal marketing content generated!")
+                            st.markdown("**Seasonal Marketing Ideas:**")
+                            st.write(result)
+                        else:
+                            st.error("AI features are currently unavailable. Please check your API key configuration.")
+                    except Exception as e:
+                        st.error(f"Error generating seasonal content: {str(e)}")
+            else:
+                st.warning("Please describe your products")
+
+def render_brand_voice_analyzer():
+    """Render brand voice analysis and messaging strategy tool"""
+    st.subheader("🎯 Brand Voice & Messaging Strategy")
+    st.write("Analyze your brand and get personalized messaging recommendations")
+    
+    with st.form("brand_voice_analyzer"):
+        bio = st.text_area("Your Bio/Story", placeholder="Tell us about yourself and your craft...")
+        products_description = st.text_area("Products Description", placeholder="Describe your products and what makes them unique...")
+        target_customers = st.text_area("Target Customers", placeholder="Describe your ideal customers...")
+        
+        if st.form_submit_button("Analyze Brand Voice", type="primary"):
+            if bio and products_description:
+                with st.spinner("Analyzing your brand voice..."):
+                    try:
+                        ai = get_ai_assistant()
+                        if ai:
+                            result = ai.generate_brand_voice_analysis(bio, products_description, target_customers)
+                            st.success("Brand voice analysis complete!")
+                            st.markdown("**Brand Voice & Messaging Strategy:**")
+                            st.write(result)
+                        else:
+                            st.error("AI features are currently unavailable. Please check your API key configuration.")
+                    except Exception as e:
+                        st.error(f"Error analyzing brand voice: {str(e)}")
+            else:
+                st.warning("Please fill in your bio and product description")
+
+def render_content_calendar_generator():
+    """Render content calendar generator for social media"""
+    st.subheader("📅 Content Calendar Generator")
+    st.write("Generate a comprehensive 4-week content calendar for your social media")
+    
+    with st.form("content_calendar"):
+        col1, col2 = st.columns(2)
+        with col1:
+            business_type = st.text_input("Business Type", placeholder="e.g., handmade jewelry, pottery studio")
+            posting_frequency = st.selectbox("Posting Frequency", ["daily", "every other day", "3 times per week", "twice a week", "weekly"])
+        with col2:
+            special_events = st.text_input("Special Events (optional)", placeholder="craft fairs, shop anniversaries, etc.")
+        
+        if st.form_submit_button("Generate Content Calendar", type="primary"):
+            if business_type:
+                with st.spinner("Creating your content calendar..."):
+                    try:
+                        ai = get_ai_assistant()
+                        if ai:
+                            result = ai.generate_content_calendar(business_type, posting_frequency, special_events)
+                            st.success("Content calendar generated!")
+                            st.markdown("**4-Week Content Calendar:**")
+                            st.write(result)
+                        else:
+                            st.error("AI features are currently unavailable. Please check your API key configuration.")
+                    except Exception as e:
+                        st.error(f"Error generating content calendar: {str(e)}")
+            else:
+                st.warning("Please describe your business type")
+
+def render_competitive_analysis_generator():
+    """Render competitive analysis tool"""
+    st.subheader("⚖️ Competitive Analysis")
+    st.write("Get insights on market positioning and competitive advantages")
+    
+    with st.form("competitive_analysis"):
+        col1, col2 = st.columns(2)
+        with col1:
+            product_type = st.text_input("Product Type", placeholder="e.g., handmade ceramic mugs")
+            price_range = st.text_input("Your Price Range", placeholder="e.g., $25-45")
+        with col2:
+            unique_features = st.text_area("Unique Features", placeholder="What makes your products special?")
+        
+        if st.form_submit_button("Analyze Competition", type="primary"):
+            if product_type and price_range and unique_features:
+                with st.spinner("Analyzing competitive landscape..."):
+                    try:
+                        ai = get_ai_assistant()
+                        if ai:
+                            result = ai.generate_competitive_analysis(product_type, price_range, unique_features)
+                            st.success("Competitive analysis complete!")
+                            st.markdown("**Competitive Analysis & Strategy:**")
+                            st.write(result)
+                        else:
+                            st.error("AI features are currently unavailable. Please check your API key configuration.")
+                    except Exception as e:
+                        st.error(f"Error generating competitive analysis: {str(e)}")
+            else:
+                st.warning("Please fill in all fields")
+
+def render_ai_business_toolkit():
+    """Render comprehensive AI business toolkit with all advanced features"""
+    st.header("🚀 Advanced AI Business Toolkit")
+    st.write("Comprehensive AI-powered tools to grow your artisan business")
+    
+    # Create tabs for different tool categories
+    tab1, tab2, tab3, tab4 = st.tabs(["📊 Marketing & SEO", "📸 Content & Creative", "📈 Business Strategy", "🎯 Brand & Analysis"])
+    
+    with tab1:
+        st.markdown("### Marketing & SEO Tools")
+        col1, col2 = st.columns(2)
+        with col1:
+            render_seo_title_generator()
+        with col2:
+            render_seasonal_marketing_generator()
+    
+    with tab2:
+        st.markdown("### Content & Creative Tools")
+        col1, col2 = st.columns(2)
+        with col1:
+            render_photography_tips_generator()
+        with col2:
+            render_content_calendar_generator()
+    
+    with tab3:
+        st.markdown("### Business Strategy Tools")
+        render_pricing_analyzer()
+    
+    with tab4:
+        st.markdown("### Brand & Analysis Tools")
+        col1, col2 = st.columns(2)
+        with col1:
+            render_brand_voice_analyzer()
+        with col2:
+            render_competitive_analysis_generator()

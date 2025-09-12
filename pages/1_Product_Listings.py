@@ -6,7 +6,7 @@ import io
 from utils.ai_assistant import AIAssistant
 from utils.database_manager import DatabaseManager
 from utils.image_handler import ImageHandler
-from utils.ai_ui_components import AIUIComponents
+from utils.ai_ui_components import AIUIComponents, render_ai_business_toolkit, render_seo_title_generator, render_pricing_analyzer, render_photography_tips_generator, render_seasonal_marketing_generator
 
 # Initialize components
 @st.cache_resource
@@ -213,21 +213,8 @@ def get_product_rating_summary(product_id):
         return f"{display_star_rating(avg_rating)} ({total_reviews} review{'s' if total_reviews != 1 else ''})"
     return "No reviews yet"
 
-st.set_page_config(
-    page_title="Product Listings - TrueCraft",
-    page_icon="📝",
-    layout="wide"
-)
-
-st.title("📝 Product Listings")
-st.markdown("Create and manage your product listings with AI assistance")
-
-# Sidebar for navigation
-with st.sidebar:
-    st.subheader("Actions")
-    page_mode = st.radio("Choose Action", ["Create New Product", "Browse Products", "Manage Listings"])
-
-if page_mode == "Create New Product":
+def render_create_product():
+    """Render the Create New Product functionality"""
     st.subheader("🆕 Create New Product Listing")
     
     # AI-Powered Product Creation Assistant
@@ -374,12 +361,13 @@ if page_mode == "Create New Product":
             else:
                 st.error("Please fill in all required fields (marked with *).")
 
-elif page_mode == "Browse Products":
+def render_browse_products():
+    """Render the Browse Products functionality"""
     st.subheader("🛍️ Product Catalog")
     
     # Get all products
     products_df = db_manager.get_products()
-    
+
     if products_df.empty:
         st.info("No products available. Create your first product listing!")
     else:
@@ -617,11 +605,12 @@ elif page_mode == "Browse Products":
                                             else:
                                                 st.error("Please fill in all required fields (marked with *).")
 
-elif page_mode == "Manage Listings":
+def render_manage_listings():
+    """Render the Manage Listings functionality"""
     st.subheader("⚙️ Manage Your Listings")
     
     products_df = db_manager.get_products()
-    
+
     if products_df.empty:
         st.info("No products to manage. Create your first product listing!")
     else:
@@ -650,7 +639,15 @@ elif page_mode == "Manage Listings":
         
         # Display editable dataframe
         display_df = products_df[['name', 'category', 'price', 'stock_quantity', 'views', 'created_at']].copy()
-        display_df['created_at'] = display_df['created_at'].dt.strftime('%Y-%m-%d %H:%M')
+        
+        # Format created_at column safely
+        if 'created_at' in display_df.columns:
+            for idx in display_df.index:
+                created_at_val = display_df.at[idx, 'created_at']
+                if pd.notnull(created_at_val):
+                    display_df.at[idx, 'created_at'] = pd.to_datetime(created_at_val).strftime('%Y-%m-%d %H:%M')
+                else:
+                    display_df.at[idx, 'created_at'] = ''
         
         edited_df = st.data_editor(
             display_df,
@@ -703,3 +700,43 @@ elif page_mode == "Manage Listings":
                         db_manager.delete_product(product_id)
                 st.success(f"Deleted {len(products_to_delete)} products")
                 st.rerun()
+
+st.set_page_config(
+    page_title="Product Listings - TrueCraft",
+    page_icon="📝",
+    layout="wide"
+)
+
+st.title("📝 Product Listings")
+st.markdown("Create and manage your product listings with comprehensive AI-powered tools and advanced writing assistance")
+
+# Add AI Business Toolkit Tab
+tab1, tab2, tab3 = st.tabs(["📝 Product Management", "🚀 AI Business Toolkit", "🎯 Advanced AI Tools"])
+
+with tab1:
+    # Sidebar for navigation
+    with st.sidebar:
+        st.subheader("Actions")
+        page_mode = st.radio("Choose Action", ["Create New Product", "Browse Products", "Manage Listings"])
+
+    if page_mode == "Create New Product":
+        render_create_product()
+    elif page_mode == "Browse Products":
+        render_browse_products()
+    elif page_mode == "Manage Listings":
+        render_manage_listings()
+
+with tab2:
+    render_ai_business_toolkit()
+
+with tab3:
+    st.header("🎯 Advanced AI Tools for Product Listings")
+    st.write("Specialized AI tools to optimize your product listings and maximize sales")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        render_seo_title_generator()
+        render_photography_tips_generator()
+    with col2:
+        render_pricing_analyzer()
+        render_seasonal_marketing_generator()
