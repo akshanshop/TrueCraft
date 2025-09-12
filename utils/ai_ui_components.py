@@ -4,10 +4,20 @@ import time
 
 class AIUIComponents:
     def __init__(self):
-        # Initialize AI assistant with caching
-        if 'ai_assistant' not in st.session_state:
-            st.session_state.ai_assistant = AIAssistant()
-        self.ai_assistant = st.session_state.ai_assistant
+        # Initialize AI assistant with caching (lazy initialization)
+        self.ai_assistant = None
+    
+    def _get_ai_assistant(self):
+        """Get AI assistant with lazy initialization and error handling"""
+        if self.ai_assistant is None:
+            if 'ai_assistant' not in st.session_state:
+                try:
+                    st.session_state.ai_assistant = AIAssistant()
+                except Exception as e:
+                    st.warning("AI features are currently unavailable. Some functionality may be limited.")
+                    st.session_state.ai_assistant = None
+            self.ai_assistant = st.session_state.ai_assistant
+        return self.ai_assistant
     
     def inline_ai_button(self, target_key, ai_function, button_text="✨ AI Assist", help_text="Get AI writing assistance", **kwargs):
         """
@@ -21,6 +31,10 @@ class AIUIComponents:
             **kwargs: Arguments to pass to the AI function
         """
         if st.button(button_text, help=help_text, key=f"ai_btn_{target_key}"):
+            ai_assistant = self._get_ai_assistant()
+            if ai_assistant is None:
+                st.error("AI features are currently unavailable.")
+                return
             try:
                 with st.spinner("AI is writing..."):
                     result = ai_function(**kwargs)
@@ -76,9 +90,13 @@ class AIUIComponents:
             
             with col1:
                 if st.button("Get Quick Tips", key=f"suggestions_{hash(text_content)}"):
+                    ai_assistant = self._get_ai_assistant()
+                    if ai_assistant is None:
+                        st.error("AI suggestions are currently unavailable.")
+                        return
                     try:
                         with st.spinner("Analyzing..."):
-                            suggestions = self.ai_assistant.quick_improve_suggestions(text_content, field_type)
+                            suggestions = ai_assistant.quick_improve_suggestions(text_content, field_type)
                             st.markdown("**Quick Improvements:**")
                             st.markdown(suggestions)
                     except Exception as e:
@@ -86,9 +104,13 @@ class AIUIComponents:
             
             with col2:
                 if st.button("Improve Text", key=f"improve_full_{hash(text_content)}"):
+                    ai_assistant = self._get_ai_assistant()
+                    if ai_assistant is None:
+                        st.error("AI text improvement is currently unavailable.")
+                        return
                     try:
                         with st.spinner("Improving text..."):
-                            improved = self.ai_assistant.improve_text(text_content, "general")
+                            improved = ai_assistant.improve_text(text_content, "general")
                             st.markdown("**Improved Version:**")
                             st.text_area("Copy this improved text:", improved, height=100, key=f"improved_{hash(text_content)}")
                             if st.button("📋 Copy to Clipboard", key=f"copy_{hash(text_content)}"):

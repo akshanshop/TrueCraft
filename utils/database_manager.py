@@ -462,7 +462,8 @@ class DatabaseManager:
                         **review_data,
                         'approved': review_data.get('approved', True)  # Default to approved
                     })
-                    review_id = cursor.fetchone()[0]
+                    result = cursor.fetchone()
+                    review_id = result[0] if result else None
                     conn.commit()
                     return review_id
         except Exception as e:
@@ -598,7 +599,8 @@ class DatabaseManager:
                                %(shipping_address)s, %(total_amount)s)
                         RETURNING id
                     """, order_data)
-                    order_id = cursor.fetchone()[0]
+                    result = cursor.fetchone()
+                    order_id = result[0] if result else None
                     
                     # Insert order items
                     for item in order_items:
@@ -654,7 +656,8 @@ class DatabaseManager:
                             updated_at = CURRENT_TIMESTAMP
                         RETURNING id
                     """, (oauth_provider, oauth_id, email, name, avatar_url, json.dumps(profile_data) if profile_data else None))
-                    user_id = cursor.fetchone()[0]
+                    result = cursor.fetchone()
+                    user_id = result[0] if result else None
                     conn.commit()
                     return user_id
         except Exception as e:
@@ -709,7 +712,8 @@ class DatabaseManager:
                             %(subject)s, %(message_content)s
                         ) RETURNING id
                     """, message_data)
-                    message_id = cursor.fetchone()[0]
+                    result = cursor.fetchone()
+                    message_id = result[0] if result else None
                     conn.commit()
                     return message_id
         except Exception as e:
