@@ -51,13 +51,17 @@ with st.sidebar:
     if auth_manager.is_authenticated():
         # Show user profile in sidebar
         user = auth_manager.get_current_user()
-        st.success(f"Welcome, {user['name']}!")
-        
-        if user['avatar_url']:
-            st.image(user['avatar_url'], width=60)
-        
-        st.write(f"📧 {user['email']}")
-        st.write(f"🔗 {user['oauth_provider'].title()}")
+        if user:
+            st.success(f"Welcome, {user['name']}!")
+            
+            if user.get('avatar_url'):
+                st.image(user['avatar_url'], width=60)
+            
+            st.write(f"📧 {user['email']}")
+            st.write(f"🔗 {user['oauth_provider'].title()}")
+        else:
+            st.error("Authentication error. Please sign in again.")
+            auth_manager.logout_user()
         
         if st.button("🚪 Sign Out", use_container_width=True):
             auth_manager.logout_user()
@@ -183,8 +187,6 @@ if not products_df.empty:
     for _, product in recent_products.iterrows():
         with st.container():
             col1, col2 = st.columns([1, 3])
-            if recent_products.empty:
-                continue
             with col1:
                 image_data = product['image_data']
                 if image_data is not None and not pd.isna(image_data) and str(image_data).strip():
