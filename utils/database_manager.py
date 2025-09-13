@@ -1,32 +1,60 @@
 import os
-import psycopg2
 import pandas as pd
 import json
 from datetime import datetime
 import streamlit as st
-from psycopg2.extras import RealDictCursor
+
+# Resilient import handling
+try:
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+    DB_AVAILABLE = True
+except ImportError:
+    DB_AVAILABLE = False
+    psycopg2 = None  # Set to None to avoid unbound errors
+    RealDictCursor = None
+    st.warning("Database functionality requires psycopg2. Install it with: pip install psycopg2-binary")
 
 class DatabaseManager:
     def __init__(self):
         """Initialize database manager with PostgreSQL connection"""
         self.database_url = os.getenv("DATABASE_URL")
-        if not self.database_url:
-            st.error("Database connection not configured")
-            raise Exception("DATABASE_URL not found")
-        self.initialize_schema()
+        self.db_available = DB_AVAILABLE and self.database_url is not None
+        
+        if not self.db_available:
+            if not DB_AVAILABLE:
+                st.warning("Database features unavailable - psycopg2 not installed")
+            elif not self.database_url:
+                st.warning("Database features unavailable - DATABASE_URL not configured")
+        else:
+            try:
+                self.initialize_schema()
+            except Exception as e:
+                st.error(f"Database initialization failed: {str(e)}")
+                self.db_available = False
     
     def get_connection(self):
         """Get database connection"""
+        if not self.db_available or not psycopg2:
+            return None
         try:
             return psycopg2.connect(self.database_url)
         except Exception as e:
             st.error(f"Database connection failed: {str(e)}")
-            raise
+            self.db_available = False
+            return None
     
     def initialize_schema(self):
         """Initialize database schema - ensure all required tables exist"""
+        if not self.db_available:
+            return
+        
+        conn = self.get_connection()
+        if conn is None:
+            return
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cursor:
                     # Create users table first (referenced by other tables)
                     cursor.execute("""
@@ -180,8 +208,21 @@ class DatabaseManager:
     # Product Management
     def get_products(self, user_id=None):
         """Get all products as DataFrame, optionally filtered by user"""
+        if not self.db_available:
+            # Return empty DataFrame with expected columns
+            return pd.DataFrame({
+                'id': [], 'user_id': [], 'name': [], 'category': [], 'price': [], 'description': [], 'materials': [],
+                'dimensions': [], 'weight': [], 'stock_quantity': [], 'shipping_cost': [],
+                'processing_time': [], 'tags': [], 'image_data': [], 'views': [], 'favorites': [],
+                'created_at': [], 'updated_at': []
+            })
+        
+        conn = self.get_connection()
+        if conn is None:
+            return pd.DataFrame()
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                     if user_id:
                         cursor.execute("""
@@ -210,7 +251,7 @@ class DatabaseManager:
                     else:
                         # Return empty DataFrame with expected columns
                         return pd.DataFrame({
-                            'id': [], 'name': [], 'category': [], 'price': [], 'description': [], 'materials': [],
+                            'id': [], 'user_id': [], 'name': [], 'category': [], 'price': [], 'description': [], 'materials': [],
                             'dimensions': [], 'weight': [], 'stock_quantity': [], 'shipping_cost': [],
                             'processing_time': [], 'tags': [], 'image_data': [], 'views': [], 'favorites': [],
                             'created_at': [], 'updated_at': []
@@ -221,8 +262,16 @@ class DatabaseManager:
     
     def add_product(self, product_data, user_id=None):
         """Add a new product"""
+        if not self.db_available:
+            st.warning("Database unavailable - product not saved")
+            return False
+        
+        conn = self.get_connection()
+        if conn is None:
+            return False
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cursor:
                     product_data_with_user = {**product_data, 'user_id': user_id}
                     cursor.execute("""
@@ -244,8 +293,16 @@ class DatabaseManager:
     
     def update_product(self, product_id, updated_data):
         """Update an existing product"""
+        if not self.db_available:
+            st.warning("Database unavailable - product not updated")
+            return False
+        
+        conn = self.get_connection()
+        if conn is None:
+            return False
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cursor:
                     # Build dynamic update query
                     set_clauses = []
@@ -270,8 +327,16 @@ class DatabaseManager:
     
     def delete_product(self, product_id):
         """Delete a product"""
+        if not self.db_available:
+            st.warning("Database unavailable - product not deleted")
+            return False
+        
+        conn = self.get_connection()
+        if conn is None:
+            return False
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cursor:
                     cursor.execute("DELETE FROM products WHERE id = %s", (product_id,))
                     conn.commit()
@@ -282,8 +347,15 @@ class DatabaseManager:
     
     def increment_views(self, product_id):
         """Increment view count for a product"""
+        if not self.db_available:
+            return False  # Silently fail for view increments when DB unavailable
+        
+        conn = self.get_connection()
+        if conn is None:
+            return False
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cursor:
                     cursor.execute("""
                         UPDATE products 
@@ -298,8 +370,15 @@ class DatabaseManager:
     
     def increment_favorites(self, product_id):
         """Increment favorite count for a product"""
+        if not self.db_available:
+            return False  # Silently fail for favorite increments when DB unavailable
+        
+        conn = self.get_connection()
+        if conn is None:
+            return False
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cursor:
                     cursor.execute("""
                         UPDATE products 
@@ -315,8 +394,21 @@ class DatabaseManager:
     # Profile Management
     def get_profiles(self):
         """Get all artisan profiles as DataFrame"""
+        if not self.db_available:
+            # Return empty DataFrame with expected columns
+            return pd.DataFrame({
+                'id': [], 'user_id': [], 'name': [], 'location': [], 'specialties': [], 'years_experience': [],
+                'bio': [], 'email': [], 'phone': [], 'website': [], 'instagram': [],
+                'facebook': [], 'etsy': [], 'education': [], 'awards': [], 'inspiration': [],
+                'profile_image': [], 'created_at': [], 'updated_at': []
+            })
+        
+        conn = self.get_connection()
+        if conn is None:
+            return pd.DataFrame()
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                     cursor.execute("""
                         SELECT * FROM profiles 
@@ -334,7 +426,7 @@ class DatabaseManager:
                     else:
                         # Return empty DataFrame with expected columns
                         return pd.DataFrame({
-                            'id': [], 'name': [], 'location': [], 'specialties': [], 'years_experience': [],
+                            'id': [], 'user_id': [], 'name': [], 'location': [], 'specialties': [], 'years_experience': [],
                             'bio': [], 'email': [], 'phone': [], 'website': [], 'instagram': [],
                             'facebook': [], 'etsy': [], 'education': [], 'awards': [], 'inspiration': [],
                             'profile_image': [], 'created_at': [], 'updated_at': []
@@ -345,8 +437,16 @@ class DatabaseManager:
     
     def add_profile(self, profile_data):
         """Add a new artisan profile"""
+        if not self.db_available:
+            st.warning("Database unavailable - profile not saved")
+            return False
+        
+        conn = self.get_connection()
+        if conn is None:
+            return False
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cursor:
                     cursor.execute("""
                         INSERT INTO profiles (
@@ -367,8 +467,16 @@ class DatabaseManager:
     
     def update_profile(self, profile_id, profile_data):
         """Update existing artisan profile"""
+        if not self.db_available:
+            st.warning("Database unavailable - profile not updated")
+            return False
+        
+        conn = self.get_connection()
+        if conn is None:
+            return False
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cursor:
                     # Build dynamic update query
                     set_clauses = []
@@ -394,8 +502,15 @@ class DatabaseManager:
     # Analytics and Tracking
     def log_analytics_event(self, event_type, product_id=None, metadata=None):
         """Log analytics events"""
+        if not self.db_available:
+            return False  # Silently fail for analytics when DB unavailable
+        
+        conn = self.get_connection()
+        if conn is None:
+            return False
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cursor:
                     user_session = st.session_state.get('session_id', 'anonymous')
                     cursor.execute("""
@@ -410,25 +525,40 @@ class DatabaseManager:
     
     def get_analytics_summary(self):
         """Get analytics summary data"""
+        if not self.db_available:
+            # Return default analytics when database unavailable
+            return {
+                'total_products': 0,
+                'total_views': 0,
+                'total_favorites': 0,
+                'avg_price': 0.0,
+                'top_categories': {},
+                'recent_searches': []
+            }
+        
+        conn = self.get_connection()
+        if conn is None:
+            return {'total_products': 0, 'total_views': 0, 'total_favorites': 0, 'avg_price': 0.0, 'top_categories': {}, 'recent_searches': []}
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                     # Get basic metrics
                     cursor.execute("SELECT COUNT(*) as total_products FROM products")
                     result = cursor.fetchone()
-                    total_products = result['total_products'] if result else 0
+                    total_products = dict(result)['total_products'] if result else 0
                     
                     cursor.execute("SELECT COALESCE(SUM(views), 0) as total_views FROM products")
                     result = cursor.fetchone()
-                    total_views = result['total_views'] if result else 0
+                    total_views = dict(result)['total_views'] if result else 0
                     
                     cursor.execute("SELECT COALESCE(SUM(favorites), 0) as total_favorites FROM products")
                     result = cursor.fetchone()
-                    total_favorites = result['total_favorites'] if result else 0
+                    total_favorites = dict(result)['total_favorites'] if result else 0
                     
                     cursor.execute("SELECT COALESCE(AVG(price), 0) as avg_price FROM products")
                     result = cursor.fetchone()
-                    avg_price = result['avg_price'] if result else 0
+                    avg_price = dict(result)['avg_price'] if result else 0
                     
                     return {
                         'total_products': total_products,
@@ -440,19 +570,28 @@ class DatabaseManager:
                     }
         except Exception as e:
             st.error(f"Error getting analytics summary: {str(e)}")
-            return {}
+            return {'total_products': 0, 'total_views': 0, 'total_favorites': 0, 'avg_price': 0.0, 'top_categories': {}, 'recent_searches': []}
     
     # Review Management
     def add_review(self, review_data):
         """Add a customer review"""
+        if not self.db_available:
+            st.warning("Database unavailable - review not saved")
+            return False
+        
+        # Validate rating is between 1-5 first
+        rating = review_data.get('rating', 0)
+        if rating < 1 or rating > 5:
+            st.error("Rating must be between 1 and 5 stars")
+            return False
+        
+        conn = self.get_connection()
+        if conn is None:
+            return False
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cursor:
-                    # Validate rating is between 1-5
-                    rating = review_data.get('rating', 0)
-                    if rating < 1 or rating > 5:
-                        st.error("Rating must be between 1 and 5 stars")
-                        return False
                     
                     cursor.execute("""
                         INSERT INTO reviews (product_id, customer_name, customer_email, rating, comment, approved)
@@ -472,8 +611,15 @@ class DatabaseManager:
     
     def get_product_reviews(self, product_id, include_unapproved=False):
         """Get reviews for a specific product"""
+        if not self.db_available:
+            return []  # Return empty list when database unavailable
+        
+        conn = self.get_connection()
+        if conn is None:
+            return []
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                     if include_unapproved:
                         cursor.execute("""
@@ -506,8 +652,15 @@ class DatabaseManager:
     
     def get_average_rating(self, product_id):
         """Get average rating for a product"""
+        if not self.db_available:
+            return {'average_rating': 0, 'total_reviews': 0, 'rating_distribution': {}}
+        
+        conn = self.get_connection()
+        if conn is None:
+            return {'average_rating': 0, 'total_reviews': 0, 'rating_distribution': {}}
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                     cursor.execute("""
                         SELECT 
@@ -524,15 +677,16 @@ class DatabaseManager:
                     result = cursor.fetchone()
                     
                     if result:
+                        result_dict = dict(result)
                         return {
-                            'average_rating': float(result['avg_rating']),
-                            'total_reviews': int(result['total_reviews']),
+                            'average_rating': float(result_dict['avg_rating']),
+                            'total_reviews': int(result_dict['total_reviews']),
                             'rating_distribution': {
-                                '5': int(result['five_star']),
-                                '4': int(result['four_star']),
-                                '3': int(result['three_star']),
-                                '2': int(result['two_star']),
-                                '1': int(result['one_star'])
+                                '5': int(result_dict['five_star']),
+                                '4': int(result_dict['four_star']),
+                                '3': int(result_dict['three_star']),
+                                '2': int(result_dict['two_star']),
+                                '1': int(result_dict['one_star'])
                             }
                         }
                     return {'average_rating': 0, 'total_reviews': 0, 'rating_distribution': {}}
@@ -542,15 +696,24 @@ class DatabaseManager:
     
     def update_review(self, review_id, review_data):
         """Update an existing review"""
+        if not self.db_available:
+            st.warning("Database unavailable - review not updated")
+            return False
+        
+        # Validate rating if provided
+        if 'rating' in review_data:
+            rating = review_data['rating']
+            if rating < 1 or rating > 5:
+                st.error("Rating must be between 1 and 5 stars")
+                return False
+        
+        conn = self.get_connection()
+        if conn is None:
+            return False
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cursor:
-                    # Validate rating if provided
-                    if 'rating' in review_data:
-                        rating = review_data['rating']
-                        if rating < 1 or rating > 5:
-                            st.error("Rating must be between 1 and 5 stars")
-                            return False
                     
                     # Build dynamic update query
                     set_clauses = []
@@ -575,8 +738,16 @@ class DatabaseManager:
     
     def delete_review(self, review_id):
         """Delete a review"""
+        if not self.db_available:
+            st.warning("Database unavailable - review not deleted")
+            return False
+        
+        conn = self.get_connection()
+        if conn is None:
+            return False
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cursor:
                     cursor.execute("DELETE FROM reviews WHERE id = %s", (review_id,))
                     conn.commit()
@@ -588,8 +759,16 @@ class DatabaseManager:
     # Order Management (for next phase)
     def create_order(self, order_data, order_items):
         """Create a new order with items"""
+        if not self.db_available:
+            st.warning("Database unavailable - order not created")
+            return None
+        
+        conn = self.get_connection()
+        if conn is None:
+            return None
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cursor:
                     # Insert order
                     cursor.execute("""
@@ -618,8 +797,15 @@ class DatabaseManager:
     
     def get_orders(self):
         """Get all orders"""
+        if not self.db_available:
+            return []  # Return empty list when database unavailable
+        
+        conn = self.get_connection()
+        if conn is None:
+            return []
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                     cursor.execute("""
                         SELECT o.*, 
@@ -640,8 +826,16 @@ class DatabaseManager:
     # User Management
     def create_user(self, oauth_provider, oauth_id, email, name, avatar_url=None, profile_data=None):
         """Create a new user from OAuth data"""
+        if not self.db_available:
+            st.warning("Database unavailable - user not created")
+            return None
+        
+        conn = self.get_connection()
+        if conn is None:
+            return None
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cursor:
                     cursor.execute("""
                         INSERT INTO users (oauth_provider, oauth_id, email, name, avatar_url, profile_data)
@@ -666,8 +860,15 @@ class DatabaseManager:
     
     def get_user_by_oauth(self, oauth_provider, oauth_id):
         """Get user by OAuth provider and ID"""
+        if not self.db_available:
+            return None  # Return None when database unavailable
+        
+        conn = self.get_connection()
+        if conn is None:
+            return None
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                     cursor.execute("""
                         SELECT * FROM users 
@@ -681,8 +882,15 @@ class DatabaseManager:
     
     def get_user_by_id(self, user_id):
         """Get user by ID"""
+        if not self.db_available:
+            return None  # Return None when database unavailable
+        
+        conn = self.get_connection()
+        if conn is None:
+            return None
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                     cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
                     row = cursor.fetchone()
@@ -694,14 +902,23 @@ class DatabaseManager:
     # Messaging System
     def send_message(self, message_data):
         """Send a message between buyer and seller"""
+        if not self.db_available:
+            st.warning("Database unavailable - message not sent")
+            return False
+        
+        # Validate sender_type first
+        sender_type = message_data.get('sender_type', '')
+        if sender_type not in ['buyer', 'seller']:
+            st.error("Sender type must be 'buyer' or 'seller'")
+            return False
+        
+        conn = self.get_connection()
+        if conn is None:
+            return False
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cursor:
-                    # Validate sender_type
-                    sender_type = message_data.get('sender_type', '')
-                    if sender_type not in ['buyer', 'seller']:
-                        st.error("Sender type must be 'buyer' or 'seller'")
-                        return False
                     
                     cursor.execute("""
                         INSERT INTO messages (
@@ -722,8 +939,15 @@ class DatabaseManager:
     
     def get_messages_for_product(self, product_id, sender_email=None):
         """Get all messages related to a specific product"""
+        if not self.db_available:
+            return []  # Return empty list when database unavailable
+        
+        conn = self.get_connection()
+        if conn is None:
+            return []
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                     if sender_email:
                         cursor.execute("""
@@ -758,8 +982,15 @@ class DatabaseManager:
     
     def get_conversations(self, email=None, sender_type=None):
         """Get conversations grouped by product and participants"""
+        if not self.db_available:
+            return []  # Return empty list when database unavailable
+        
+        conn = self.get_connection()
+        if conn is None:
+            return []
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                     base_query = """
                         SELECT 
@@ -812,8 +1043,15 @@ class DatabaseManager:
     
     def mark_message_as_read(self, message_id):
         """Mark a specific message as read"""
+        if not self.db_available:
+            return False  # Silently fail when database unavailable
+        
+        conn = self.get_connection()
+        if conn is None:
+            return False
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cursor:
                     cursor.execute("""
                         UPDATE messages 
@@ -828,8 +1066,15 @@ class DatabaseManager:
     
     def mark_conversation_as_read(self, product_id, sender_email):
         """Mark all messages in a conversation as read"""
+        if not self.db_available:
+            return False  # Silently fail when database unavailable
+        
+        conn = self.get_connection()
+        if conn is None:
+            return False
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cursor:
                     cursor.execute("""
                         UPDATE messages 
@@ -844,8 +1089,15 @@ class DatabaseManager:
     
     def get_message_thread(self, product_id, participant_emails):
         """Get message thread between specific participants for a product"""
+        if not self.db_available:
+            return []  # Return empty list when database unavailable
+        
+        conn = self.get_connection()
+        if conn is None:
+            return []
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                     cursor.execute("""
                         SELECT m.*, p.name as product_name
@@ -874,8 +1126,15 @@ class DatabaseManager:
     
     def get_unread_message_count(self, email=None):
         """Get count of unread messages for a user"""
+        if not self.db_available:
+            return 0  # Return 0 when database unavailable
+        
+        conn = self.get_connection()
+        if conn is None:
+            return 0
+        
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                     if email:
                         cursor.execute("""
@@ -891,7 +1150,7 @@ class DatabaseManager:
                         """)
                     
                     result = cursor.fetchone()
-                    return int(result['unread_count']) if result else 0
+                    return int(dict(result)['unread_count']) if result else 0
         except Exception as e:
             st.error(f"Error getting unread message count: {str(e)}")
             return 0

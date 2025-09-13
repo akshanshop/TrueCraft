@@ -488,12 +488,13 @@ def render_seo_title_generator(form_key_suffix=""):
             else:
                 st.warning("Please fill in all required fields")
 
-def render_pricing_analyzer():
+def render_pricing_analyzer(form_key_suffix=""):
     """Render comprehensive pricing analysis tool"""
     st.subheader("💰 Pricing Analysis & Strategy")
     st.write("Get AI-powered pricing recommendations based on materials, time, and market factors")
     
-    with st.form("pricing_analyzer"):
+    form_key = f"pricing_analyzer{form_key_suffix}"
+    with st.form(form_key):
         col1, col2 = st.columns(2)
         with col1:
             product_name = st.text_input("Product Name")
@@ -610,12 +611,13 @@ def render_brand_voice_analyzer(form_key_suffix=""):
             else:
                 st.warning("Please fill in your bio and product description")
 
-def render_content_calendar_generator():
+def render_content_calendar_generator(form_key_suffix=""):
     """Render content calendar generator for social media"""
     st.subheader("📅 Content Calendar Generator")
     st.write("Generate a comprehensive 4-week content calendar for your social media")
     
-    with st.form("content_calendar"):
+    form_key = f"content_calendar{form_key_suffix}"
+    with st.form(form_key):
         col1, col2 = st.columns(2)
         with col1:
             business_type = st.text_input("Business Type", placeholder="e.g., handmade jewelry, pottery studio")
@@ -640,12 +642,13 @@ def render_content_calendar_generator():
             else:
                 st.warning("Please describe your business type")
 
-def render_competitive_analysis_generator():
+def render_competitive_analysis_generator(form_key_suffix=""):
     """Render competitive analysis tool"""
     st.subheader("⚖️ Competitive Analysis")
     st.write("Get insights on market positioning and competitive advantages")
     
-    with st.form("competitive_analysis"):
+    form_key = f"competitive_analysis{form_key_suffix}"
+    with st.form(form_key):
         col1, col2 = st.columns(2)
         with col1:
             product_type = st.text_input("Product Type", placeholder="e.g., handmade ceramic mugs")
@@ -692,11 +695,11 @@ def render_ai_business_toolkit():
         with col1:
             render_photography_tips_generator("_toolkit")
         with col2:
-            render_content_calendar_generator()
+            render_content_calendar_generator("_toolkit")
     
     with tab3:
         st.markdown("### Business Strategy Tools")
-        render_pricing_analyzer()
+        render_pricing_analyzer("_toolkit")
     
     with tab4:
         st.markdown("### Brand & Analysis Tools")
@@ -704,4 +707,4 @@ def render_ai_business_toolkit():
         with col1:
             render_brand_voice_analyzer("_toolkit")
         with col2:
-            render_competitive_analysis_generator()
+            render_competitive_analysis_generator("_toolkit")

@@ -541,5 +541,5 @@ with tab2:
 
 with tab3:
     render_brand_voice_analyzer("_standalone")
-    render_content_calendar_generator()
+    render_content_calendar_generator("_standalone")
     render_seasonal_marketing_generator("_standalone_profile")

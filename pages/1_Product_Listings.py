@@ -738,5 +738,5 @@ with tab3:
         render_seo_title_generator("_standalone")
         render_photography_tips_generator("_standalone")
     with col2:
-        render_pricing_analyzer()
+        render_pricing_analyzer("_standalone")
         render_seasonal_marketing_generator("_standalone_products")
