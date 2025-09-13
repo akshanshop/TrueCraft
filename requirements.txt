@@ -10,3 +10,15 @@ python-jose
 requests-oauthlib
 authlib
 requests
+base64
+io
+plotly.express
+plotly.graph_objects
+time
+os
+json
+hashlib
+secrets
+urllib.parse
+requests
+psycopg2
