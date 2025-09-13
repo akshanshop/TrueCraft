@@ -520,12 +520,13 @@ def render_pricing_analyzer():
             else:
                 st.warning("Please fill in all required fields")
 
-def render_photography_tips_generator():
+def render_photography_tips_generator(form_key_suffix=""):
     """Render personalized product photography tips generator"""
     st.subheader("📸 Product Photography Tips")
     st.write("Get personalized photography advice for your specific products")
     
-    with st.form("photography_tips"):
+    form_key = f"photography_tips{form_key_suffix}"
+    with st.form(form_key):
         col1, col2 = st.columns(2)
         with col1:
             product_type = st.text_input("Product Type", placeholder="e.g., handmade necklace, ceramic bowl")
@@ -550,12 +551,13 @@ def render_photography_tips_generator():
             else:
                 st.warning("Please fill in the product type and materials")
 
-def render_seasonal_marketing_generator():
+def render_seasonal_marketing_generator(form_key_suffix=""):
     """Render seasonal marketing content generator"""
     st.subheader("🎄 Seasonal Marketing Content")
     st.write("Create targeted seasonal marketing content for holidays and special occasions")
     
-    with st.form("seasonal_marketing"):
+    form_key = f"seasonal_marketing{form_key_suffix}"
+    with st.form(form_key):
         col1, col2 = st.columns(2)
         with col1:
             products_list = st.text_area("Your Products", placeholder="List your main products...")
@@ -580,12 +582,13 @@ def render_seasonal_marketing_generator():
             else:
                 st.warning("Please describe your products")
 
-def render_brand_voice_analyzer():
+def render_brand_voice_analyzer(form_key_suffix=""):
     """Render brand voice analysis and messaging strategy tool"""
     st.subheader("🎯 Brand Voice & Messaging Strategy")
     st.write("Analyze your brand and get personalized messaging recommendations")
     
-    with st.form("brand_voice_analyzer"):
+    form_key = f"brand_voice_analyzer{form_key_suffix}"
+    with st.form(form_key):
         bio = st.text_area("Your Bio/Story", placeholder="Tell us about yourself and your craft...")
         products_description = st.text_area("Products Description", placeholder="Describe your products and what makes them unique...")
         target_customers = st.text_area("Target Customers", placeholder="Describe your ideal customers...")
@@ -681,13 +684,13 @@ def render_ai_business_toolkit():
         with col1:
             render_seo_title_generator("_toolkit")
         with col2:
-            render_seasonal_marketing_generator()
+            render_seasonal_marketing_generator("_toolkit")
     
     with tab2:
         st.markdown("### Content & Creative Tools")
         col1, col2 = st.columns(2)
         with col1:
-            render_photography_tips_generator()
+            render_photography_tips_generator("_toolkit")
         with col2:
             render_content_calendar_generator()
     
@@ -699,6 +702,6 @@ def render_ai_business_toolkit():
         st.markdown("### Brand & Analysis Tools")
         col1, col2 = st.columns(2)
         with col1:
-            render_brand_voice_analyzer()
+            render_brand_voice_analyzer("_toolkit")
         with col2:
             render_competitive_analysis_generator()

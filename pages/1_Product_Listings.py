@@ -736,7 +736,7 @@ with tab3:
     col1, col2 = st.columns(2)
     with col1:
         render_seo_title_generator("_standalone")
-        render_photography_tips_generator()
+        render_photography_tips_generator("_standalone")
     with col2:
         render_pricing_analyzer()
-        render_seasonal_marketing_generator()
+        render_seasonal_marketing_generator("_standalone_products")

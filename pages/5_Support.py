@@ -5,6 +5,12 @@ from utils.database_manager import DatabaseManager
 from utils.ai_assistant import AIAssistant
 from utils.ai_ui_components import AIUIComponents
 
+st.set_page_config(
+    page_title="Support - TrueCraft",
+    page_icon="🆘",
+    layout="wide"
+)
+
 # Initialize database manager
 @st.cache_resource
 def get_database_manager():
@@ -24,12 +30,6 @@ def get_ai_assistant():
         return None
 
 ai_ui = AIUIComponents()
-
-st.set_page_config(
-    page_title="Support - TrueCraft",
-    page_icon="🆘",
-    layout="wide"
-)
 
 # Custom CSS for support interface
 st.markdown("""

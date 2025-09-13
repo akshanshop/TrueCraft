@@ -540,6 +540,6 @@ with tab2:
     render_ai_business_toolkit()
 
 with tab3:
-    render_brand_voice_analyzer()
+    render_brand_voice_analyzer("_standalone")
     render_content_calendar_generator()
-    render_seasonal_marketing_generator()
+    render_seasonal_marketing_generator("_standalone_profile")
