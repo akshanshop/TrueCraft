@@ -443,99 +443,107 @@ with tab3:
     
     # Getting Started Guide
     with st.expander("🚀 **Getting Started Guide for New Artisans**", expanded=True):
+        st.markdown('<div class="help-category">', unsafe_allow_html=True)
+        
+        st.markdown("#### Welcome to TrueCraft! Here's how to get started:")
+        
+        st.markdown("##### Step 1: Create Your Profile")
         st.markdown("""
-        <div class="help-category">
-            <h4>Welcome to ArtisanAI! Here's how to get started:</h4>
-            
-            <h5>Step 1: Create Your Profile</h5>
-            <ul>
-                <li>Go to the <strong>Artisan Profile</strong> page</li>
-                <li>Fill in your personal information and craft specialties</li>
-                <li>Write a compelling bio using our AI assistant</li>
-                <li>Add social media links and contact information</li>
-            </ul>
-            
-            <h5>Step 2: Add Your First Product</h5>
-            <ul>
-                <li>Navigate to <strong>Product Listings</strong></li>
-                <li>Click "Add New Product" and fill in details</li>
-                <li>Upload high-quality product images</li>
-                <li>Use AI assistance for descriptions and pricing</li>
-            </ul>
-            
-            <h5>Step 3: Optimize and Promote</h5>
-            <ul>
-                <li>Review analytics to understand performance</li>
-                <li>Respond to customer messages promptly</li>
-                <li>Update listings based on feedback</li>
-                <li>Add more products to expand your catalog</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+        - Go to the **Artisan Profile** page
+        - Fill in your personal information and craft specialties  
+        - Write a compelling bio using our AI assistant
+        - Add social media links and contact information
+        """)
+        
+        st.markdown("##### Step 2: Add Your First Product")
+        st.markdown("""
+        - Navigate to **Product Listings**
+        - Click "Add New Product" and fill in details
+        - Upload high-quality product images
+        - Use AI assistance for descriptions and pricing
+        """)
+        
+        st.markdown("##### Step 3: Optimize and Promote")
+        st.markdown("""
+        - Review analytics to understand performance
+        - Respond to customer messages promptly
+        - Update listings based on feedback
+        - Add more products to expand your catalog
+        """)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
     
     # Platform Features Guide
     with st.expander("🎨 **Platform Features Overview**"):
+        st.markdown('<div class="help-category">', unsafe_allow_html=True)
+        
+        st.markdown("#### Key Features and How to Use Them:")
+        
+        st.markdown("##### 🤖 AI Assistant")
         st.markdown("""
-        <div class="help-category">
-            <h4>Key Features and How to Use Them:</h4>
-            
-            <h5>🤖 AI Assistant</h5>
-            <p>Get help with product descriptions, pricing suggestions, and profile optimization. 
-            The AI analyzes your inputs and provides tailored recommendations.</p>
-            
-            <h5>📊 Analytics Dashboard</h5>
-            <p>Track product views, favorites, and performance metrics. Use insights to 
-            improve your listings and understand customer preferences.</p>
-            
-            <h5>💬 Messaging System</h5>
-            <p>Communicate directly with potential customers. Manage inquiries, negotiate 
-            custom orders, and build relationships.</p>
-            
-            <h5>⭐ Reviews & Ratings</h5>
-            <p>Collect customer feedback to build trust and credibility. Monitor reviews 
-            and respond to customer concerns.</p>
-        </div>
-        """, unsafe_allow_html=True)
+        Get help with product descriptions, pricing suggestions, and profile optimization. 
+        The AI analyzes your inputs and provides tailored recommendations.
+        """)
+        
+        st.markdown("##### 📊 Analytics Dashboard")
+        st.markdown("""
+        Track product views, favorites, and performance metrics. Use insights to 
+        improve your listings and understand customer preferences.
+        """)
+        
+        st.markdown("##### 💬 Messaging System")
+        st.markdown("""
+        Communicate directly with potential customers. Manage inquiries, negotiate 
+        custom orders, and build relationships.
+        """)
+        
+        st.markdown("##### ⭐ Reviews & Ratings")
+        st.markdown("""
+        Collect customer feedback to build trust and credibility. Monitor reviews 
+        and respond to customer concerns.
+        """)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
     
     # Best Practices
     with st.expander("🌟 **Best Practices for Success**"):
+        st.markdown('<div class="help-category">', unsafe_allow_html=True)
+        
+        st.markdown("#### Tips for Artisan Success:")
+        
+        st.markdown("##### 📷 Product Photography")
         st.markdown("""
-        <div class="help-category">
-            <h4>Tips for Artisan Success:</h4>
-            
-            <h5>📷 Product Photography</h5>
-            <ul>
-                <li>Use natural lighting when possible</li>
-                <li>Show multiple angles and details</li>
-                <li>Include size references (coins, hands, etc.)</li>
-                <li>Keep backgrounds clean and uncluttered</li>
-            </ul>
-            
-            <h5>✍️ Writing Compelling Descriptions</h5>
-            <ul>
-                <li>Tell the story behind your piece</li>
-                <li>Highlight unique materials and techniques</li>
-                <li>Mention care instructions and durability</li>
-                <li>Use emotional language that connects with buyers</li>
-            </ul>
-            
-            <h5>💰 Pricing Strategies</h5>
-            <ul>
-                <li>Factor in materials, time, and skill level</li>
-                <li>Research similar products in the market</li>
-                <li>Consider offering different price points</li>
-                <li>Don't undervalue your artistic work</li>
-            </ul>
-            
-            <h5>🤝 Customer Relations</h5>
-            <ul>
-                <li>Respond to messages within 24 hours</li>
-                <li>Be clear about shipping times and costs</li>
-                <li>Offer customization when possible</li>
-                <li>Follow up after sales for feedback</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+        - Use natural lighting when possible
+        - Show multiple angles and details
+        - Include size references (coins, hands, etc.)
+        - Keep backgrounds clean and uncluttered
+        """)
+        
+        st.markdown("##### ✍️ Writing Compelling Descriptions")
+        st.markdown("""
+        - Tell the story behind your piece
+        - Highlight unique materials and techniques
+        - Mention care instructions and durability
+        - Use emotional language that connects with buyers
+        """)
+        
+        st.markdown("##### 💰 Pricing Strategies")
+        st.markdown("""
+        - Factor in materials, time, and skill level
+        - Research similar products in the market
+        - Consider offering different price points
+        - Don't undervalue your artistic work
+        """)
+        
+        st.markdown("##### 🤝 Customer Relations")
+        st.markdown("""
+        - Respond to messages within 24 hours
+        - Be clear about shipping times and costs
+        - Offer customization when possible
+        - Follow up after sales for feedback
+        """)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
 
 with tab4:
     st.subheader("🔧 Troubleshooting Common Issues")
