@@ -23,6 +23,28 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Handle OAuth callback if present
+query_params = st.query_params
+if 'code' in query_params and 'state' in query_params:
+    provider = query_params.get('provider', 'google')  # Default to google if not specified
+    code = query_params['code']
+    state = query_params['state']
+    
+    # Get the current URL for redirect_uri
+    redirect_uri = st.get_option("server.baseUrl") or "http://localhost:5000"
+    if not redirect_uri.endswith('/'):
+        redirect_uri += '/'
+    
+    # Handle the OAuth callback
+    if auth_manager.handle_oauth_callback(provider, code, state, redirect_uri):
+        st.success(f"Successfully signed in with {provider.title()}!")
+        # Clear query parameters and refresh
+        st.query_params.clear()
+        st.rerun()
+    else:
+        st.error("Authentication failed. Please try again.")
+        st.query_params.clear()
+
 
 # Custom CSS for warm, crafted aesthetic using Streamlit's built-in styling
 st.markdown("""
