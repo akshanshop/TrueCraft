@@ -457,12 +457,13 @@ def get_ai_assistant():
         st.warning("AI features are currently unavailable. Please check your API key configuration.")
         return None
 
-def render_seo_title_generator():
+def render_seo_title_generator(form_key_suffix=""):
     """Render SEO-optimized title generator"""
     st.subheader("🔍 SEO Title Generator")
     st.write("Generate search engine optimized product titles that attract buyers")
     
-    with st.form("seo_title_generator"):
+    form_key = f"seo_title_generator{form_key_suffix}"
+    with st.form(form_key):
         col1, col2 = st.columns(2)
         with col1:
             product_name = st.text_input("Product Name")
@@ -678,7 +679,7 @@ def render_ai_business_toolkit():
         st.markdown("### Marketing & SEO Tools")
         col1, col2 = st.columns(2)
         with col1:
-            render_seo_title_generator()
+            render_seo_title_generator("_toolkit")
         with col2:
             render_seasonal_marketing_generator()
     
