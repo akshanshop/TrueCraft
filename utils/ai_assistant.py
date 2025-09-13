@@ -1,5 +1,6 @@
 import json
 import os
+from typing import Optional
 from openai import OpenAI
 
 class AIAssistant:
@@ -8,12 +9,29 @@ class AIAssistant:
         # do not change this unless explicitly requested by the user
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            raise ValueError("OPENAI_API_KEY environment variable is required")
-        self.client = OpenAI(api_key=api_key)
-        self.model = "gpt-5"
+            self.enabled: bool = False
+            self.client: Optional[OpenAI] = None
+            self.model: str = "gpt-5"
+        else:
+            self.enabled: bool = True
+            self.client: Optional[OpenAI] = OpenAI(api_key=api_key)
+            self.model: str = "gpt-5"
+    
+    def _check_enabled(self):
+        """Check if AI features are enabled, return error message if not"""
+        if not self.enabled:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
+        return None
     
     def generate_product_description(self, name, category, materials, price=None):
         """Generate compelling product descriptions for artisan products"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
         
         price_context = f" with a price point of ${price}" if price else ""
         
@@ -49,6 +67,13 @@ class AIAssistant:
     
     def suggest_pricing(self, name, category, materials, dimensions=None):
         """Provide AI-powered pricing suggestions based on product details"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return {"min_price": 0, "max_price": 0, "reasoning": error_msg}
+        
+        if not self.client:
+            return {"min_price": 0, "max_price": 0, "reasoning": "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."}
         
         dimensions_context = f" with dimensions {dimensions}" if dimensions else ""
         
@@ -90,6 +115,13 @@ class AIAssistant:
     def generate_artist_bio(self, name, craft_type, experience, inspiration, unique_aspect):
         """Generate compelling artist bios and stories"""
         
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
+        
         prompt = f"""
         Create a compelling artisan bio for:
         - Name/Business: {name}
@@ -124,6 +156,13 @@ class AIAssistant:
     
     def generate_social_media_post(self, topic, platform, tone):
         """Generate social media content for artisans"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
         
         platform_guidelines = {
             "Instagram": "Visual-focused, use relevant hashtags, engaging captions",
@@ -163,6 +202,13 @@ class AIAssistant:
     def generate_custom_content(self, content_type, context, specific_request):
         """Generate custom content based on user specifications"""
         
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
+        
         prompt = f"""
         Help create {content_type} content with this context:
         
@@ -195,6 +241,13 @@ class AIAssistant:
     def analyze_product_image(self, image_data):
         """Analyze product images to suggest improvements or generate descriptions"""
         
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
+        
         prompt = """
         Analyze this product image and provide:
         1. A detailed description of what you see
@@ -225,10 +278,17 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to analyze product image: {str(e)}")
+            return "AI image analysis temporarily unavailable. Please try again later."
     
     def generate_message_template(self, message_type, product_name=None, context=None):
         """Generate message templates for buyer-seller communications"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
         
         product_context = f" about {product_name}" if product_name else ""
         additional_context = f"Additional context: {context}" if context else ""
@@ -274,10 +334,17 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate message template: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     def improve_text(self, original_text, improvement_type="general"):
         """Improve existing text content for better clarity and impact"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
         
         improvement_types = {
             "grammar": "Correct grammar, spelling, and punctuation while maintaining the original tone and meaning",
@@ -316,10 +383,17 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to improve text: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     def generate_support_ticket(self, issue_type, description, urgency="medium"):
         """Generate well-structured support ticket content"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
         
         prompt = f"""
         Help create a clear, professional support ticket for this issue:
@@ -352,10 +426,17 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate support ticket: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     def generate_review_response(self, review_text, rating, response_type="thank_you"):
         """Generate professional responses to customer reviews"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
         
         response_types = {
             "thank_you": "grateful response acknowledging positive feedback",
@@ -395,10 +476,17 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate review response: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     def generate_review_template(self, product_category, rating=5):
         """Generate thoughtful review templates for customers"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
         
         prompt = f"""
         Create a thoughtful review template for a {product_category} product with {rating} stars.
@@ -424,10 +512,17 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate review template: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     def quick_improve_suggestions(self, text, field_type="general"):
         """Provide quick, actionable suggestions for improving text"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
         
         field_contexts = {
             "product_name": "product title that needs to be catchy and descriptive",
@@ -468,12 +563,19 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate improvement suggestions: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     # ===== ENHANCED AI BUSINESS TOOLS =====
     
     def generate_seo_optimized_title(self, product_name, category, keywords=None):
         """Generate SEO-optimized product titles"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+            
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
+            
         try:
             keywords_text = f" with focus on keywords: {keywords}" if keywords else ""
             prompt = f"""
@@ -502,10 +604,17 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate SEO titles: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     def generate_pricing_analysis(self, product_name, materials, time_hours, skill_level, category):
         """Generate AI-powered pricing analysis and suggestions"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+            
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
+            
         try:
             prompt = f"""
             Provide pricing analysis for a handmade {category} product:
@@ -539,10 +648,17 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate pricing analysis: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     def generate_product_photography_tips(self, product_type, materials, setting="home"):
         """Generate personalized product photography tips"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+            
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
+            
         try:
             prompt = f"""
             Create specific photography tips for a {product_type} made from {materials}, photographing in a {setting} setting.
@@ -571,10 +687,17 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate photography tips: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     def generate_seasonal_marketing_content(self, products_list, season_or_holiday, target_audience="general"):
         """Generate seasonal marketing content and strategies"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+            
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
+            
         try:
             prompt = f"""
             Create seasonal marketing content for {season_or_holiday} targeting {target_audience}.
@@ -605,10 +728,17 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate seasonal content: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     def generate_brand_voice_analysis(self, bio, products_description, target_customers):
         """Analyze and suggest brand voice and messaging"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+            
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
+            
         try:
             prompt = f"""
             Analyze this artisan's brand and suggest voice/messaging strategy:
@@ -641,10 +771,17 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate brand voice analysis: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     def generate_content_calendar(self, business_type, posting_frequency, special_events=None):
         """Generate a content calendar for social media and marketing"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+            
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
+            
         try:
             events_text = f" considering these special events: {special_events}" if special_events else ""
             prompt = f"""
@@ -674,10 +811,17 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate content calendar: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     def generate_customer_personas(self, products, business_info, current_customers_info=None):
         """Generate detailed customer personas"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+            
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
+            
         try:
             current_info = f" Current customers: {current_customers_info}" if current_customers_info else ""
             prompt = f"""
@@ -710,10 +854,17 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate customer personas: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     def generate_competitive_analysis(self, product_type, price_range, unique_features):
         """Generate competitive analysis and positioning advice"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+            
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
+            
         try:
             prompt = f"""
             Provide competitive analysis for a {product_type} priced around {price_range} with these unique features: {unique_features}.
@@ -742,10 +893,17 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate competitive analysis: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     def generate_email_marketing_sequence(self, business_name, product_type, customer_journey_stage):
         """Generate email marketing sequences for different customer stages"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+            
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure OPENAI_API_KEY to enable AI features."
+            
         try:
             prompt = f"""
             Create a 3-email sequence for {business_name} selling {product_type} targeting customers at the {customer_journey_stage} stage.
@@ -778,4 +936,4 @@ class AIAssistant:
             content = response.choices[0].message.content
             return content.strip() if content else ""
         except Exception as e:
-            raise Exception(f"Failed to generate email sequence: {str(e)}")
+            return "AI assistance temporarily unavailable. Please try again later."
