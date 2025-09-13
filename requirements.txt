@@ -1,0 +1,12 @@
+streamlit
+pandas
+pillow
+plotly
+httpx
+openai
+streamlit-authenticator
+psycopg2-binary
+python-jose
+requests-oauthlib
+authlib
+requests
