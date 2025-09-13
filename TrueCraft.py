@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import os
 from utils.database_manager import DatabaseManager
 from utils.auth_manager import AuthManager
 
@@ -30,10 +31,8 @@ if 'code' in query_params and 'state' in query_params:
     code = query_params['code']
     state = query_params['state']
     
-    # Get the current URL for redirect_uri
-    redirect_uri = st.get_option("server.baseUrl") or "http://localhost:5000"
-    if not redirect_uri.endswith('/'):
-        redirect_uri += '/'
+    # Get the current URL for redirect_uri - Replit environment
+    redirect_uri = "https://" + str(os.getenv('REPL_ID', 'localhost')) + ".replit.app/"
     
     # Handle the OAuth callback
     if auth_manager.handle_oauth_callback(provider, code, state, redirect_uri):
@@ -100,12 +99,26 @@ with st.sidebar:
                 st.success("Successfully logged out!")
                 st.rerun()
     else:
-        st.markdown("### 🔐 Sign In Required")
-        st.info("Sign in to access your profile and saved data.")
+        st.markdown("### 🔐 Sign In")
+        st.markdown("Connect to access your profile and saved data.")
         
-        if st.button("🔐 Sign In", use_container_width=True, type="primary"):
-            # Scroll to sign-in section on main page
-            st.info("Please use the sign-in buttons on the main page above.")
+        # Get current URL for redirect URI - Replit environment
+        redirect_uri = "https://" + str(os.getenv('REPL_ID', 'localhost')) + ".replit.app/"
+        
+        # Google Login - Real OAuth
+        if auth_manager.is_provider_configured('google'):
+            google_url = auth_manager.get_oauth_url('google', redirect_uri)
+            if google_url:
+                st.markdown(f'<a href="{google_url}" target="_self"><button style="width:100%; padding:8px; background:#db4437; color:white; border:none; border-radius:5px; font-size:14px; cursor:pointer; margin:5px 0;">🔴 Continue with Google</button></a>', unsafe_allow_html=True)
+        
+        # GitHub Login - Real OAuth
+        if auth_manager.is_provider_configured('github'):
+            github_url = auth_manager.get_oauth_url('github', redirect_uri)
+            if github_url:
+                st.markdown(f'<a href="{github_url}" target="_self"><button style="width:100%; padding:8px; background:#333; color:white; border:none; border-radius:5px; font-size:14px; cursor:pointer; margin:5px 0;">⚫ Continue with GitHub</button></a>', unsafe_allow_html=True)
+        
+        if not any(auth_manager.is_provider_configured(p) for p in ['google', 'github']):
+            st.warning("OAuth setup required")
     
 
 # Main Navigation Section

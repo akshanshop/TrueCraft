@@ -274,37 +274,44 @@ class AuthManager:
         return True
     
     def show_login_form(self):
-        """Display login form with social providers"""
+        """Display login form with real social providers"""
         st.subheader("🔐 Sign In to TrueCraft")
-        st.markdown("Connect with your favorite social platform to save your data and access all features.")
+        st.markdown("Connect with your social account to save your data and access all features.")
+        
+        # Get current URL for redirect URI - Replit environment
+        redirect_uri = "https://" + str(os.getenv('REPL_ID', 'localhost')) + ".replit.app/"
         
         col1, col2 = st.columns(2)
         
         with col1:
             st.markdown("### Quick Sign In")
             
-            # Google Login
-            if st.button("🔴 Continue with Google", use_container_width=True, type="primary"):
-                # Demo implementation - in real app, redirect to OAuth URL
-                st.info("Google OAuth would redirect here. This is a demo implementation.")
-            
-            # Facebook Login
-            if st.button("🔵 Continue with Facebook", use_container_width=True):
-                # Demo implementation - in real app, redirect to OAuth URL
-                st.info("Facebook OAuth would redirect here. This is a demo implementation.")
+            # Google Login - Real OAuth
+            if self.is_provider_configured('google'):
+                google_url = self.get_oauth_url('google', redirect_uri)
+                if google_url:
+                    st.markdown(f'<a href="{google_url}" target="_self"><button style="width:100%; padding:10px; background:#db4437; color:white; border:none; border-radius:5px; font-size:16px; cursor:pointer;">🔴 Continue with Google</button></a>', unsafe_allow_html=True)
+                else:
+                    st.error("Google OAuth not properly configured")
+            else:
+                st.info("Google sign-in: Configuration needed")
         
         with col2:
-            st.markdown("### Professional Networks")
+            st.markdown("### Developer Platform")
             
-            # LinkedIn Login
-            if st.button("🔗 Continue with LinkedIn", use_container_width=True):
-                # Demo implementation - in real app, redirect to OAuth URL
-                st.info("LinkedIn OAuth would redirect here. This is a demo implementation.")
-            
-            # Twitter Login
-            if st.button("🐦 Continue with Twitter", use_container_width=True):
-                # Demo implementation - in real app, redirect to OAuth URL
-                st.info("Twitter OAuth would redirect here. This is a demo implementation.")
+            # GitHub Login - Real OAuth
+            if self.is_provider_configured('github'):
+                github_url = self.get_oauth_url('github', redirect_uri)
+                if github_url:
+                    st.markdown(f'<a href="{github_url}" target="_self"><button style="width:100%; padding:10px; background:#333; color:white; border:none; border-radius:5px; font-size:16px; cursor:pointer;">⚫ Continue with GitHub</button></a>', unsafe_allow_html=True)
+                else:
+                    st.error("GitHub OAuth not properly configured")
+            else:
+                st.info("GitHub sign-in: Configuration needed")
+        
+        # Show available providers status
+        if not any(self.is_provider_configured(p) for p in ['google', 'github']):
+            st.warning("No OAuth providers are configured. Please check your environment variables.")
         
         st.divider()
         st.markdown("*Your data is secure and we only access basic profile information.*")
