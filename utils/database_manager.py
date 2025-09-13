@@ -1002,7 +1002,7 @@ class DatabaseManager:
                             COUNT(*) as message_count,
                             MAX(m.timestamp) as last_message_time,
                             COUNT(CASE WHEN NOT m.is_read THEN 1 END) as unread_count,
-                            STRING_AGG(DISTINCT m.subject, '; ' ORDER BY m.timestamp DESC) as subjects
+                            STRING_AGG(DISTINCT m.subject, '; ') as subjects
                         FROM messages m
                         JOIN products p ON m.product_id = p.id
                     """
