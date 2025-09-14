@@ -7,7 +7,7 @@ import base64
 import urllib.parse
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
-from utils.database_manager import DatabaseManager
+from utils.database_factory import create_database_service
 
 try:
     from authlib.integrations.requests_client import OAuth2Session
@@ -21,7 +21,7 @@ except ImportError:
 class AuthManager:
     def __init__(self):
         """Initialize authentication manager"""
-        self.db_manager = DatabaseManager()
+        self.db_manager = create_database_service()
         self.oauth_available = OAUTH_AVAILABLE
         
         # OAuth provider configurations

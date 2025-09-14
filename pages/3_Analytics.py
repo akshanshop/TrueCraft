@@ -3,14 +3,14 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
-from utils.database_manager import DatabaseManager
+from utils.database_factory import create_database_service
 
 # Initialize components
 @st.cache_resource
-def get_database_manager():
-    return DatabaseManager()
+def get_database_service():
+    return create_database_service()
 
-db_manager = get_database_manager()
+db_manager = get_database_service()
 
 st.set_page_config(
     page_title="Analytics - TrueCraft",

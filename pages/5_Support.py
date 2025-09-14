@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-from utils.database_manager import DatabaseManager
+from utils.database_factory import create_database_service
 from utils.ai_assistant import AIAssistant
 from utils.ai_ui_components import AIUIComponents
 
@@ -13,10 +13,10 @@ st.set_page_config(
 
 # Initialize database manager
 @st.cache_resource
-def get_database_manager():
-    return DatabaseManager()
+def get_database_service():
+    return create_database_service()
 
-db_manager = get_database_manager()
+db_manager = get_database_service()
 
 # Initialize AI components safely
 def get_ai_assistant():

@@ -1,20 +1,20 @@
 import streamlit as st
 import pandas as pd
 import os
-from utils.database_manager import DatabaseManager
+from utils.database_factory import create_database_service
 from utils.auth_manager import AuthManager
 
-# Initialize database manager
+# Initialize database service with new portable system
 @st.cache_resource
-def get_database_manager():
-    return DatabaseManager()
+def get_database_service():
+    return create_database_service()
 
 # Initialize authentication manager
 @st.cache_resource
 def get_auth_manager():
     return AuthManager()
 
-db_manager = get_database_manager()
+db_manager = get_database_service()  # Using new portable database service
 auth_manager = get_auth_manager()
 
 st.set_page_config(

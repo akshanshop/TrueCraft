@@ -4,16 +4,16 @@ from datetime import datetime
 import base64
 import io
 from utils.ai_assistant import AIAssistant
-from utils.database_manager import DatabaseManager
+from utils.database_factory import create_database_service
 from utils.image_handler import ImageHandler
 from utils.ai_ui_components import AIUIComponents, render_ai_business_toolkit, render_seo_title_generator, render_pricing_analyzer, render_photography_tips_generator, render_seasonal_marketing_generator
 
 # Initialize components
 @st.cache_resource
-def get_database_manager():
-    return DatabaseManager()
+def get_database_service():
+    return create_database_service()
 
-db_manager = get_database_manager()
+db_manager = get_database_service()
 
 # Initialize AI components safely
 def get_ai_assistant():
