@@ -70,14 +70,15 @@ class AuthManager:
             avatar_url = user_data.get('picture', user_data.get('avatar_url', user_data.get('profile_image_url', '')))
             
             # Create user in database
-            user_id = self.db_manager.create_user(
-                oauth_provider=provider,
-                oauth_id=oauth_id,
-                email=email,
-                name=name,
-                avatar_url=avatar_url,
-                profile_data=user_data
-            )
+            user_data_dict = {
+                'oauth_provider': provider,
+                'oauth_id': oauth_id,
+                'email': email,
+                'name': name,
+                'avatar_url': avatar_url,
+                'profile_data': user_data
+            }
+            user_id = self.db_manager.create_user(user_data_dict)
             
             return user_id
         except Exception as e:

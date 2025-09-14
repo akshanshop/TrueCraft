@@ -128,6 +128,18 @@ class MockDatabaseService:
     
     def create_user(self, user_data):
         return None  # No user management in demo mode
+    
+    def get_user_by_id(self, user_id):
+        return None  # No user management in demo mode
+    
+    def get_conversations(self, email=None, sender_type=None):
+        return []  # No conversations in demo mode
+    
+    def mark_conversation_as_read(self, product_id, sender_email):
+        return True  # Silent operation in demo mode
+    
+    def get_message_thread(self, product_id, participant_emails):
+        return []  # No message threads in demo mode
 
 def get_database_status():
     """Get information about the current database configuration and status"""

@@ -558,6 +558,182 @@ class DatabaseService:
         finally:
             session.close()
     
+    # User Management Methods
+    def get_user_by_id(self, user_id: int) -> Optional[Dict[str, Any]]:
+        """Get user by ID"""
+        if not self.db_available:
+            return None
+        
+        session = self.get_session()
+        if not session:
+            return None
+        
+        try:
+            user = session.query(User).filter(User.id == user_id).first()
+            if user:
+                return {
+                    'id': user.id,
+                    'oauth_provider': user.oauth_provider,
+                    'oauth_id': user.oauth_id,
+                    'email': user.email,
+                    'name': user.name,
+                    'avatar_url': user.avatar_url,
+                    'profile_data': user.profile_data,
+                    'created_at': user.created_at,
+                    'updated_at': user.updated_at,
+                    'last_login': user.last_login
+                }
+            return None
+        except Exception as e:
+            print(f"Error getting user by ID: {str(e)}")
+            return None
+        finally:
+            session.close()
+    
+    # Conversation Management Methods
+    def get_conversations(self, email: Optional[str] = None, sender_type: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Get conversations grouped by product and participants"""
+        if not self.db_available:
+            return []
+        
+        session = self.get_session()
+        if not session:
+            return []
+        
+        try:
+            # Build the query with joins
+            query = session.query(
+                Message.product_id,
+                Product.name.label('product_name'),
+                Message.sender_email,
+                Message.sender_name,
+                Message.sender_type,
+                func.count().label('message_count'),
+                func.max(Message.timestamp).label('last_message_time'),
+                func.sum(
+                    func.case(
+                        (Message.is_read == False, 1),
+                        else_=0
+                    )
+                ).label('unread_count'),
+                func.string_agg(func.distinct(Message.subject), '; ').label('subjects')
+            ).join(Product, Message.product_id == Product.id)
+            
+            # Apply filters
+            if email:
+                query = query.filter(Message.sender_email == email)
+            
+            if sender_type:
+                query = query.filter(Message.sender_type == sender_type)
+            
+            # Group and order
+            query = query.group_by(
+                Message.product_id,
+                Product.name,
+                Message.sender_email,
+                Message.sender_name,
+                Message.sender_type
+            ).order_by(desc('last_message_time'))
+            
+            results = query.all()
+            
+            conversations = []
+            for result in results:
+                conversations.append({
+                    'product_id': result.product_id,
+                    'product_name': result.product_name,
+                    'sender_email': result.sender_email,
+                    'sender_name': result.sender_name,
+                    'sender_type': result.sender_type,
+                    'message_count': result.message_count,
+                    'last_message_time': result.last_message_time,
+                    'unread_count': result.unread_count or 0,
+                    'subjects': result.subjects or ''
+                })
+            
+            return conversations
+            
+        except Exception as e:
+            print(f"Error getting conversations: {str(e)}")
+            return []
+        finally:
+            session.close()
+    
+    def mark_conversation_as_read(self, product_id: int, sender_email: str) -> bool:
+        """Mark all messages in a conversation as read"""
+        if not self.db_available:
+            return False
+        
+        session = self.get_session()
+        if not session:
+            return False
+        
+        try:
+            messages = session.query(Message).filter(
+                and_(
+                    Message.product_id == product_id,
+                    Message.sender_email == sender_email
+                )
+            ).all()
+            
+            for message in messages:
+                message.is_read = True
+                message.updated_at = datetime.now()
+            
+            session.commit()
+            return True
+            
+        except Exception as e:
+            print(f"Error marking conversation as read: {str(e)}")
+            session.rollback()
+            return False
+        finally:
+            session.close()
+    
+    def get_message_thread(self, product_id: int, participant_emails: List[str]) -> List[Dict[str, Any]]:
+        """Get message thread between specific participants for a product"""
+        if not self.db_available:
+            return []
+        
+        session = self.get_session()
+        if not session:
+            return []
+        
+        try:
+            messages = session.query(Message, Product.name.label('product_name')).join(
+                Product, Message.product_id == Product.id
+            ).filter(
+                and_(
+                    Message.product_id == product_id,
+                    Message.sender_email.in_(participant_emails)
+                )
+            ).order_by(Message.timestamp.asc()).all()
+            
+            thread = []
+            for message, product_name in messages:
+                thread.append({
+                    'id': message.id,
+                    'sender_type': message.sender_type,
+                    'sender_name': message.sender_name,
+                    'sender_email': message.sender_email,
+                    'product_id': message.product_id,
+                    'product_name': product_name,
+                    'subject': message.subject,
+                    'message_content': message.message_content,
+                    'is_read': message.is_read,
+                    'timestamp': message.timestamp,
+                    'created_at': message.created_at,
+                    'updated_at': message.updated_at
+                })
+            
+            return thread
+            
+        except Exception as e:
+            print(f"Error getting message thread: {str(e)}")
+            return []
+        finally:
+            session.close()
+    
     # Helper methods for empty DataFrames
     def _empty_products_df(self) -> pd.DataFrame:
         """Return empty products DataFrame with expected columns"""
