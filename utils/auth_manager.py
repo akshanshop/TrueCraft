@@ -8,6 +8,7 @@ import urllib.parse
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 from utils.database_factory import create_database_service
+from utils.config import get_public_url
 
 try:
     from authlib.integrations.requests_client import OAuth2Session
@@ -279,8 +280,8 @@ class AuthManager:
         st.subheader("🔐 Sign In to TrueCraft")
         st.markdown("Connect with your social account to save your data and access all features.")
         
-        # Get current URL for redirect URI - Replit environment
-        redirect_uri = "https://" + str(os.getenv('REPL_ID', 'localhost')) + ".replit.app/"
+        # Get current URL for redirect URI - works for all environments
+        redirect_uri = get_public_url() + "/"
         
         col1, col2 = st.columns(2)
         

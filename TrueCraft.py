@@ -3,6 +3,7 @@ import pandas as pd
 import os
 from utils.database_factory import create_database_service
 from utils.auth_manager import AuthManager
+from utils.config import get_public_url
 
 # Initialize database service with new portable system
 @st.cache_resource
@@ -31,8 +32,8 @@ if 'code' in query_params and 'state' in query_params:
     code = query_params['code']
     state = query_params['state']
     
-    # Get the current URL for redirect_uri - Replit environment
-    redirect_uri = "https://" + str(os.getenv('REPL_ID', 'localhost')) + ".replit.app/"
+    # Get the current URL for redirect_uri - works for all environments
+    redirect_uri = get_public_url() + "/"
     
     # Handle the OAuth callback
     if auth_manager.handle_oauth_callback(provider, code, state, redirect_uri):
@@ -102,8 +103,8 @@ with st.sidebar:
         st.markdown("### 🔐 Sign In")
         st.markdown("Connect to access your profile and saved data.")
         
-        # Get current URL for redirect URI - Replit environment
-        redirect_uri = "https://" + str(os.getenv('REPL_ID', 'localhost')) + ".replit.app/"
+        # Get current URL for redirect URI - works for all environments
+        redirect_uri = get_public_url() + "/"
         
         # Google Login - Real OAuth
         if auth_manager.is_provider_configured('google'):
