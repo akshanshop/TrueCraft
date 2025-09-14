@@ -1,47 +1,101 @@
 import os
 import pandas as pd
 import json
+import sqlite3
 from datetime import datetime
 import streamlit as st
+from pathlib import Path
 
-# Resilient import handling
+# Import our configuration system
+try:
+    from .config import get_app_config, get_database_mode, get_database_url
+except ImportError:
+    # Fallback if config system not available
+    def get_database_mode():
+        return 'postgres' if os.getenv('DATABASE_URL') and _postgres_available() else 'sqlite'
+    def get_database_url():
+        if get_database_mode() == 'postgres':
+            return os.getenv('DATABASE_URL', '')
+        else:
+            Path('data').mkdir(exist_ok=True)
+            return f"sqlite:///data/truecraft.db"
+    def get_app_config():
+        return {'database_mode': get_database_mode(), 'database_url': get_database_url()}
+
+# Resilient import handling for PostgreSQL
 try:
     import psycopg2
     from psycopg2.extras import RealDictCursor
-    DB_AVAILABLE = True
+    POSTGRES_AVAILABLE = True
 except ImportError:
-    DB_AVAILABLE = False
-    psycopg2 = None  # Set to None to avoid unbound errors
+    POSTGRES_AVAILABLE = False
+    psycopg2 = None
     RealDictCursor = None
-    st.warning("Database functionality requires psycopg2. Install it with: pip install psycopg2-binary")
+
+def _postgres_available():
+    return POSTGRES_AVAILABLE
 
 class DatabaseManager:
     def __init__(self):
-        """Initialize database manager with PostgreSQL connection"""
-        self.database_url = os.getenv("DATABASE_URL")
-        self.db_available = DB_AVAILABLE and self.database_url is not None
+        """Initialize database manager with PostgreSQL or SQLite connection"""
+        try:
+            self.config = get_app_config()
+            self.database_mode = self.config['database_mode']
+            self.database_url = self.config['database_url']
+        except:
+            # Fallback configuration
+            self.database_mode = 'sqlite'
+            Path('data').mkdir(exist_ok=True)
+            self.database_url = 'data/truecraft.db'
         
-        if not self.db_available:
-            if not DB_AVAILABLE:
-                st.warning("Database features unavailable - psycopg2 not installed")
-            elif not self.database_url:
-                st.warning("Database features unavailable - DATABASE_URL not configured")
+        # Determine database availability based on mode
+        if self.database_mode == 'postgres':
+            self.db_available = POSTGRES_AVAILABLE and bool(self.database_url)
+            if not self.db_available:
+                if not POSTGRES_AVAILABLE:
+                    # Don't show warning in UI for missing optional dependencies
+                    print("PostgreSQL support unavailable - psycopg2 not installed, falling back to SQLite")
+                    self.database_mode = 'sqlite'
+                    Path('data').mkdir(exist_ok=True)
+                    self.database_url = 'data/truecraft.db'
+                    self.db_available = True
+                elif not self.database_url:
+                    print("PostgreSQL DATABASE_URL not configured, falling back to SQLite")
+                    self.database_mode = 'sqlite' 
+                    Path('data').mkdir(exist_ok=True)
+                    self.database_url = 'data/truecraft.db'
+                    self.db_available = True
         else:
+            # SQLite mode
+            self.db_available = True
+        
+        # Initialize database schema if available
+        if self.db_available:
             try:
                 self.initialize_schema()
             except Exception as e:
-                st.error(f"Database initialization failed: {str(e)}")
-                self.db_available = False
+                print(f"Database initialization failed: {str(e)}")
+                # Don't disable DB for initialization issues, might be schema already exists
+                pass
     
     def get_connection(self):
-        """Get database connection"""
-        if not self.db_available or not psycopg2:
+        """Get database connection for PostgreSQL or SQLite"""
+        if not self.db_available:
             return None
+        
         try:
-            return psycopg2.connect(self.database_url)
+            if self.database_mode == 'postgres':
+                if not psycopg2:
+                    print("PostgreSQL mode but psycopg2 not available")
+                    return None
+                return psycopg2.connect(self.database_url)
+            else:
+                # SQLite mode
+                # Handle sqlite:/// URL prefix
+                db_path = self.database_url.replace('sqlite:///', '')
+                return sqlite3.connect(db_path)
         except Exception as e:
-            st.error(f"Database connection failed: {str(e)}")
-            self.db_available = False
+            print(f"Database connection failed: {str(e)}")
             return None
     
     def initialize_schema(self):
@@ -54,8 +108,19 @@ class DatabaseManager:
             return
         
         try:
-            with conn:
-                with conn.cursor() as cursor:
+            cursor = conn.cursor()
+            if self.database_mode == 'postgres':
+                self._create_postgres_schema(cursor)
+            else:
+                self._create_sqlite_schema(cursor)
+            conn.commit()
+            if self.database_mode == 'sqlite':
+                conn.close()
+        except Exception as e:
+            print(f"Schema initialization error: {str(e)}")
+    
+    def _create_postgres_schema(self, cursor):
+        """Create PostgreSQL schema"""
                     # Create users table first (referenced by other tables)
                     cursor.execute("""
                         CREATE TABLE IF NOT EXISTS users (
