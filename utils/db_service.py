@@ -612,7 +612,7 @@ class DatabaseService:
                 func.max(Message.timestamp).label('last_message_time'),
                 func.sum(
                     func.case(
-                        (Message.is_read == False, 1),
+                        [(Message.is_read == False, 1)],
                         else_=0
                     )
                 ).label('unread_count'),

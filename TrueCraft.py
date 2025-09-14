@@ -118,7 +118,8 @@ with st.sidebar:
                 st.markdown(f'<a href="{github_url}" target="_self"><button style="width:100%; padding:8px; background:#333; color:white; border:none; border-radius:5px; font-size:14px; cursor:pointer; margin:5px 0;">⚫ Continue with GitHub</button></a>', unsafe_allow_html=True)
         
         if not any(auth_manager.is_provider_configured(p) for p in ['google', 'github']):
-            st.warning("OAuth setup required")
+            st.info("💡 **Demo Mode**: You're using TrueCraft without authentication. All features are available!")
+            st.markdown("*To enable social login, add your OAuth credentials to environment variables.*")
     
 
 # Main Navigation Section
