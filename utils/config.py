@@ -42,9 +42,9 @@ def get_public_url() -> str:
         return f"https://{vercel_url}"
     
     # Replit
-    if repl_id := os.getenv('REPL_ID'):
+    if repl_slug := os.getenv('REPL_SLUG'):
         repl_owner = os.getenv('REPL_OWNER', 'user')
-        return f"https://{repl_id}.{repl_owner}.repl.co"
+        return f"https://{repl_slug}.{repl_owner}.replit.app"
     
     # Default to localhost for local development
     return "http://localhost:5000"
