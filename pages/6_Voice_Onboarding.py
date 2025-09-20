@@ -224,7 +224,11 @@ else:
                 'heritage': st.session_state.onboarding_data.get('cultural_heritage', 'Family traditions')
             }
             
-            cultural_story = ai_assistant.cultural_storytelling(artisan_data)
+            cultural_story = ai_assistant.cultural_storytelling(
+                artisan_data.get('culture', 'Not specified'),
+                artisan_data.get('craft', 'Various crafts'), 
+                artisan_data.get('heritage', 'Family traditions')
+            )
             st.markdown("#### 🌟 Your Cultural Story")
             st.write(cultural_story)
         
@@ -251,18 +255,13 @@ else:
                 }
                 
                 sustainability = ai_assistant.sustainability_assessment(
-                    product_data,
-                    st.session_state.onboarding_data.get('sustainability', 'Traditional practices')
+                    product_data.get('materials', 'Traditional materials'),
+                    product_data.get('production_method', 'Handmade'),
+                    product_data.get('packaging', 'Eco-friendly')
                 )
                 
-                st.markdown("#### 🌿 Sustainability Score")
-                if sustainability.get('sustainability_score'):
-                    st.metric("Sustainability Score", f"{sustainability['sustainability_score']}/100")
-                    
-                    if sustainability.get('tags'):
-                        st.markdown("**Sustainability Tags:**")
-                        for tag in sustainability['tags']:
-                            st.badge(tag)
+                st.markdown("#### 🌿 Sustainability Assessment")
+                st.write(sustainability)
     
     # Action buttons
     col1, col2, col3 = st.columns(3)

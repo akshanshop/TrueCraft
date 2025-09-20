@@ -52,8 +52,8 @@ class AIAssistant:
             if use_json:
                 prompt += "\n\nPlease respond in valid JSON format only."
                 
-            # Use a more suitable model for instruction following and JSON generation
-            api_url = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1"
+            # Use a publicly available model that works with most API keys
+            api_url = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium"
             
             payload = {
                 "inputs": prompt,
@@ -428,4 +428,269 @@ class AIAssistant:
         """
         
         content = self._generate_content(prompt, max_output_tokens=300, temperature=0.3)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
+    def generate_seo_optimized_title(self, product_name, category, keywords=""):
+        """Generate SEO-optimized product titles"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.enabled:
+            return "AI assistance temporarily unavailable. Please configure HUGGINGFACE_API_KEY to enable AI features."
+        
+        keywords_context = f" with focus on keywords: {keywords}" if keywords else ""
+        
+        prompt = f"""
+        Create 3-5 SEO-optimized product titles for:
+        - Product: {product_name}
+        - Category: {category}
+        - Keywords: {keywords_context}
+        
+        The titles should:
+        - Be 60 characters or less for search engines
+        - Include relevant keywords naturally
+        - Sound appealing to buyers
+        - Highlight artisan/handmade quality
+        - Use power words that convert
+        
+        Format as a numbered list.
+        """
+        
+        content = self._generate_content(prompt, max_output_tokens=300, temperature=0.7)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
+    def generate_pricing_analysis(self, product_name, materials, time_hours, skill_level, category):
+        """Generate comprehensive pricing analysis"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.enabled:
+            return "AI assistance temporarily unavailable. Please configure HUGGINGFACE_API_KEY to enable AI features."
+        
+        prompt = f"""
+        Provide comprehensive pricing analysis for:
+        - Product: {product_name}
+        - Materials: {materials}
+        - Time to create: {time_hours} hours
+        - Skill level: {skill_level}
+        - Category: {category}
+        
+        Analysis should include:
+        - Material cost estimation
+        - Labor cost calculation
+        - Overhead considerations
+        - Market positioning advice
+        - Suggested price range
+        - Profit margin recommendations
+        
+        Provide practical, actionable pricing strategy.
+        """
+        
+        content = self._generate_content(prompt, max_output_tokens=400, temperature=0.5)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
+    def generate_product_photography_tips(self, product_type, materials, setting):
+        """Generate personalized product photography tips"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.enabled:
+            return "AI assistance temporarily unavailable. Please configure HUGGINGFACE_API_KEY to enable AI features."
+        
+        prompt = f"""
+        Provide specific photography tips for:
+        - Product: {product_type}
+        - Materials: {materials}
+        - Setting: {setting}
+        
+        Include advice on:
+        - Lighting setup for these materials
+        - Best angles and composition
+        - Background choices
+        - Props and styling
+        - Equipment recommendations
+        - Common mistakes to avoid
+        
+        Make tips practical and actionable for artisans.
+        """
+        
+        content = self._generate_content(prompt, max_output_tokens=400, temperature=0.6)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
+    def cultural_storytelling(self, cultural_background, craft_tradition, personal_story):
+        """Generate cultural storytelling content for artisans"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        prompt = f"""Create compelling cultural storytelling content for:
+        - Cultural background: {cultural_background}
+        - Craft tradition: {craft_tradition}
+        - Personal story: {personal_story}
+        
+        Generate content that honors cultural heritage, tells the artisan's journey, and connects craft to cultural history."""
+        
+        content = self._generate_content(prompt, max_output_tokens=400, temperature=0.7)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
+    def financial_literacy_guidance(self, business_stage, financial_topic, specific_question):
+        """Generate financial literacy guidance for artisan businesses"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        prompt = f"""Provide financial literacy guidance for artisan business:
+        - Business stage: {business_stage}
+        - Topic: {financial_topic}
+        - Specific question: {specific_question}
+        
+        Cover accounting, taxes, pricing, cash flow, and business expenses for creative entrepreneurs."""
+        
+        content = self._generate_content(prompt, max_output_tokens=400, temperature=0.5)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
+    def sustainability_assessment(self, materials_used, production_process, packaging_approach):
+        """Generate sustainability assessment and recommendations"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        prompt = f"""Assess sustainability practices and provide recommendations:
+        - Materials: {materials_used}
+        - Production: {production_process}
+        - Packaging: {packaging_approach}
+        
+        Suggest improvements for sustainable sourcing, eco-friendly production, and waste reduction."""
+        
+        content = self._generate_content(prompt, max_output_tokens=400, temperature=0.6)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
+    def generate_review_template(self, product_category, rating=5):
+        """Generate thoughtful review templates for customers"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        prompt = f"""Create a review template for {product_category} with {rating} stars.
+        Include placeholders [like this], sound authentic, mention craftsmanship quality.
+        Make it 2-3 sentences that customers can customize."""
+        
+        content = self._generate_content(prompt, max_output_tokens=200, temperature=0.7)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
+    def quick_improve_suggestions(self, text, field_type="general"):
+        """Provide quick, actionable suggestions for improving text"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        prompt = f"""Analyze this {field_type} text and provide 2-3 quick suggestions:
+        
+        Text: "{text}"
+        
+        Format as bullet points:
+        • [Specific actionable suggestion]
+        • [Another specific suggestion]
+        
+        Focus on clarity, appeal, and artisan/handmade qualities."""
+        
+        content = self._generate_content(prompt, max_output_tokens=200, temperature=0.6)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
+    def generate_seasonal_marketing_content(self, products_list, season_or_holiday, target_audience):
+        """Generate seasonal marketing content"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.enabled:
+            return "AI assistance temporarily unavailable. Please configure HUGGINGFACE_API_KEY to enable AI features."
+        
+        prompt = f"""
+        Create seasonal marketing content for:
+        - Products: {products_list}
+        - Season/Holiday: {season_or_holiday}
+        - Target audience: {target_audience}
+        
+        Generate:
+        - Compelling headline ideas
+        - Social media post concepts
+        - Email subject lines
+        - Promotional angles
+        - Gift messaging ideas
+        - Call-to-action suggestions
+        
+        Make it festive and relevant to the season.
+        """
+        
+        content = self._generate_content(prompt, max_output_tokens=400, temperature=0.7)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
+    def generate_brand_voice_analysis(self, bio, products_description, target_customers):
+        """Generate brand voice analysis and recommendations"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.enabled:
+            return "AI assistance temporarily unavailable. Please configure HUGGINGFACE_API_KEY to enable AI features."
+        
+        prompt = f"""
+        Analyze brand voice and provide recommendations:
+        - Artisan bio: {bio}
+        - Products: {products_description}
+        - Target customers: {target_customers}
+        
+        Provide analysis on:
+        - Current brand voice characteristics
+        - Tone and personality traits
+        - Communication style recommendations
+        - Language preferences
+        - Brand positioning suggestions
+        - Voice consistency tips
+        
+        Help define a clear brand voice strategy.
+        """
+        
+        content = self._generate_content(prompt, max_output_tokens=400, temperature=0.6)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+
+    def generate_content_calendar(self, business_type, posting_frequency, special_events):
+        """Generate content calendar suggestions"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        prompt = f"""Create content calendar suggestions for:
+        - Business type: {business_type}
+        - Posting frequency: {posting_frequency}  
+        - Special events: {special_events}
+        
+        Include weekly themes, post types, seasonal ideas, and engagement strategies."""
+        
+        content = self._generate_content(prompt, max_output_tokens=400, temperature=0.7)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
+    def generate_competitive_analysis(self, product_type, price_range, unique_features):
+        """Generate competitive analysis and positioning advice"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        prompt = f"""Provide competitive analysis for:
+        - Product type: {product_type}
+        - Price range: {price_range}
+        - Unique features: {unique_features}
+        
+        Cover positioning strategies, differentiation, and competitive advantages."""
+        
+        content = self._generate_content(prompt, max_output_tokens=400, temperature=0.6)
         return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
