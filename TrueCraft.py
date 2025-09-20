@@ -70,8 +70,79 @@ st.markdown("""
 # Main page header
 st.markdown('<div class="main-header">', unsafe_allow_html=True)
 st.title("🎨 TrueCraft Marketplace Assistant")
-st.markdown("*Empowering local artisans with AI-powered tools for online success*")
+st.markdown("*A movement to empower artisans and preserve culture through AI-powered tools*")
+st.markdown("**Not just a marketplace → An AI assistant that helps artisans sell smarter, not harder**")
 st.markdown('</div>', unsafe_allow_html=True)
+
+# Value Proposition Section
+st.markdown("""---""")
+st.subheader("🌟 Why TrueCraft is Different")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.markdown("""
+    **🎯 Problem-Solution Fit**
+    
+    We identified a real pain point: artisans struggle with digital access, fair pricing, and visibility.
+    
+    Our solution is practical, AI-powered, and designed specifically for artisans — not just another e-commerce clone.
+    """)
+
+with col2:
+    st.markdown("""
+    **🤖 Technological Edge**
+    
+    Combines AI + voice recognition + personalization + sustainability tagging in one ecosystem.
+    
+    Features like AI-generated storytelling and fair price prediction make our project stand out.
+    """)
+
+with col3:
+    st.markdown("""
+    **🌍 Social + Economic Impact**
+    
+    Unlike profit-driven platforms, we prioritize artisans' growth, cultural preservation, and fair trade.
+    
+    Contributing to SDGs: Decent Work, Reduced Inequalities, and Sustainable Consumption.
+    """)
+
+# Differentiation from competitors
+st.info("""
+💡 **Our Focus**: Amazon/Flipkart/Etsy focus on sellers in general. We focus only on artisans, 
+breaking their entry barriers with AI-powered, easy-to-use tools. This laser focus + inclusivity makes our platform unique.
+""")
+
+# Future Vision Section
+with st.expander("🚀 **Scalable & Future-Proof Vision**", expanded=False):
+    st.markdown("""
+    ### Start Local → Scale Globally
+    
+    **Current Phase**: Empowering local artisans with AI-powered tools
+    
+    **Future Features**:
+    - 🔗 Blockchain authenticity verification for handmade products
+    - 🥽 AR/VR craft experiences for immersive shopping
+    - 📚 AI-driven financial literacy programs for artisans
+    - 🗣️ Voice onboarding in local languages for accessibility
+    - 🌿 Advanced sustainability tagging and impact tracking
+    
+    **Long-Term Vision**: Not just a project → a movement to empower artisans and preserve culture.
+    With global demand for authentic, handmade, and sustainable products rising, our platform is timely and future-ready.
+    """)
+
+# Team commitment section
+with st.expander("💪 **Our Commitment**", expanded=False):
+    st.markdown("""
+    ### Passion & Commitment of Our Team
+    
+    We are not just students building a project → we are passionate about solving real-world problems.
+    
+    Our diverse skill set (tech + design + social awareness) makes us capable of execution beyond the idea stage.
+    
+    **Our Promise**: Every feature we build, every decision we make, is centered around empowering artisans 
+    and preserving the rich cultural heritage embedded in their crafts.
+    """)
 
 # Sidebar with permanent user profile
 with st.sidebar:
@@ -123,8 +194,9 @@ with st.sidebar:
             st.markdown("*To enable social login, add your OAuth credentials to environment variables.*")
     
 
+st.markdown("""---""")
 # Main Navigation Section
-st.subheader("🚀 TrueCraft Tools & Features")
+st.subheader("🚀 AI-Powered Tools for Artisan Success")
 
 # Navigation Grid - 2 rows of 3 columns
 col1, col2, col3 = st.columns(3)

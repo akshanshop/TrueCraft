@@ -125,12 +125,13 @@ with col2:
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Main content tabs
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "📋 FAQ", 
     "📞 Contact Support", 
     "📚 Help Guides", 
     "🔧 Troubleshooting", 
-    "📖 Resources"
+    "📖 Resources",
+    "🎆 Our Mission"
 ])
 
 with tab1:
@@ -205,7 +206,7 @@ with tab1:
         "General": [
             {
                 "question": "What is TrueCraft Marketplace Assistant?",
-                "answer": "TrueCraft is an AI-powered platform designed to help local artisans create compelling product listings, manage their online presence, and connect with customers. It provides tools for description writing, pricing optimization, and marketplace management."
+                "answer": "TrueCraft is not just another marketplace — it's a movement to empower artisans and preserve culture through AI-powered tools. Unlike profit-driven platforms that focus on sellers in general, we focus exclusively on artisans, breaking their entry barriers with AI-powered, easy-to-use tools designed specifically for their needs."
             },
             {
                 "question": "Is there a cost to use the platform?",
@@ -213,7 +214,7 @@ with tab1:
             },
             {
                 "question": "How do I get started as a new artisan?",
-                "answer": "Start by creating your artisan profile, then add your first product listing. Use our AI tools to optimize descriptions and pricing. Check out the Help Guides tab for detailed getting started instructions."
+                "answer": "Start by creating your artisan profile, then add your first product listing. Use our AI tools to optimize descriptions and pricing. Our platform combines AI + voice recognition + personalization + sustainability tagging to help you sell smarter, not harder. Check out the Help Guides tab for detailed getting started instructions."
             },
             {
                 "question": "Can customers contact me directly?",
@@ -694,6 +695,215 @@ with tab5:
                     <a href="{resource['link']}" target="_blank">Access Resource →</a>
                 </div>
                 """, unsafe_allow_html=True)
+
+with tab6:
+    st.subheader("🌟 Our Mission & Vision")
+    
+    # Hero mission statement
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; border-radius: 15px; color: white; text-align: center; margin-bottom: 2rem;">
+        <h2>🎨 Not just a project → A movement to empower artisans and preserve culture</h2>
+        <p style="font-size: 1.2rem; margin: 0;">We are passionate about solving real-world problems and empowering artisans worldwide</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Problem-Solution Fit
+    st.markdown("### 🎯 Strong Problem-Solution Fit")
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        st.markdown("""
+        **The Real Pain Points We Identified:**
+        - Artisans struggle with digital access and online visibility
+        - Difficulty in achieving fair pricing for handmade products
+        - Lack of tools designed specifically for artisan needs
+        - Cultural heritage at risk of being lost in modern commerce
+        """)
+    
+    with col2:
+        st.markdown("""
+        **Our Practical Solution:**
+        - AI-powered platform designed specifically for artisans
+        - Not just another e-commerce clone
+        - Tools that help artisans sell smarter, not harder
+        - Focus on cultural preservation and fair trade
+        """)
+    
+    st.divider()
+    
+    # Unique Value Proposition
+    st.markdown("### 🚀 Unique Value Proposition")
+    st.markdown("""
+    <div style="background: #e3f2fd; padding: 1.5rem; border-radius: 10px; border-left: 5px solid #2196f3;">
+        <h4>🤖 Not just a marketplace → We built an AI assistant that helps artisans sell smarter</h4>
+        <ul>
+            <li><strong>Voice onboarding in local languages</strong> for accessibility</li>
+            <li><strong>AI-generated storytelling</strong> that captures the essence of handmade crafts</li>
+            <li><strong>Fair price prediction</strong> based on materials, time, and skill level</li>
+            <li><strong>Cultural preservation tools</strong> that honor traditional techniques</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.divider()
+    
+    # Social + Economic Impact
+    st.markdown("### 🌍 Social + Economic Impact")
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        st.markdown("""
+        **Unlike profit-driven platforms, we prioritize:**
+        - Artisans' growth and empowerment
+        - Cultural preservation and heritage protection
+        - Fair trade and ethical commerce
+        - Sustainable consumption patterns
+        """)
+    
+    with col2:
+        st.markdown("""
+        **Contributing to UN Sustainable Development Goals:**
+        - 🏢 **SDG 8**: Decent Work and Economic Growth
+        - ⚖️ **SDG 10**: Reduced Inequalities
+        - 🌱 **SDG 12**: Sustainable Consumption and Production
+        - 📚 **SDG 11**: Sustainable Communities
+        """)
+    
+    st.divider()
+    
+    # Technological Edge
+    st.markdown("### 🔬 Technological Edge")
+    st.markdown("""
+    <div style="background: #f3e5f5; padding: 1.5rem; border-radius: 10px; border-left: 5px solid #9c27b0;">
+        <h4>🛠️ Combines cutting-edge technologies in one ecosystem:</h4>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem;">
+            <div>
+                <strong>🤖 AI & Machine Learning</strong><br>
+                Smart content generation, pricing optimization, and personalized recommendations
+            </div>
+            <div>
+                <strong>🎤 Voice Recognition</strong><br>
+                Accessible onboarding in local languages for inclusive participation
+            </div>
+            <div>
+                <strong>🎯 Personalization</strong><br>
+                Tailored experiences based on artisan specialties and customer preferences
+            </div>
+            <div>
+                <strong>🌿 Sustainability Tagging</strong><br>
+                Advanced tracking of environmental impact and sustainable practices
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.info("💡 **Few (or no) existing solutions provide this blend of accessibility + technology + heritage preservation.**")
+    
+    st.divider()
+    
+    # Differentiation from Competitors
+    st.markdown("### 🥇 Differentiation from Competitors")
+    
+    comparison_data = {
+        "Platform": ["Amazon/Flipkart/Etsy", "TrueCraft"],
+        "Focus": ["Sellers in general", "Only artisans"],
+        "Approach": ["Volume-driven sales", "Cultural preservation + fair trade"],
+        "Tools": ["Generic e-commerce tools", "AI-powered artisan-specific tools"],
+        "Mission": ["Profit maximization", "Artisan empowerment + heritage preservation"],
+        "Entry Barriers": ["High learning curve", "AI-assisted, easy-to-use tools"]
+    }
+    
+    comparison_df = pd.DataFrame(comparison_data)
+    st.dataframe(comparison_df, use_container_width=True, hide_index=True)
+    
+    st.success("🎯 **Our laser focus + inclusivity makes our project unique in the marketplace ecosystem.**")
+    
+    st.divider()
+    
+    # Scalable & Future-Proof
+    st.markdown("### 🚀 Scalable & Future-Proof Vision")
+    
+    with st.expander("**Phase 1: Start Local → Scale Globally**", expanded=True):
+        col1, col2 = st.columns([1, 1])
+        
+        with col1:
+            st.markdown("""
+            **Current Phase:**
+            - Empowering local artisans with AI tools
+            - Building sustainable marketplace ecosystem
+            - Establishing cultural preservation practices
+            - Creating fair trade frameworks
+            """)
+        
+        with col2:
+            st.markdown("""
+            **Next Phase - Global Expansion:**
+            - Multi-language support worldwide
+            - Cross-cultural artisan collaboration
+            - International fair trade networks
+            - Global cultural heritage database
+            """)
+    
+    with st.expander("**Future Features & Innovation Roadmap**"):
+        st.markdown("""
+        <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 10px;">
+            <h4>🔮 Planned Innovations:</h4>
+            <ul>
+                <li><strong>🔗 Blockchain authenticity verification</strong> - Ensuring genuine handmade products</li>
+                <li><strong>🥽 AR/VR craft experiences</strong> - Immersive shopping and virtual workshops</li>
+                <li><strong>📚 AI-driven financial literacy</strong> - Empowering artisans with business skills</li>
+                <li><strong>🗣️ Enhanced voice onboarding</strong> - Supporting 50+ local languages</li>
+                <li><strong>🌍 Advanced sustainability tracking</strong> - Complete environmental impact analysis</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.info("🌟 **With global demand for authentic, handmade, and sustainable products rising, our platform is timely and future-ready.**")
+    
+    st.divider()
+    
+    # Team Commitment
+    st.markdown("### 💪 Passion & Commitment of Our Team")
+    st.markdown("""
+    <div style="background: #fff3e0; padding: 1.5rem; border-radius: 10px; border-left: 5px solid #ff9800;">
+        <h4>👥 We are not just students building a project → We are passionate problem solvers</h4>
+        <p><strong>Our diverse skill set includes:</strong></p>
+        <ul>
+            <li><strong>🛠️ Technical Excellence:</strong> AI/ML, full-stack development, and scalable architecture</li>
+            <li><strong>🎨 Design Thinking:</strong> User-centered design and cultural sensitivity</li>
+            <li><strong>🌍 Social Awareness:</strong> Understanding of artisan challenges and cultural preservation</li>
+        </ul>
+        <p><strong>This combination makes us capable of execution beyond the idea stage.</strong></p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.divider()
+    
+    # Long-Term Vision
+    st.markdown("### 🌟 Long-Term Vision")
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%); padding: 2rem; border-radius: 15px; text-align: center;">
+        <h3>🎯 Our Ultimate Goal</h3>
+        <p style="font-size: 1.1rem; margin: 1rem 0;">
+            Transform TrueCraft from a platform into a <strong>global movement</strong> that preserves cultural heritage, 
+            empowers artisan communities, and creates sustainable economic opportunities worldwide.
+        </p>
+        <p style="font-size: 1rem;">
+            Every artisan deserves fair compensation for their skill, every cultural tradition deserves preservation, 
+            and every handmade product tells a story worth sharing.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Call to action
+    st.markdown("""
+    ---
+    <div style="text-align: center; padding: 1rem;">
+        <h4>🤝 Join us in this mission!</h4>
+        <p>Whether you're an artisan, a customer, or a supporter of cultural preservation, 
+        you're part of building a more sustainable and equitable creative economy.</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     st.divider()
     
