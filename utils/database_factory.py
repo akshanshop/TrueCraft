@@ -27,7 +27,7 @@ def create_database_service():
     Prefers SQLAlchemy service, with safe fallbacks.
     """
     # Try to use new SQLAlchemy service first
-    if SQLALCHEMY_AVAILABLE:
+    if SQLALCHEMY_AVAILABLE and DatabaseService is not None:
         try:
             service = DatabaseService()
             if service.db_available:
@@ -157,7 +157,7 @@ def get_database_status():
     try:
         service = create_database_service()
         
-        if isinstance(service, DatabaseService):
+        if DatabaseService is not None and isinstance(service, DatabaseService):
             status['active_service'] = 'SQLAlchemy'
             # Test database connection
             try:
@@ -166,7 +166,7 @@ def get_database_status():
             except:
                 status['connection_test'] = {'success': False, 'error': 'Connection test failed'}
                 
-        elif hasattr(service, 'database_url'):  # Legacy DatabaseManager
+        elif hasattr(service, 'db_available') and hasattr(service, 'database_url'):  # Legacy DatabaseManager
             status['active_service'] = 'Legacy PostgreSQL'
             status['connection_test'] = {
                 'success': service.db_available,
