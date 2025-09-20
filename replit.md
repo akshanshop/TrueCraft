@@ -2,7 +2,7 @@
 
 ## Overview
 
-TrueCraft Marketplace Assistant is a Streamlit-based web application designed to empower local artisans with AI-powered tools for online marketplace success. The application provides three core functionalities: AI-assisted product listing creation, artisan profile management, and analytics dashboard for tracking product performance. The system leverages OpenAI's GPT-5 model to generate compelling product descriptions, pricing suggestions, and writing assistance for artisan profiles.
+TrueCraft Marketplace Assistant is a Streamlit-based web application designed to empower local artisans with AI-powered tools for online marketplace success. The application provides three core functionalities: AI-assisted product listing creation, artisan profile management, and analytics dashboard for tracking product performance. The system leverages Google's Gemini-2.5-pro model to generate compelling product descriptions, pricing suggestions, and writing assistance for artisan profiles.
 
 ## User Preferences
 
@@ -25,12 +25,13 @@ Preferred communication style: Simple, everyday language.
   - Analytics: product views, search terms, user interactions
 
 ### AI Integration
-- **AI Provider**: OpenAI API integration using the GPT-5 model
+- **AI Provider**: Google Gemini API integration using the Gemini-2.5-pro model
 - **Core AI Features**:
   - Product description generation based on product details and materials
   - Pricing suggestions with market analysis
   - Writing assistance for artisan profiles
-- **AI Assistant Architecture**: Centralized AIAssistant class handling all OpenAI API interactions
+  - Image analysis for product listings
+- **AI Assistant Architecture**: Centralized AIAssistant class handling all Gemini API interactions
 
 ### Image Processing
 - **Image Handling**: PIL (Python Imaging Library) for image processing and optimization
@@ -46,15 +47,16 @@ Preferred communication style: Simple, everyday language.
 ## External Dependencies
 
 ### AI Services
-- **OpenAI API**: GPT-5 model for content generation and AI assistance
-- **Authentication**: API key-based authentication for OpenAI services
+- **Google Gemini API**: Gemini-2.5-pro model for content generation and AI assistance
+- **Authentication**: API key-based authentication for Gemini services
+- **Image Analysis**: Multimodal capabilities for product image analysis
 
 ### Python Libraries
 - **Streamlit**: Web application framework and UI components
 - **Pandas**: Data manipulation and DataFrame operations
 - **Plotly**: Interactive data visualization and charting
 - **PIL (Pillow)**: Image processing and optimization
-- **OpenAI Python Client**: Official OpenAI API client library
+- **Google Gemini Python Client**: Official Google Gemini API client library
 
 ### Data Storage
 - **Session State**: Streamlit's built-in session state for temporary data persistence
