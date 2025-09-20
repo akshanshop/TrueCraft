@@ -4,6 +4,14 @@ from typing import Optional, Dict, Any
 from google import genai
 from google.genai import types
 
+# Import i18n support
+try:
+    from .i18n import i18n
+    I18N_AVAILABLE = True
+except ImportError:
+    I18N_AVAILABLE = False
+    i18n = None
+
 class AIAssistant:
     def __init__(self):
         # IMPORTANT: KEEP THIS COMMENT - Using Gemini blueprint integration
@@ -23,14 +31,20 @@ class AIAssistant:
     def _check_enabled(self):
         """Check if AI features are enabled, return error message if not"""
         if not self.enabled:
+            if I18N_AVAILABLE and i18n:
+                return i18n.t("ai_unavailable")
             return "AI assistance temporarily unavailable. Please configure GEMINI_API_KEY to enable AI features."
         return None
     
-    def _generate_content(self, prompt: str, use_json: bool = False, max_output_tokens: int = 300, temperature: float = 0.7):
+    def _generate_content(self, prompt: str, use_json: bool = False, max_output_tokens: int = 300, temperature: float = 0.7, target_language: Optional[str] = None):
         """Helper method to generate content using Gemini API"""
         try:
             if not self.client:
                 return None
+            
+            # Add language support to prompt if available
+            if target_language and I18N_AVAILABLE and i18n:
+                prompt = i18n.generate_ai_prompt_in_language(prompt, target_language)
                 
             if use_json:
                 config = types.GenerateContentConfig(
@@ -53,7 +67,7 @@ class AIAssistant:
         except Exception as e:
             return None
     
-    def generate_product_description(self, name, category, materials, price=None):
+    def generate_product_description(self, name, category, materials, price=None, target_language=None):
         """Generate compelling product descriptions for artisan products"""
         
         error_msg = self._check_enabled()
@@ -83,8 +97,13 @@ class AIAssistant:
         Write in a warm, personal tone that reflects the artisan's passion for their craft.
         """
         
-        content = self._generate_content(prompt, max_output_tokens=300, temperature=0.7)
-        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+        content = self._generate_content(prompt, max_output_tokens=300, temperature=0.7, target_language=target_language)
+        if content:
+            return content.strip()
+        else:
+            if I18N_AVAILABLE and i18n:
+                return i18n.t("ai_error")
+            return "AI assistance temporarily unavailable. Please try again later."
     
     def suggest_pricing(self, name, category, materials, dimensions=None):
         """Provide AI-powered pricing suggestions based on product details"""

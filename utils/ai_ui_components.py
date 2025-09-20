@@ -1,6 +1,7 @@
 import streamlit as st
 from utils.ai_assistant import AIAssistant
 import time
+from utils.i18n import i18n, t
 
 class AIUIComponents:
     def __init__(self):
@@ -14,7 +15,7 @@ class AIUIComponents:
                 try:
                     st.session_state.ai_assistant = AIAssistant()
                 except Exception as e:
-                    st.warning("AI features are currently unavailable. Some functionality may be limited.")
+                    st.warning(t("ai_features_unavailable"))
                     st.session_state.ai_assistant = None
             self.ai_assistant = st.session_state.ai_assistant
         return self.ai_assistant
@@ -37,6 +38,9 @@ class AIUIComponents:
                 return
             try:
                 with st.spinner("AI is writing..."):
+                    # Add current language to kwargs if not present
+                    if 'target_language' not in kwargs:
+                        kwargs['target_language'] = i18n.get_language()
                     result = ai_function(**kwargs)
                     if result and result.strip():
                         st.session_state[target_key] = result

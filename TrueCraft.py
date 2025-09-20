@@ -4,6 +4,7 @@ import os
 from utils.database_factory import create_database_service
 from utils.auth_manager import AuthManager
 from utils.config import get_public_url
+from utils.i18n import i18n, t
 
 # Initialize database service with new portable system
 @st.cache_resource
@@ -19,7 +20,7 @@ db_manager = get_database_service()  # Using new portable database service
 auth_manager = get_auth_manager()
 
 st.set_page_config(
-    page_title="TrueCraft Marketplace Assistant",
+    page_title=t("app_title"),
     page_icon="🎨",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -69,17 +70,22 @@ st.markdown("""
 
 # Main page header
 st.markdown('<div class="main-header">', unsafe_allow_html=True)
-st.title("🎨 TrueCraft Marketplace Assistant")
-st.markdown("*Empowering local artisans with AI-powered tools for online success*")
+st.title(f"🎨 {t('app_title')}")
+st.markdown(f"*{t('app_tagline')}*")
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Sidebar with permanent user profile
 with st.sidebar:
+    # Language selector at top
+    st.markdown("### 🌐 Language / Idioma")
+    i18n.language_selector("main_language_selector")
+    st.divider()
+    
     # User profile at top of sidebar
     if auth_manager.is_authenticated():
         user = auth_manager.get_current_user()
         if user:
-            st.markdown("### 👤 Your Account")
+            st.markdown(f"### 👤 {t('your_account')}")
             
             # Profile picture and name
             col1, col2 = st.columns([1, 2])
@@ -91,17 +97,17 @@ with st.sidebar:
             
             with col2:
                 st.markdown(f"**{user['name']}**")
-                st.caption(f"Connected via {user['oauth_provider'].title()}")
+                st.caption(f"{t('connected_via')} {user['oauth_provider'].title()}")
             
             st.divider()
             
-            if st.button("🚪 Sign Out", use_container_width=True, type="secondary"):
+            if st.button(f"🚪 {t('sign_out')}", use_container_width=True, type="secondary"):
                 auth_manager.logout_user()
-                st.success("Successfully logged out!")
+                st.success(t("successfully_logged_out"))
                 st.rerun()
     else:
-        st.markdown("### 🔐 Sign In")
-        st.markdown("Connect to access your profile and saved data.")
+        st.markdown(f"### 🔐 {t('sign_in')}")
+        st.markdown(t("connect_to_access"))
         
         # Get current URL for redirect URI - works for all environments
         redirect_uri = get_public_url() + "/"
@@ -110,41 +116,41 @@ with st.sidebar:
         if auth_manager.is_provider_configured('google'):
             google_url = auth_manager.get_oauth_url('google', redirect_uri)
             if google_url:
-                st.markdown(f'<a href="{google_url}" target="_self"><button style="width:100%; padding:8px; background:#db4437; color:white; border:none; border-radius:5px; font-size:14px; cursor:pointer; margin:5px 0;">🔴 Continue with Google</button></a>', unsafe_allow_html=True)
+                st.markdown(f'<a href="{google_url}" target="_self"><button style="width:100%; padding:8px; background:#db4437; color:white; border:none; border-radius:5px; font-size:14px; cursor:pointer; margin:5px 0;">🔴 {t("continue_with_google")}</button></a>', unsafe_allow_html=True)
         
         # GitHub Login - Real OAuth
         if auth_manager.is_provider_configured('github'):
             github_url = auth_manager.get_oauth_url('github', redirect_uri)
             if github_url:
-                st.markdown(f'<a href="{github_url}" target="_self"><button style="width:100%; padding:8px; background:#333; color:white; border:none; border-radius:5px; font-size:14px; cursor:pointer; margin:5px 0;">⚫ Continue with GitHub</button></a>', unsafe_allow_html=True)
+                st.markdown(f'<a href="{github_url}" target="_self"><button style="width:100%; padding:8px; background:#333; color:white; border:none; border-radius:5px; font-size:14px; cursor:pointer; margin:5px 0;">⚫ {t("continue_with_github")}</button></a>', unsafe_allow_html=True)
         
         if not any(auth_manager.is_provider_configured(p) for p in ['google', 'github']):
-            st.info("💡 **Demo Mode**: You're using TrueCraft without authentication. All features are available!")
-            st.markdown("*To enable social login, add your OAuth credentials to environment variables.*")
+            st.info(f"💡 **{t('demo_mode')}**")
+            st.markdown(f"*{t('enable_social_login')}*")
     
 
 # Main Navigation Section
-st.subheader("🚀 TrueCraft Tools & Features")
+st.subheader(f"🚀 TrueCraft {t('tools_features')}")
 
 # Navigation Grid - 2 rows of 3 columns
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.subheader("🏠 Home")
-    st.markdown("Main dashboard with overview of your TrueCraft marketplace activity.")
-    if st.button("Go to Home", use_container_width=True):
+    st.subheader(f"🏠 {t('home')}")
+    st.markdown(t("home_desc"))
+    if st.button(t("go_to_home"), use_container_width=True):
         st.switch_page("TrueCraft.py")
 
 with col2:
-    st.subheader("📝 Product Listings")
-    st.markdown("Create and manage your product listings with AI-generated descriptions.")
-    if st.button("Manage Products", use_container_width=True):
+    st.subheader(f"📝 {t('product_listings')}")
+    st.markdown(t("product_listings_desc"))
+    if st.button(t("manage_products"), use_container_width=True):
         st.switch_page("pages/1_Product_Listings.py")
 
 with col3:
-    st.subheader("👤 Artisan Profile")
-    st.markdown("Build your professional artisan profile and showcase your story.")
-    if st.button("Manage Profile", use_container_width=True):
+    st.subheader(f"👤 {t('artisan_profile')}")
+    st.markdown(t("artisan_profile_desc"))
+    if st.button(t("manage_profile"), use_container_width=True):
         st.switch_page("pages/2_Artisan_Profile.py")
 
 # Second row

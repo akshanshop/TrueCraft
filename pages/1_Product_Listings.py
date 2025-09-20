@@ -7,6 +7,7 @@ from utils.ai_assistant import AIAssistant
 from utils.database_factory import create_database_service
 from utils.image_handler import ImageHandler
 from utils.ai_ui_components import AIUIComponents, render_ai_business_toolkit, render_seo_title_generator, render_pricing_analyzer, render_photography_tips_generator, render_seasonal_marketing_generator
+from utils.i18n import i18n, t
 
 # Initialize components
 @st.cache_resource
@@ -23,7 +24,7 @@ def get_ai_assistant():
             st.session_state.ai_assistant = AIAssistant()
         return st.session_state.ai_assistant
     except Exception as e:
-        st.warning("AI features are currently unavailable. Some functionality may be limited.")
+        st.warning(t("ai_features_unavailable"))
         return None
 
 image_handler = ImageHandler()
