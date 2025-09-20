@@ -280,6 +280,62 @@ if st.session_state.chat_open:
     st.markdown("### 🤖 TrueCraft AI Assistant")
     st.markdown("Ask me anything about your artisan business - product descriptions, pricing, marketing, or general business advice!")
     
+    # Default prompt options (like Flipkart's implementation)
+    if len(st.session_state.messages) <= 1:  # Show default prompts only at the beginning
+        st.markdown("**💡 Quick Start - Choose a topic or type your own question:**")
+        
+        # Define default prompts for artisan business
+        default_prompts = [
+            "How should I price my handmade products?",
+            "Write a compelling product description for my jewelry",
+            "What are the best marketing strategies for artisans?", 
+            "Help me create an engaging artisan profile bio",
+            "What materials should I mention in my product listings?",
+            "How can I improve my product photography?",
+            "What shipping options work best for handmade items?",
+            "Help me write a social media post about my craft"
+        ]
+        
+        # Display default prompts in a grid
+        col1, col2 = st.columns(2)
+        for i, prompt in enumerate(default_prompts):
+            with col1 if i % 2 == 0 else col2:
+                if st.button(f"💬 {prompt}", key=f"default_prompt_{i}", help="Click to ask this question"):
+                    # Process the selected default prompt
+                    st.session_state.messages.append({"role": "user", "content": prompt})
+                    
+                    # Get AI response for the selected prompt
+                    ai_assistant = get_ai_assistant()
+                    if ai_assistant and ai_assistant.enabled:
+                        try:
+                            with st.spinner("AI is thinking..."):
+                                response = ai_assistant.generate_custom_content(
+                                    "conversational assistance",
+                                    f"User is asking about their artisan business: {prompt}",
+                                    "Provide helpful, friendly advice about artisan business, crafts, product creation, pricing, marketing, or general business questions. Keep responses concise but informative. Be encouraging and supportive."
+                                )
+                                
+                                if response and response.strip():
+                                    st.session_state.messages.append({"role": "assistant", "content": response})
+                                else:
+                                    st.session_state.messages.append({
+                                        "role": "assistant", 
+                                        "content": "I apologize, but I'm having trouble generating a response right now. Please try again later."
+                                    })
+                        except Exception as e:
+                            st.session_state.messages.append({
+                                "role": "assistant", 
+                                "content": "I'm sorry, but I'm experiencing technical difficulties. Please try again later."
+                            })
+                    else:
+                        st.session_state.messages.append({
+                            "role": "assistant", 
+                            "content": "AI features are currently unavailable. Please check your API configuration."
+                        })
+                    st.rerun()
+        
+        st.markdown("**Or type your own question below:**")
+    
     # Create a container for chat messages with custom styling
     chat_container = st.container()
     with chat_container:
