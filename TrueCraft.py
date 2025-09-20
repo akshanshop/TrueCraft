@@ -404,7 +404,7 @@ def render_ai_chatbot():
         st.session_state.chatbot_open = False
     if 'chat_messages' not in st.session_state:
         st.session_state.chat_messages = [
-            {"role": "assistant", "content": f"👋 {t('ai_chatbot_welcome', 'Hello! I\'m your TrueCraft AI assistant. I can help you with product descriptions, pricing advice, business tips, and more. How can I assist you today?')}"}
+            {"role": "assistant", "content": f"👋 Hello! I'm your TrueCraft AI assistant. I can help you with product descriptions, pricing advice, business tips, and more. How can I assist you today?"}
         ]
     if 'chat_input' not in st.session_state:
         st.session_state.chat_input = ""
@@ -522,7 +522,7 @@ if st.session_state.get('chatbot_open', False):
         else:
             st.session_state.chat_messages.append({
                 "role": "assistant", 
-                "content": f"{t('ai_unavailable', 'AI features are currently unavailable. Please check your API configuration.')}"
+                "content": "AI features are currently unavailable. Please check your API configuration."
             })
         
         st.rerun()
@@ -539,7 +539,7 @@ if st.session_state.get('chatbot_open', False):
         # Clear chat button
         if st.button("Clear Chat", key="clear_chat"):
             st.session_state.chat_messages = [
-                {"role": "assistant", "content": f"👋 {t('ai_chatbot_welcome', 'Hello! I\'m your TrueCraft AI assistant. I can help you with product descriptions, pricing advice, business tips, and more. How can I assist you today?')}"}
+                {"role": "assistant", "content": f"👋 Hello! I'm your TrueCraft AI assistant. I can help you with product descriptions, pricing advice, business tips, and more. How can I assist you today?"}
             ]
             st.rerun()
 
