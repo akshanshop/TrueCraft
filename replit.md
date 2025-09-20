@@ -2,7 +2,7 @@
 
 ## Overview
 
-TrueCraft Marketplace Assistant is a Streamlit-based web application designed to empower local artisans with AI-powered tools for online marketplace success. The application provides three core functionalities: AI-assisted product listing creation, artisan profile management, and analytics dashboard for tracking product performance. The system leverages Google's Gemini-2.5-pro model to generate compelling product descriptions, pricing suggestions, and writing assistance for artisan profiles.
+TrueCraft Marketplace Assistant is a Streamlit-based web application designed to empower local artisans with AI-powered tools for online marketplace success. The application provides three core functionalities: AI-assisted product listing creation, artisan profile management, and analytics dashboard for tracking product performance. The system leverages Hugging Face API for text generation to create compelling product descriptions, pricing suggestions, and writing assistance for artisan profiles.
 
 ## User Preferences
 
@@ -10,17 +10,18 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-**September 20, 2025** - Project import setup and credential configuration completed:
-- Configured Google Gemini API integration for AI-powered features  
+**September 20, 2025** - Project import setup and AI/OAuth configuration completed:
+- **CHANGED**: Migrated from Google Gemini to Hugging Face API for AI-powered features
+- Configured Hugging Face API integration for product descriptions, pricing suggestions, and artisan assistance
 - Set up Google OAuth (Client ID and Secret) for social authentication
-- Set up GitHub OAuth (Client ID and Secret) for social authentication
+- Set up GitHub OAuth (Client ID and Secret) for social authentication  
 - PostgreSQL database connection established
 - All credentials securely stored in Replit Secrets
 - Application fully configured for Replit environment with proper host settings
 - Deployment configuration set for autoscale production deployment
 - All authentication and AI features now fully functional
 
-**Note**: OAuth credentials configured manually as environment variables rather than using Replit's OAuth integration system per user preference.
+**Note**: OAuth credentials configured manually as environment variables rather than using Replit's OAuth integration system per user preference. Hugging Face API used for AI features with limitations on audio transcription and multimodal image analysis.
 
 ## System Architecture
 
@@ -28,7 +29,7 @@ Preferred communication style: Simple, everyday language.
 - **Framework**: Streamlit-based web application with multi-page navigation
 - **Layout**: Wide layout with responsive design using Streamlit's column system
 - **Styling**: Custom CSS integrated through Streamlit's markdown functionality for warm, crafted aesthetic
-- **Page Structure**: Main app.py serving as homepage with dedicated pages for Product Listings, Artisan Profile, and Analytics
+- **Page Structure**: Main TrueCraft.py serving as homepage with dedicated pages for Product Listings, Artisan Profile, and Analytics
 
 ### Data Management
 - **Storage**: Session-based data persistence using Streamlit's session state
@@ -39,13 +40,13 @@ Preferred communication style: Simple, everyday language.
   - Analytics: product views, search terms, user interactions
 
 ### AI Integration
-- **AI Provider**: Google Gemini API integration using the Gemini-2.5-pro model
+- **AI Provider**: Hugging Face API integration using text generation models
 - **Core AI Features**:
   - Product description generation based on product details and materials
   - Pricing suggestions with market analysis
   - Writing assistance for artisan profiles
-  - Image analysis for product listings
-- **AI Assistant Architecture**: Centralized AIAssistant class handling all Gemini API interactions
+  - Limited image analysis (requires multimodal model upgrade)
+- **AI Assistant Architecture**: Centralized AIAssistant class handling all Hugging Face API interactions
 
 ### Image Processing
 - **Image Handling**: PIL (Python Imaging Library) for image processing and optimization
@@ -61,16 +62,16 @@ Preferred communication style: Simple, everyday language.
 ## External Dependencies
 
 ### AI Services
-- **Google Gemini API**: Gemini-2.5-pro model for content generation and AI assistance
-- **Authentication**: API key-based authentication for Gemini services
-- **Image Analysis**: Multimodal capabilities for product image analysis
+- **Hugging Face API**: Text generation using mistralai/Mistral-7B-Instruct-v0.1 model for content generation and AI assistance
+- **Authentication**: API key-based authentication via HUGGINGFACE_API_KEY environment variable
+- **Limitations**: Audio transcription and advanced image analysis require additional service integration
 
 ### Python Libraries
 - **Streamlit**: Web application framework and UI components
 - **Pandas**: Data manipulation and DataFrame operations
 - **Plotly**: Interactive data visualization and charting
 - **PIL (Pillow)**: Image processing and optimization
-- **Google Gemini Python Client**: Official Google Gemini API client library
+- **Requests**: HTTP library for Hugging Face API communication
 
 ### Data Storage
 - **Session State**: Streamlit's built-in session state for temporary data persistence
