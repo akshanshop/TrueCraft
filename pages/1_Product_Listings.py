@@ -360,6 +360,329 @@ def render_create_product():
                     st.error("Failed to create product listing. Please try again.")
             else:
                 st.error("Please fill in all required fields (marked with *).")
+    
+    # Advanced AI Features Section (outside of form)
+    st.divider()
+    st.markdown("### 🚀 Advanced AI Features for Your Products")
+    st.markdown("*Enhance your product listings with AI-powered analysis and insights*")
+    
+    # Create tabs for different AI features
+    ai_tab1, ai_tab2, ai_tab3, ai_tab4 = st.tabs([
+        "💰 Fair Pricing", "🌱 Sustainability", "🏛️ Cultural Story", "🎯 Future Tech"
+    ])
+    
+    with ai_tab1:
+        st.markdown("#### 💰 AI-Powered Fair Pricing Analysis")
+        st.info("Ensure you receive fair compensation for your craftsmanship and cultural contribution")
+        
+        # Input fields for pricing analysis
+        col1, col2 = st.columns(2)
+        with col1:
+            product_for_pricing = st.text_input("Product Name", placeholder="Enter product name for analysis")
+            category_for_pricing = st.selectbox("Product Category", [
+                "Ceramics & Pottery", "Textiles & Fabrics", "Jewelry & Accessories", 
+                "Woodwork & Furniture", "Metalwork", "Leather Goods", "Art & Paintings",
+                "Sculptures", "Home Decor", "Other"
+            ], key="pricing_category")
+        
+        with col2:
+            materials_for_pricing = st.text_input("Materials Used", placeholder="e.g., organic cotton, reclaimed wood")
+            creation_time = st.selectbox("Time to Create", [
+                "Less than 1 day", "1-3 days", "1 week", "2-4 weeks", "1-3 months", "More than 3 months"
+            ])
+        
+        if st.button("🔍 Analyze Fair Pricing", use_container_width=True):
+            if product_for_pricing and materials_for_pricing:
+                ai_assistant = get_ai_assistant()
+                if ai_assistant:
+                    with st.spinner("Analyzing fair pricing with AI..."):
+                        product_data = {
+                            'name': product_for_pricing,
+                            'category': category_for_pricing,
+                            'materials': materials_for_pricing,
+                            'creation_time': creation_time,
+                            'skill_level': 'Expert artisan level'
+                        }
+                        
+                        pricing_analysis = ai_assistant.fair_price_analysis(product_data)
+                        
+                        if pricing_analysis.get('fair_price_range'):
+                            fair_min = pricing_analysis['fair_price_range'].get('min', 0)
+                            fair_max = pricing_analysis['fair_price_range'].get('max', 0)
+                            
+                            col1, col2, col3 = st.columns(3)
+                            with col1:
+                                st.metric("💎 Minimum Fair Price", f"${fair_min:.2f}")
+                            with col2:
+                                st.metric("✨ Maximum Fair Price", f"${fair_max:.2f}")
+                            with col3:
+                                avg_price = (fair_min + fair_max) / 2
+                                st.metric("📊 Recommended Price", f"${avg_price:.2f}")
+                            
+                            st.success("**Market Analysis:**")
+                            st.write(pricing_analysis.get('market_analysis', 'Analysis complete.'))
+                            
+                            if pricing_analysis.get('ethical_factors'):
+                                st.info("**Factors Supporting Fair Pricing:**")
+                                for factor in pricing_analysis['ethical_factors']:
+                                    st.write(f"• {factor}")
+                else:
+                    st.warning("AI pricing analysis requires OpenAI API key configuration.")
+            else:
+                st.warning("Please provide product name and materials for analysis.")
+    
+    with ai_tab2:
+        st.markdown("#### 🌱 Sustainability Assessment & Certification")
+        st.info("Showcase your environmental commitment and sustainable practices")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            product_for_sustainability = st.text_input("Product Name", placeholder="Product to assess", key="sustain_product")
+            materials_sustainability = st.text_area(
+                "Materials & Sourcing:", 
+                placeholder="Describe your materials and where they come from...",
+                key="sustain_materials"
+            )
+        
+        with col2:
+            sustainable_practices = st.text_area(
+                "Sustainable Practices:", 
+                placeholder="Describe your eco-friendly practices, waste reduction, energy use...",
+                key="sustain_practices"
+            )
+            packaging_approach = st.text_input("Packaging Approach", placeholder="e.g., recyclable, minimal, biodegradable")
+        
+        if st.button("🌿 Generate Sustainability Report", use_container_width=True):
+            if product_for_sustainability and (materials_sustainability or sustainable_practices):
+                ai_assistant = get_ai_assistant()
+                if ai_assistant:
+                    with st.spinner("Analyzing sustainability impact..."):
+                        product_data_sustain = {
+                            'materials': materials_sustainability,
+                            'production_method': 'Handmade by artisan',
+                            'origin': 'Local artisan workshop',
+                            'packaging': packaging_approach or 'Eco-friendly packaging'
+                        }
+                        
+                        sustainability = ai_assistant.sustainability_assessment(
+                            product_data_sustain, 
+                            sustainable_practices
+                        )
+                        
+                        if sustainability.get('sustainability_score'):
+                            score = sustainability['sustainability_score']
+                            
+                            # Display score with color coding
+                            col1, col2, col3 = st.columns(3)
+                            with col1:
+                                st.metric("🌍 Sustainability Score", f"{score}/100")
+                            with col2:
+                                if score >= 80:
+                                    st.success("🌟 Excellent Rating!")
+                                elif score >= 60:
+                                    st.warning("🌱 Good Rating")
+                                else:
+                                    st.info("🌿 Developing")
+                            with col3:
+                                # Calculate potential certification level
+                                if score >= 85:
+                                    cert_level = "Platinum Eco-Artisan"
+                                elif score >= 70:
+                                    cert_level = "Gold Eco-Artisan"
+                                elif score >= 55:
+                                    cert_level = "Silver Eco-Artisan"
+                                else:
+                                    cert_level = "Bronze Eco-Artisan"
+                                st.metric("🏆 Certification Level", cert_level)
+                            
+                            if sustainability.get('tags'):
+                                st.markdown("**🏷️ Sustainability Tags:**")
+                                tag_cols = st.columns(min(len(sustainability['tags']), 4))
+                                for i, tag in enumerate(sustainability['tags']):
+                                    with tag_cols[i % 4]:
+                                        st.markdown(f"`{tag}`")
+                            
+                            if sustainability.get('recommendations'):
+                                st.markdown("**💡 Improvement Recommendations:**")
+                                for rec in sustainability['recommendations']:
+                                    st.write(f"🚀 {rec}")
+                            
+                            if sustainability.get('environmental_impact'):
+                                st.success(f"**🌍 Environmental Impact:** {sustainability['environmental_impact']}")
+                            
+                            if sustainability.get('social_impact'):
+                                st.info(f"**👥 Social Impact:** {sustainability['social_impact']}")
+                else:
+                    st.warning("Sustainability assessment requires OpenAI API key configuration.")
+            else:
+                st.warning("Please provide product name and sustainability information.")
+    
+    with ai_tab3:
+        st.markdown("#### 🏛️ Cultural Heritage & Storytelling")
+        st.info("Celebrate your cultural traditions and connect with customers through authentic stories")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            artisan_name = st.text_input("Your Name/Business", placeholder="Your artisan name or business")
+            cultural_background = st.text_input("Cultural Background", placeholder="e.g., Japanese, Mexican, Indian traditions")
+            craft_tradition = st.text_input("Craft Tradition", placeholder="e.g., pottery, weaving, metalwork")
+        
+        with col2:
+            experience_years = st.selectbox("Years of Experience", [
+                "Less than 1 year", "1-3 years", "3-5 years", "5-10 years", "10-20 years", "20+ years"
+            ])
+            traditional_techniques = st.text_area(
+                "Traditional Techniques:", 
+                placeholder="Describe the traditional methods you use...",
+                key="cultural_techniques"
+            )
+            family_heritage = st.text_area(
+                "Family Heritage:", 
+                placeholder="Any family traditions or heritage related to your craft...",
+                key="family_heritage"
+            )
+        
+        if st.button("📖 Generate Cultural Story", use_container_width=True):
+            if artisan_name and cultural_background:
+                ai_assistant = get_ai_assistant()
+                if ai_assistant:
+                    with st.spinner("Creating your cultural story..."):
+                        artisan_data = {
+                            'name': artisan_name,
+                            'craft': craft_tradition,
+                            'culture': cultural_background,
+                            'experience': experience_years,
+                            'techniques': traditional_techniques,
+                            'heritage': family_heritage
+                        }
+                        
+                        cultural_story = ai_assistant.cultural_storytelling(artisan_data)
+                        
+                        st.markdown("### 📖 Your Cultural Story")
+                        st.write(cultural_story)
+                        
+                        # Download/copy options
+                        col1, col2, col3 = st.columns(3)
+                        with col1:
+                            if st.button("📋 Copy to Clipboard"):
+                                st.code(cultural_story)
+                                st.success("Story ready to copy!")
+                        
+                        with col2:
+                            if st.button("➕ Add to Profile"):
+                                st.info("Visit the Artisan Profile page to add this story!")
+                        
+                        with col3:
+                            # SDG Impact Assessment
+                            if st.button("🎯 Check SDG Impact"):
+                                business_data = {
+                                    'business_type': f"{craft_tradition} artisan",
+                                    'products': craft_tradition,
+                                    'materials': traditional_techniques,
+                                    'community': 'Local artisan community',
+                                    'employment': 'Artisan entrepreneur',
+                                    'sustainability': 'Traditional artisan methods'
+                                }
+                                
+                                sdg_impact = ai_assistant.sdg_impact_assessment(business_data)
+                                
+                                if sdg_impact.get('impact_score'):
+                                    st.metric("🎯 SDG Impact Score", f"{sdg_impact['impact_score']}/100")
+                                    
+                                    if sdg_impact.get('sdg_contributions'):
+                                        st.markdown("**Your SDG Contributions:**")
+                                        for contrib in sdg_impact['sdg_contributions'][:3]:  # Show top 3
+                                            st.write(f"🎯 **SDG {contrib.get('goal_number')}**: {contrib.get('goal_name')}")
+                else:
+                    st.warning("Cultural storytelling requires OpenAI API key configuration.")
+            else:
+                st.warning("Please provide your name and cultural background.")
+    
+    with ai_tab4:
+        st.markdown("#### 🔮 Future Technology Features")
+        st.info("Preview upcoming features that will revolutionize artisan marketplaces")
+        
+        # Blockchain Authenticity
+        st.markdown("##### 🔗 Blockchain Authenticity Verification")
+        col1, col2 = st.columns(2)
+        with col1:
+            product_for_blockchain = st.text_input("Product Name", placeholder="Product for authenticity planning", key="blockchain_product")
+            cultural_significance = st.text_input("Cultural Significance", placeholder="Why is this culturally important?")
+        
+        with col2:
+            unique_features = st.text_area("Unique Features", placeholder="What makes this product unique and authentic?")
+            production_process = st.text_area("Production Process", placeholder="Describe your creation process...")
+        
+        if st.button("🔍 Plan Blockchain Authenticity", use_container_width=True):
+            if product_for_blockchain:
+                ai_assistant = get_ai_assistant()
+                if ai_assistant:
+                    with st.spinner("Creating authenticity verification plan..."):
+                        product_data_auth = {
+                            'type': product_for_blockchain,
+                            'cultural_significance': cultural_significance,
+                            'unique_features': unique_features,
+                            'process': production_process
+                        }
+                        
+                        auth_plan = ai_assistant.blockchain_authenticity_guidance(product_data_auth)
+                        
+                        st.success("**🔗 Blockchain Authenticity Plan:**")
+                        st.write(auth_plan.get('authenticity_plan', 'Authenticity plan generated'))
+                        
+                        if auth_plan.get('blockchain_benefits'):
+                            st.markdown("**Benefits for Your Product:**")
+                            for benefit in auth_plan['blockchain_benefits']:
+                                st.write(f"✅ {benefit}")
+                else:
+                    st.warning("Blockchain planning requires OpenAI API key configuration.")
+        
+        st.divider()
+        
+        # AR/VR Experience
+        st.markdown("##### 🥽 AR/VR Craft Experience Planning")
+        col1, col2 = st.columns(2)
+        with col1:
+            craft_type_vr = st.selectbox("Craft Type", [
+                "Pottery & Ceramics", "Textile Weaving", "Jewelry Making", "Woodworking", 
+                "Metalwork", "Glassblowing", "Painting", "Sculpture", "Other"
+            ], key="vr_craft")
+            techniques_vr = st.text_area("Key Techniques", placeholder="Main techniques customers should see...")
+        
+        with col2:
+            workshop_description = st.text_area("Workshop Setting", placeholder="Describe your workspace...")
+            cultural_elements = st.text_area("Cultural Elements", placeholder="Cultural aspects to highlight...")
+        
+        if st.button("🎬 Design Virtual Experience", use_container_width=True):
+            if craft_type_vr:
+                ai_assistant = get_ai_assistant()
+                if ai_assistant:
+                    with st.spinner("Designing virtual craft experience..."):
+                        craft_data = {
+                            'craft_type': craft_type_vr,
+                            'techniques': techniques_vr,
+                            'culture': cultural_elements,
+                            'workshop': workshop_description,
+                            'processes': f"Step-by-step {craft_type_vr} creation"
+                        }
+                        
+                        ar_plan = ai_assistant.ar_vr_experience_plan(craft_data)
+                        
+                        st.success("**🥽 Virtual Experience Plan:**")
+                        st.write(ar_plan.get('experience_plan', 'Virtual experience designed'))
+                        
+                        if ar_plan.get('user_journey'):
+                            st.markdown("**Customer Journey:**")
+                            for step in ar_plan['user_journey']:
+                                st.write(f"🎯 {step}")
+                        
+                        if ar_plan.get('educational_value'):
+                            st.info(f"**📚 Educational Value:** {ar_plan['educational_value']}")
+                else:
+                    st.warning("AR/VR planning requires OpenAI API key configuration.")
+        
+        st.markdown("---")
+        st.info("💡 **Coming Soon**: These features will be available in future updates to help you showcase your crafts with cutting-edge technology!")
 
 def render_browse_products():
     """Render the Browse Products functionality"""

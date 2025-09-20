@@ -172,6 +172,28 @@ with col6:
     if st.button("Get Support", use_container_width=True):
         st.switch_page("pages/5_Support.py")
 
+# Third row - Advanced AI Features
+st.markdown("### 🚀 Advanced AI Features")
+col7, col8, col9 = st.columns(3)
+
+with col7:
+    st.subheader("🎙️ Voice Onboarding")
+    st.markdown("Complete your artisan profile using AI-powered voice guidance in your language.")
+    if st.button("Start Voice Setup", use_container_width=True, type="primary"):
+        st.switch_page("pages/6_Voice_Onboarding.py")
+
+with col8:
+    st.subheader("🌱 Sustainability Hub")
+    st.markdown("Assess your environmental impact and get sustainability certifications.")
+    if st.button("Sustainability Assessment", use_container_width=True):
+        st.info("🌿 Sustainability features are integrated into product creation and analytics!")
+
+with col9:
+    st.subheader("🏛️ Cultural Heritage")
+    st.markdown("Preserve and showcase your cultural traditions and stories.")
+    if st.button("Cultural Storytelling", use_container_width=True):
+        st.info("🎨 Cultural storytelling is available in Voice Onboarding and Profile pages!")
+
 # Quick stats
 st.divider()
 st.subheader("📈 Quick Overview")
