@@ -1,6 +1,6 @@
 modules = ["python-3.11"]
 [agent]
-integrations = ["python_openai:1.0.0"]
+integrations = ["python_openai:1.0.0", "python_gemini:1.0.0"]
 expertMode = true
 
 [nix]
