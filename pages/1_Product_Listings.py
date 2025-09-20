@@ -707,8 +707,144 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("📝 Product Listings")
-st.markdown("Create and manage your product listings with comprehensive AI-powered tools and advanced writing assistance")
+# Enhanced CSS for consistent styling
+st.markdown("""
+<style>
+    /* Main layout improvements */
+    .main .block-container {
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+        max-width: 1400px !important;
+        margin: 0 auto !important;
+    }
+    
+    /* Enhanced header styling */
+    .page-header {
+        text-align: center;
+        padding: 2rem 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+    }
+    
+    .page-header h1 {
+        margin-bottom: 0.5rem;
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+    
+    /* Form styling */
+    .stForm {
+        background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e8ecff;
+        margin-bottom: 2rem;
+    }
+    
+    /* Button enhancements */
+    .stButton > button {
+        border-radius: 12px;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+    }
+    
+    /* Card styling for products */
+    .product-card {
+        background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
+        padding: 1.5rem;
+        border-radius: 16px;
+        margin: 1rem 0;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e8ecff;
+        transition: all 0.3s ease;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    }
+    
+    /* Tab styling */
+    .stTabs {
+        background: transparent;
+    }
+    
+    /* Alert styling */
+    .stAlert {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+    
+    /* Sidebar styling */
+    .css-1d391kg {
+        background: linear-gradient(145deg, #f8f9ff 0%, #ffffff 100%);
+        border-radius: 12px;
+        padding: 1rem;
+    }
+    
+    /* Input field styling */
+    .stTextInput > div > div > input,
+    .stTextArea > div > div > textarea,
+    .stSelectbox > div > div > select {
+        border-radius: 8px;
+        border: 1px solid #e8ecff;
+        transition: all 0.3s ease;
+    }
+    
+    .stTextInput > div > div > input:focus,
+    .stTextArea > div > div > textarea:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    /* Section headers */
+    .section-header {
+        text-align: center;
+        padding: 1.5rem 0;
+        color: #2d3748;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .main .block-container {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+        
+        .page-header {
+            padding: 1.5rem 1rem;
+        }
+        
+        .page-header h1 {
+            font-size: 2rem;
+        }
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Enhanced page header
+st.markdown('''
+<div class="page-header">
+    <h1>📝 Product Listings</h1>
+    <p>Create and manage your product listings with comprehensive AI-powered tools and advanced writing assistance</p>
+</div>
+''', unsafe_allow_html=True)
 
 # Add AI Business Toolkit Tab
 tab1, tab2, tab3 = st.tabs(["📝 Product Management", "🚀 AI Business Toolkit", "🎯 Advanced AI Tools"])

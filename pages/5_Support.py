@@ -11,6 +11,94 @@ st.set_page_config(
     layout="wide"
 )
 
+# Enhanced CSS for consistent styling
+st.markdown("""
+<style>
+    /* Main layout improvements */
+    .main .block-container {
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+        max-width: 1400px !important;
+        margin: 0 auto !important;
+    }
+    
+    /* Button enhancements */
+    .stButton > button {
+        border-radius: 12px;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+    }
+    
+    /* Form styling */
+    .stForm {
+        background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e8ecff;
+        margin-bottom: 2rem;
+    }
+    
+    /* Tab styling */
+    .stTabs {
+        background: transparent;
+    }
+    
+    /* Input field styling */
+    .stTextInput > div > div > input,
+    .stTextArea > div > div > textarea,
+    .stSelectbox > div > div > select {
+        border-radius: 8px;
+        border: 1px solid #e8ecff;
+        transition: all 0.3s ease;
+    }
+    
+    .stTextInput > div > div > input:focus,
+    .stTextArea > div > div > textarea:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    /* Alert styling */
+    .stAlert {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+    
+    /* DataFrame styling */
+    .stDataFrame {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+    
+    /* Expander styling */
+    .streamlit-expanderHeader {
+        background: linear-gradient(145deg, #f8f9ff 0%, #ffffff 100%);
+        border-radius: 12px;
+        border: 1px solid #e8ecff;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .main .block-container {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # Initialize database manager
 @st.cache_resource
 def get_database_service():
@@ -39,8 +127,9 @@ st.markdown("""
         padding: 2rem 0;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        border-radius: 10px;
+        border-radius: 20px;
         margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
     }
     .faq-container {
         background: #f8f9fa;

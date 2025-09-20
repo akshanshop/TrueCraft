@@ -46,23 +46,179 @@ if 'code' in query_params and 'state' in query_params:
         st.query_params.clear()
 
 
-# Custom CSS for warm, crafted aesthetic using Streamlit's built-in styling
+# Enhanced CSS for symmetric and aesthetic design
 st.markdown("""
 <style>
+    /* Main layout improvements */
+    .main .block-container {
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+        max-width: 1400px !important;
+        margin: 0 auto !important;
+    }
+    
+    /* Enhanced header styling */
     .main-header {
         text-align: center;
-        padding: 2rem 0;
+        padding: 3rem 0 2rem 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
     }
-    .welcome-card {
-        padding: 1.5rem;
-        border-radius: 10px;
+    
+    .main-header h1 {
+        margin-bottom: 0.5rem;
+        font-size: 3rem;
+        font-weight: 700;
+    }
+    
+    /* Aesthetic card styling */
+    .value-card {
+        background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
+        padding: 2rem;
+        border-radius: 16px;
         margin: 1rem 0;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e8ecff;
+        transition: all 0.3s ease;
+        height: 100%;
+        min-height: 220px;
+        display: flex;
+        flex-direction: column;
     }
-    /* Remove left and right padding from main content */
-    .main .block-container {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-        max-width: none !important;
+    
+    .value-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    }
+    
+    .value-card h4 {
+        color: #2d3748;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+    
+    .value-card p {
+        color: #4a5568;
+        line-height: 1.6;
+        flex-grow: 1;
+    }
+    
+    /* Navigation grid styling */
+    .nav-card {
+        background: linear-gradient(145deg, #ffffff 0%, #f8feff 100%);
+        padding: 2rem;
+        border-radius: 16px;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e8f4ff;
+        transition: all 0.3s ease;
+        height: 100%;
+        min-height: 180px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    
+    .nav-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        border-color: #667eea;
+    }
+    
+    .nav-card h3 {
+        color: #2d3748;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+    }
+    
+    .nav-card p {
+        color: #4a5568;
+        margin-bottom: 1.5rem;
+        flex-grow: 1;
+    }
+    
+    /* Button enhancements */
+    .stButton > button {
+        width: 100%;
+        border-radius: 12px;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+    }
+    
+    /* Metrics styling */
+    .metric-card {
+        background: linear-gradient(145deg, #ffffff 0%, #f0f8ff 100%);
+        padding: 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e8f2ff;
+        margin: 0.5rem 0;
+    }
+    
+    /* Info box styling */
+    .stAlert {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+    
+    /* Expander styling */
+    .streamlit-expanderHeader {
+        background: linear-gradient(145deg, #f8f9ff 0%, #ffffff 100%);
+        border-radius: 12px;
+        border: 1px solid #e8ecff;
+    }
+    
+    /* Divider styling */
+    hr {
+        margin: 3rem 0;
+        border: none;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #667eea, transparent);
+    }
+    
+    /* Section headers */
+    .section-header {
+        text-align: center;
+        padding: 2rem 0 1rem 0;
+        color: #2d3748;
+        font-size: 2rem;
+        font-weight: 600;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .main .block-container {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+        
+        .main-header {
+            padding: 2rem 1rem;
+        }
+        
+        .main-header h1 {
+            font-size: 2rem;
+        }
+        
+        .value-card, .nav-card {
+            margin: 0.5rem 0;
+            padding: 1.5rem;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -78,34 +234,34 @@ st.markdown('</div>', unsafe_allow_html=True)
 st.markdown("""---""")
 st.subheader("🌟 Why TrueCraft is Different")
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3 = st.columns(3, gap="large")
 
 with col1:
     st.markdown("""
-    **🎯 Problem-Solution Fit**
-    
-    We identified a real pain point: artisans struggle with digital access, fair pricing, and visibility.
-    
-    Our solution is practical, AI-powered, and designed specifically for artisans — not just another e-commerce clone.
-    """)
+    <div class="value-card">
+        <h4>🎯 Problem-Solution Fit</h4>
+        <p>We identified a real pain point: artisans struggle with digital access, fair pricing, and visibility.</p>
+        <p>Our solution is practical, AI-powered, and designed specifically for artisans — not just another e-commerce clone.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col2:
     st.markdown("""
-    **🤖 Technological Edge**
-    
-    Combines AI + voice recognition + personalization + sustainability tagging in one ecosystem.
-    
-    Features like AI-generated storytelling and fair price prediction make our project stand out.
-    """)
+    <div class="value-card">
+        <h4>🤖 Technological Edge</h4>
+        <p>Combines AI + voice recognition + personalization + sustainability tagging in one ecosystem.</p>
+        <p>Features like AI-generated storytelling and fair price prediction make our project stand out.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col3:
     st.markdown("""
-    **🌍 Social + Economic Impact**
-    
-    Unlike profit-driven platforms, we prioritize artisans' growth, cultural preservation, and fair trade.
-    
-    Contributing to SDGs: Decent Work, Reduced Inequalities, and Sustainable Consumption.
-    """)
+    <div class="value-card">
+        <h4>🌍 Social + Economic Impact</h4>
+        <p>Unlike profit-driven platforms, we prioritize artisans' growth, cultural preservation, and fair trade.</p>
+        <p>Contributing to SDGs: Decent Work, Reduced Inequalities, and Sustainable Consumption.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Differentiation from competitors
 st.info("""
@@ -195,74 +351,129 @@ with st.sidebar:
     
 
 st.markdown("""---""")
-# Main Navigation Section
-st.subheader("🚀 AI-Powered Tools for Artisan Success")
+st.markdown('<div class="section-header">🚀 AI-Powered Tools for Artisan Success</div>', unsafe_allow_html=True)
 
 # Navigation Grid - 2 rows of 3 columns
-col1, col2, col3 = st.columns(3)
+col1, col2, col3 = st.columns(3, gap="large")
 
 with col1:
-    st.subheader("🏠 Home")
-    st.markdown("Main dashboard with overview of your TrueCraft marketplace activity.")
+    st.markdown("""
+    <div class="nav-card">
+        <h3>🏠 Home</h3>
+        <p>Main dashboard with overview of your TrueCraft marketplace activity.</p>
+    </div>
+    """, unsafe_allow_html=True)
     if st.button("Go to Home", use_container_width=True):
         st.switch_page("TrueCraft.py")
 
 with col2:
-    st.subheader("📝 Product Listings")
-    st.markdown("Create and manage your product listings with AI-generated descriptions.")
+    st.markdown("""
+    <div class="nav-card">
+        <h3>📝 Product Listings</h3>
+        <p>Create and manage your product listings with AI-generated descriptions.</p>
+    </div>
+    """, unsafe_allow_html=True)
     if st.button("Manage Products", use_container_width=True):
         st.switch_page("pages/1_Product_Listings.py")
 
 with col3:
-    st.subheader("👤 Artisan Profile")
-    st.markdown("Build your professional artisan profile and showcase your story.")
+    st.markdown("""
+    <div class="nav-card">
+        <h3>👤 Artisan Profile</h3>
+        <p>Build your professional artisan profile and showcase your story.</p>
+    </div>
+    """, unsafe_allow_html=True)
     if st.button("Manage Profile", use_container_width=True):
         st.switch_page("pages/2_Artisan_Profile.py")
 
 # Second row
-col4, col5, col6 = st.columns(3)
+col4, col5, col6 = st.columns(3, gap="large")
 
 with col4:
-    st.subheader("📊 Analytics")
-    st.markdown("Get detailed performance insights and track your sales trends.")
+    st.markdown("""
+    <div class="nav-card">
+        <h3>📊 Analytics</h3>
+        <p>Get detailed performance insights and track your sales trends.</p>
+    </div>
+    """, unsafe_allow_html=True)
     if st.button("View Analytics", use_container_width=True):
         st.switch_page("pages/3_Analytics.py")
 
 with col5:
-    st.subheader("💬 Messages")
     unread_count = db_manager.get_unread_message_count()
     if unread_count > 0:
-        st.markdown(f"Manage customer communications. **{unread_count} unread messages**")
+        st.markdown(f"""
+        <div class="nav-card">
+            <h3>💬 Messages</h3>
+            <p>Manage customer communications. <strong>{unread_count} unread messages</strong></p>
+        </div>
+        """, unsafe_allow_html=True)
     else:
-        st.markdown("Manage all your customer communications in one place.")
+        st.markdown("""
+        <div class="nav-card">
+            <h3>💬 Messages</h3>
+            <p>Manage all your customer communications in one place.</p>
+        </div>
+        """, unsafe_allow_html=True)
     if st.button("View Messages", use_container_width=True):
         st.switch_page("pages/4_Messages.py")
 
 with col6:
-    st.subheader("🆘 Support")
-    st.markdown("Get help, and access guides, and troubleshoot any issues.")
+    st.markdown("""
+    <div class="nav-card">
+        <h3>🆘 Support</h3>
+        <p>Get help, and access guides, and troubleshoot any issues.</p>
+    </div>
+    """, unsafe_allow_html=True)
     if st.button("Get Support", use_container_width=True):
         st.switch_page("pages/5_Support.py")
 
 # Quick stats
-st.divider()
-st.subheader("📈 Quick Overview")
+st.markdown("""---""")
+st.markdown('<div class="section-header">📈 Quick Overview</div>', unsafe_allow_html=True)
 
 # Get current data
 products_df = db_manager.get_products()
 profiles_df = db_manager.get_profiles()
 
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3, col4 = st.columns(4, gap="medium")
 with col1:
-    st.metric("Total Products", len(products_df))
+    st.markdown("""
+    <div class="metric-card">
+        <h3>📦</h3>
+        <h2>{}</h2>
+        <p>Total Products</p>
+    </div>
+    """.format(len(products_df)), unsafe_allow_html=True)
+    
 with col2:
-    st.metric("Active Profiles", len(profiles_df))
+    st.markdown("""
+    <div class="metric-card">
+        <h3>👥</h3>
+        <h2>{}</h2>
+        <p>Active Profiles</p>
+    </div>
+    """.format(len(profiles_df)), unsafe_allow_html=True)
+    
 with col3:
     avg_price = products_df['price'].mean() if not products_df.empty else 0
-    st.metric("Average Price", f"${avg_price:.2f}")
+    st.markdown("""
+    <div class="metric-card">
+        <h3>💰</h3>
+        <h2>${:.2f}</h2>
+        <p>Average Price</p>
+    </div>
+    """.format(avg_price), unsafe_allow_html=True)
+    
 with col4:
     total_messages = db_manager.get_unread_message_count()
-    st.metric("Unread Messages", total_messages)
+    st.markdown("""
+    <div class="metric-card">
+        <h3>💬</h3>
+        <h2>{}</h2>
+        <p>Unread Messages</p>
+    </div>
+    """.format(total_messages), unsafe_allow_html=True)
 
 # Recent activity
 if not products_df.empty:
