@@ -185,7 +185,7 @@ col7, col8, col9 = st.columns(3)
 with col7:
     st.subheader(f"🎙️ {t('voice_onboarding')}")
     st.markdown(t('voice_onboarding_desc'))
-    if st.button(t('start_voice_setup'), use_container_width=True, type="primary"):
+    if st.button(t('start_voice_setup'), use_container_width=True):
         st.switch_page("pages/6_Voice_Onboarding.py")
 
 with col8:
