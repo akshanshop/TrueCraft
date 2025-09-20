@@ -43,8 +43,12 @@ class AIAssistant:
                 return None
             
             # Add language support to prompt if available
-            if target_language and I18N_AVAILABLE and i18n:
-                prompt = i18n.generate_ai_prompt_in_language(prompt, target_language)
+            if target_language and I18N_AVAILABLE and i18n and hasattr(i18n, 'generate_ai_prompt_in_language'):
+                try:
+                    prompt = i18n.generate_ai_prompt_in_language(prompt, target_language)
+                except:
+                    # Skip language modification if it fails
+                    pass
                 
             if use_json:
                 config = types.GenerateContentConfig(
@@ -65,6 +69,8 @@ class AIAssistant:
             )
             return response.text if response.text else ""
         except Exception as e:
+            # Log error server-side for debugging, return None to trigger proper error handling
+            print(f"AI API Error: {str(e)}")
             return None
     
     def generate_product_description(self, name, category, materials, price=None, target_language=None):

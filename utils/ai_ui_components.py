@@ -49,7 +49,8 @@ class AIUIComponents:
                     else:
                         st.error("Failed to generate content. Please try again.")
             except Exception as e:
-                st.error(f"AI assistance error: {str(e)}")
+                print(f"AI UI Error: {str(e)}")  # Log server-side for debugging
+                st.error("Failed to generate content. Please try again.")
     
     def text_improvement_widget(self, text_input, field_type="general"):
         """
