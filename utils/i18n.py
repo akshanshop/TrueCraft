@@ -16,9 +16,36 @@ class I18nManager:
         self.current_language = "en"
         self.supported_languages = {
             "en": "English",
-            "es": "Español", 
-            "fr": "Français",
-            "de": "Deutsch"
+            "hi": "हिन्दी (Hindi)",
+            "te": "తెలుగు (Telugu)", 
+            "mr": "मराठी (Marathi)",
+            "ta": "தமிழ் (Tamil)",
+            "bn": "বাংলা (Bengali)",
+            "gu": "ગુજરાતી (Gujarati)",
+            "kn": "ಕನ್ನಡ (Kannada)",
+            "ml": "മലയാളം (Malayalam)",
+            "pa": "ਪੰਜਾਬੀ (Punjabi)",
+            "ur": "اردو (Urdu)",
+            "zh": "中文 (Chinese)",
+            "ja": "日本語 (Japanese)",
+            "ko": "한국어 (Korean)",
+            "ar": "العربية (Arabic)",
+            "ru": "Русский (Russian)",
+            "pt": "Português (Portuguese)",
+            "it": "Italiano (Italian)",
+            "nl": "Nederlands (Dutch)",
+            "id": "Bahasa Indonesia",
+            "th": "ไทย (Thai)",
+            "vi": "Tiếng Việt (Vietnamese)",
+            "tr": "Türkçe (Turkish)",
+            "pl": "Polski (Polish)",
+            "sv": "Svenska (Swedish)",
+            "no": "Norsk (Norwegian)",
+            "da": "Dansk (Danish)",
+            "fi": "Suomi (Finnish)",
+            "es": "Español (Spanish)", 
+            "fr": "Français (French)",
+            "de": "Deutsch (German)"
         }
         self._load_translations()
     
@@ -318,17 +345,36 @@ class I18nManager:
         
         # Language-specific prompt additions
         lang_names = {
-            "es": "Spanish",
-            "fr": "French", 
-            "de": "German",
-            "it": "Italian",
-            "pt": "Portuguese",
+            "hi": "Hindi",
+            "te": "Telugu", 
+            "mr": "Marathi",
+            "ta": "Tamil",
+            "bn": "Bengali",
+            "gu": "Gujarati",
+            "kn": "Kannada",
+            "ml": "Malayalam",
+            "pa": "Punjabi",
+            "ur": "Urdu",
             "zh": "Chinese",
             "ja": "Japanese", 
             "ko": "Korean",
-            "hi": "Hindi",
             "ar": "Arabic",
-            "ru": "Russian"
+            "ru": "Russian",
+            "pt": "Portuguese",
+            "it": "Italian",
+            "nl": "Dutch",
+            "id": "Indonesian",
+            "th": "Thai",
+            "vi": "Vietnamese",
+            "tr": "Turkish",
+            "pl": "Polish",
+            "sv": "Swedish",
+            "no": "Norwegian",
+            "da": "Danish",
+            "fi": "Finnish",
+            "es": "Spanish",
+            "fr": "French", 
+            "de": "German"
         }
         
         lang_name = lang_names.get(target_lang, "the user's preferred language")
