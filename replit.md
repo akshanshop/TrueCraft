@@ -8,6 +8,16 @@ TrueCraft Marketplace Assistant is a Streamlit-based web application designed to
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+**September 20, 2025** - Project import setup and credential configuration completed:
+- Configured Google Gemini API integration for AI-powered features  
+- Set up Google OAuth (Client ID and Secret) for social authentication
+- Set up GitHub OAuth (Client ID and Secret) for social authentication
+- PostgreSQL database connection established
+- All credentials securely stored in Replit Secrets
+- Application fully configured for Replit environment with proper host settings
+
 ## System Architecture
 
 ### Frontend Architecture
