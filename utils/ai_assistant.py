@@ -546,6 +546,222 @@ class AIAssistant:
     
     # ===== ENHANCED AI BUSINESS TOOLS =====
     
+    def generate_seo_optimized_title(self, product_name, category, keywords=None, target_language=None):
+        """Generate SEO-optimized product titles"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure GEMINI_API_KEY to enable AI features."
+        
+        keywords_context = f" with keywords: {keywords}" if keywords else ""
+        
+        prompt = f"""
+        Create 5 SEO-optimized product titles for this handmade artisan product:
+        - Product name: {product_name}
+        - Category: {category}
+        - Keywords to include: {keywords_context}
+        
+        Each title should:
+        - Be 50-70 characters long (ideal for search engines)
+        - Include the main product name and category
+        - Incorporate relevant keywords naturally
+        - Appeal to customers searching for handmade/artisan products
+        - Be compelling and click-worthy
+        - Follow best practices for marketplace listings
+        
+        Format as a numbered list with brief explanations for each title's SEO strategy.
+        """
+        
+        content = self._generate_content(prompt, max_output_tokens=400, temperature=0.7, target_language=target_language)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
+    def generate_pricing_analysis(self, product_name, materials, time_hours, skill_level, category, target_language=None):
+        """Generate comprehensive pricing analysis"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure GEMINI_API_KEY to enable AI features."
+        
+        prompt = f"""
+        Provide a comprehensive pricing analysis for this handmade product:
+        - Product: {product_name}
+        - Materials: {materials}
+        - Time to create: {time_hours} hours
+        - Skill level required: {skill_level}
+        - Category: {category}
+        
+        Include:
+        1. Material cost estimation
+        2. Labor value calculation (considering skill level)
+        3. Market positioning analysis
+        4. Competitive pricing range
+        5. Profit margin recommendations
+        6. Pricing strategy suggestions (premium, competitive, value)
+        
+        Provide specific price ranges and reasoning for each recommendation.
+        """
+        
+        content = self._generate_content(prompt, max_output_tokens=500, temperature=0.5, target_language=target_language)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
+    def generate_product_photography_tips(self, product_type, materials, setting, target_language=None):
+        """Generate photography tips for product images"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure GEMINI_API_KEY to enable AI features."
+        
+        prompt = f"""
+        Provide specific photography tips for taking professional product photos:
+        - Product type: {product_type}
+        - Materials: {materials}
+        - Setting/location: {setting}
+        
+        Include:
+        1. Lighting recommendations (natural vs artificial)
+        2. Background and staging suggestions
+        3. Camera angles and composition tips
+        4. Props and styling ideas
+        5. How to highlight the handmade quality
+        6. Common mistakes to avoid
+        7. Mobile phone photography tips
+        
+        Make it practical and actionable for artisans without professional equipment.
+        """
+        
+        content = self._generate_content(prompt, max_output_tokens=400, temperature=0.6, target_language=target_language)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
+    def generate_seasonal_marketing_content(self, products_list, season_or_holiday, target_audience, target_language=None):
+        """Generate seasonal marketing content"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure GEMINI_API_KEY to enable AI features."
+        
+        prompt = f"""
+        Create seasonal marketing content for these handmade products:
+        - Products: {products_list}
+        - Season/Holiday: {season_or_holiday}
+        - Target audience: {target_audience}
+        
+        Provide:
+        1. Marketing campaign theme
+        2. 3 social media post ideas with captions
+        3. Email newsletter content
+        4. Product bundling suggestions
+        5. Seasonal keywords to use
+        6. Promotional ideas that align with the season
+        
+        Focus on connecting the handmade nature of products with seasonal emotions and needs.
+        """
+        
+        content = self._generate_content(prompt, max_output_tokens=500, temperature=0.7, target_language=target_language)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
+    def generate_brand_voice_analysis(self, bio, products_description, target_customers, target_language=None):
+        """Analyze and define brand voice"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure GEMINI_API_KEY to enable AI features."
+        
+        prompt = f"""
+        Analyze this artisan business and define their brand voice:
+        - Bio: {bio}
+        - Products: {products_description}
+        - Target customers: {target_customers}
+        
+        Provide:
+        1. Brand personality analysis (3-4 key traits)
+        2. Tone of voice recommendations
+        3. Language style guidelines
+        4. Do's and don'ts for communication
+        5. Example phrases that match the brand voice
+        6. How to adapt voice for different platforms
+        
+        Make it practical for consistent brand communication across all channels.
+        """
+        
+        content = self._generate_content(prompt, max_output_tokens=400, temperature=0.6, target_language=target_language)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
+    def generate_content_calendar(self, business_type, posting_frequency, special_events, target_language=None):
+        """Generate social media content calendar"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure GEMINI_API_KEY to enable AI features."
+        
+        prompt = f"""
+        Create a 4-week social media content calendar for:
+        - Business type: {business_type}
+        - Posting frequency: {posting_frequency}
+        - Special events: {special_events}
+        
+        Include:
+        1. Week-by-week content themes
+        2. Post type variety (behind-scenes, products, tips, personal)
+        3. Best posting times for artisan audiences
+        4. Engagement strategies
+        5. Hashtag suggestions for each post type
+        6. Content ideas that showcase the handmade process
+        
+        Format as a clear weekly schedule with specific post ideas.
+        """
+        
+        content = self._generate_content(prompt, max_output_tokens=500, temperature=0.7, target_language=target_language)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
+    def generate_competitive_analysis(self, product_type, price_range, unique_features, target_language=None):
+        """Generate competitive analysis and positioning"""
+        
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable. Please configure GEMINI_API_KEY to enable AI features."
+        
+        prompt = f"""
+        Provide a competitive analysis for this handmade product:
+        - Product type: {product_type}
+        - Your price range: {price_range}
+        - Unique features: {unique_features}
+        
+        Analyze:
+        1. Market positioning strategy
+        2. Competitive advantages to highlight
+        3. Pricing strategy vs competitors
+        4. Unique selling propositions
+        5. Market differentiation opportunities
+        6. Customer value propositions
+        7. Areas for improvement or expansion
+        
+        Focus on how to stand out in the handmade/artisan marketplace.
+        """
+        
+        content = self._generate_content(prompt, max_output_tokens=400, temperature=0.6, target_language=target_language)
+        return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
+    
     def transcribe_audio(self, audio_file_path):
         """Transcribe audio files for voice onboarding and communication"""
         
