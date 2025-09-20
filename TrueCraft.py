@@ -66,144 +66,6 @@ st.markdown("""
         padding-right: 1rem !important;
         max-width: none !important;
     }
-    
-    /* AI Chatbot Floating Widget */
-    .chatbot-container {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 9999;
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        border: 2px solid #8B4513;
-        width: 350px;
-        max-height: 500px;
-        font-family: inherit;
-    }
-    
-    .chatbot-header {
-        background: linear-gradient(135deg, #8B4513, #A0522D);
-        color: white;
-        padding: 12px 15px;
-        border-radius: 12px 12px 0 0;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        cursor: pointer;
-        font-weight: 500;
-    }
-    
-    .chatbot-header .logo {
-        font-size: 20px;
-        margin-right: 8px;
-    }
-    
-    .chatbot-messages {
-        height: 300px;
-        overflow-y: auto;
-        padding: 15px;
-        background: #FFF8DC;
-        border-bottom: 1px solid #F5E6D3;
-    }
-    
-    .message {
-        margin-bottom: 10px;
-        padding: 8px 12px;
-        border-radius: 12px;
-        max-width: 85%;
-        word-wrap: break-word;
-        font-size: 14px;
-        line-height: 1.4;
-    }
-    
-    .user-message {
-        background: #8B4513;
-        color: white;
-        margin-left: auto;
-        text-align: right;
-    }
-    
-    .bot-message {
-        background: white;
-        color: #2F1B14;
-        border: 1px solid #F5E6D3;
-        margin-right: auto;
-    }
-    
-    .chatbot-input {
-        padding: 12px 15px;
-        border-radius: 0 0 12px 12px;
-        background: white;
-        display: flex;
-        gap: 8px;
-        align-items: center;
-    }
-    
-    .chatbot-toggle {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 10000;
-        background: linear-gradient(135deg, #8B4513, #A0522D);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 60px;
-        height: 60px;
-        cursor: pointer;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        transition: all 0.3s ease;
-    }
-    
-    .chatbot-toggle:hover {
-        transform: scale(1.1);
-        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-    }
-    
-    .chatbot-hidden {
-        display: none;
-    }
-    
-    .typing-indicator {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-        padding: 8px 12px;
-        background: white;
-        border: 1px solid #F5E6D3;
-        border-radius: 12px;
-        max-width: 85%;
-        margin-right: auto;
-        font-size: 14px;
-        color: #666;
-    }
-    
-    .typing-dots {
-        display: inline-flex;
-        margin-left: 8px;
-    }
-    
-    .typing-dots span {
-        background: #8B4513;
-        border-radius: 50%;
-        width: 4px;
-        height: 4px;
-        margin: 0 1px;
-        animation: typing 1.4s infinite ease-in-out;
-    }
-    
-    .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
-    .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
-    
-    @keyframes typing {
-        0%, 80%, 100% { opacity: 0.3; }
-        40% { opacity: 1; }
-    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -395,153 +257,87 @@ st.markdown(f"""
 def get_ai_assistant():
     return AIAssistant()
 
-# AI Chatbot Component
-def render_ai_chatbot():
-    """Render the floating AI chatbot in the bottom right corner"""
-    
-    # Initialize session state for chatbot
-    if 'chatbot_open' not in st.session_state:
-        st.session_state.chatbot_open = False
-    if 'chat_messages' not in st.session_state:
-        st.session_state.chat_messages = [
-            {"role": "assistant", "content": f"👋 Hello! I'm your TrueCraft AI assistant. I can help you with product descriptions, pricing advice, business tips, and more. How can I assist you today?"}
-        ]
-    if 'chat_input' not in st.session_state:
-        st.session_state.chat_input = ""
-    
-    # Chatbot toggle button
-    if not st.session_state.chatbot_open:
-        chatbot_html = """
-        <div class="chatbot-toggle" onclick="toggleChatbot()">
-            🤖
-        </div>
-        """
-    else:
-        # Build messages HTML
-        messages_html = ""
-        for msg in st.session_state.chat_messages:
-            if msg["role"] == "user":
-                messages_html += f'<div class="message user-message">{msg["content"]}</div>'
-            else:
-                messages_html += f'<div class="message bot-message">{msg["content"]}</div>'
-        
-        chatbot_html = f"""
-        <div class="chatbot-container">
-            <div class="chatbot-header" onclick="toggleChatbot()">
-                <div>
-                    <span class="logo">🤖</span>
-                    <strong>TrueCraft AI Assistant</strong>
-                </div>
-                <span style="cursor: pointer;">✕</span>
-            </div>
-            <div class="chatbot-messages" id="chatbot-messages">
-                {messages_html}
-            </div>
-            <div class="chatbot-input">
-                <div style="flex: 1; font-size: 14px; color: #666;">
-                    Type your message below and click "Ask AI Assistant" to send...
-                </div>
-            </div>
-        </div>
-        """
-    
-    # JavaScript for toggle functionality
-    chatbot_script = """
-    <script>
-    function toggleChatbot() {
-        window.parent.postMessage({type: 'chatbot_toggle'}, '*');
-    }
-    
-    // Auto-scroll to bottom of messages
-    function scrollChatToBottom() {
-        var messagesDiv = document.getElementById('chatbot-messages');
-        if (messagesDiv) {
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-    }
-    setTimeout(scrollChatToBottom, 100);
-    </script>
-    """
-    
-    # Render the chatbot
-    st.markdown(chatbot_html + chatbot_script, unsafe_allow_html=True)
-    
-    # Handle chatbot toggle via JavaScript message
-    if st.session_state.get('chatbot_toggle_requested', False):
-        st.session_state.chatbot_open = not st.session_state.chatbot_open
-        st.session_state.chatbot_toggle_requested = False
-        st.rerun()
+# AI Chatbot - Fixed Implementation using Streamlit Native Components
+st.markdown("---")
 
-# Chatbot input and response handling
-if st.session_state.get('chatbot_open', False):
-    st.markdown("---")
-    st.markdown("### 🤖 Chat with AI Assistant")
+# Initialize chat messages in session state
+if 'messages' not in st.session_state:
+    st.session_state.messages = [
+        {"role": "assistant", "content": "👋 Hello! I'm your TrueCraft AI assistant. I can help you with product descriptions, pricing advice, business tips, and more. How can I assist you today?"}
+    ]
+
+# Chat toggle button
+col1, col2, col3 = st.columns([2, 1, 2])
+with col2:
+    if 'chat_open' not in st.session_state:
+        st.session_state.chat_open = False
     
-    # Chat input
-    col1, col2 = st.columns([4, 1])
-    with col1:
-        user_input = st.text_input(
-            "Ask me anything about your artisan business:",
-            value="",
-            placeholder="e.g., How should I price my handmade jewelry? or Help me write a product description...",
-            key="chatbot_input_field"
-        )
+    if st.button("🤖 AI Assistant Chat", type="primary", use_container_width=True):
+        st.session_state.chat_open = not st.session_state.chat_open
+
+# Show chat interface when open
+if st.session_state.chat_open:
+    st.markdown("### 🤖 TrueCraft AI Assistant")
+    st.markdown("Ask me anything about your artisan business - product descriptions, pricing, marketing, or general business advice!")
     
-    with col2:
-        send_button = st.button("Ask AI Assistant", type="primary", key="send_chat")
+    # Create a container for chat messages with custom styling
+    chat_container = st.container()
+    with chat_container:
+        # Display chat messages using Streamlit's chat message components
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"]):
+                st.write(message["content"])
     
-    # Handle send button or enter key
-    if send_button and user_input.strip():
-        # Add user message
-        st.session_state.chat_messages.append({"role": "user", "content": user_input})
+    # Chat input using Streamlit's built-in chat input
+    if prompt := st.chat_input("Ask me anything about your artisan business..."):
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        
+        # Display user message
+        with st.chat_message("user"):
+            st.write(prompt)
         
         # Get AI response
         ai_assistant = get_ai_assistant()
         if ai_assistant and ai_assistant.enabled:
             try:
-                with st.spinner("AI is thinking..."):
-                    # Use the general content generation for chatbot responses
-                    response = ai_assistant.generate_custom_content(
-                        "conversational assistance",
-                        f"User is asking about their artisan business: {user_input}",
-                        "Provide helpful, friendly advice about artisan business, crafts, product creation, pricing, marketing, or general business questions. Keep responses concise but informative."
-                    )
-                    
-                    if response and response.strip():
-                        st.session_state.chat_messages.append({"role": "assistant", "content": response})
-                    else:
-                        st.session_state.chat_messages.append({
-                            "role": "assistant", 
-                            "content": "I apologize, but I'm having trouble generating a response right now. Please try again later."
-                        })
+                with st.chat_message("assistant"):
+                    with st.spinner("AI is thinking..."):
+                        # Use the AI assistant to generate response
+                        response = ai_assistant.generate_custom_content(
+                            "conversational assistance",
+                            f"User is asking about their artisan business: {prompt}",
+                            "Provide helpful, friendly advice about artisan business, crafts, product creation, pricing, marketing, or general business questions. Keep responses concise but informative. Be encouraging and supportive."
+                        )
+                        
+                        if response and response.strip():
+                            st.write(response)
+                            st.session_state.messages.append({"role": "assistant", "content": response})
+                        else:
+                            error_msg = "I apologize, but I'm having trouble generating a response right now. Please try again later."
+                            st.write(error_msg)
+                            st.session_state.messages.append({"role": "assistant", "content": error_msg})
             except Exception as e:
-                st.session_state.chat_messages.append({
-                    "role": "assistant", 
-                    "content": "I'm sorry, but I'm experiencing technical difficulties. Please try again later."
-                })
+                error_msg = "I'm sorry, but I'm experiencing technical difficulties. Please try again later."
+                with st.chat_message("assistant"):
+                    st.write(error_msg)
+                st.session_state.messages.append({"role": "assistant", "content": error_msg})
         else:
-            st.session_state.chat_messages.append({
-                "role": "assistant", 
-                "content": "AI features are currently unavailable. Please check your API configuration."
-            })
-        
-        st.rerun()
+            error_msg = "AI features are currently unavailable. Please check your API configuration."
+            with st.chat_message("assistant"):
+                st.write(error_msg)
+            st.session_state.messages.append({"role": "assistant", "content": error_msg})
     
-    # Display chat messages
-    if st.session_state.chat_messages:
-        st.markdown("#### Conversation")
-        for msg in st.session_state.chat_messages:
-            if msg["role"] == "user":
-                st.markdown(f"**You:** {msg['content']}")
-            else:
-                st.markdown(f"**🤖 AI Assistant:** {msg['content']}")
-        
-        # Clear chat button
-        if st.button("Clear Chat", key="clear_chat"):
-            st.session_state.chat_messages = [
-                {"role": "assistant", "content": f"👋 Hello! I'm your TrueCraft AI assistant. I can help you with product descriptions, pricing advice, business tips, and more. How can I assist you today?"}
+    # Chat controls
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("🗑️ Clear Chat"):
+            st.session_state.messages = [
+                {"role": "assistant", "content": "👋 Hello! I'm your TrueCraft AI assistant. I can help you with product descriptions, pricing advice, business tips, and more. How can I assist you today?"}
             ]
             st.rerun()
-
-# Render the chatbot
-render_ai_chatbot()
+    
+    with col2:
+        if st.button("❌ Close Chat"):
+            st.session_state.chat_open = False
+            st.rerun()
