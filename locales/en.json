@@ -44,9 +44,9 @@
   "unread_messages": "Unread Messages",
   "quick_overview": "Quick Overview",
   "recent_products": "Recent Products",
+  "views": "Views",
   "no_image": "No image",
   "unknown": "Unknown",
-  "views": "Views",
   "welcome_message": "Welcome to TrueCraft! Start by creating your first product listing.",
   "product_name": "Product Name",
   "category": "Category",
@@ -126,5 +126,11 @@
   "generate_story": "Generate Cultural Story",
   "generate_plan": "Generate Business Plan",
   "advanced_ai_features": "Advanced AI Features",
-  "tools_features": "Tools & Features"
+  "ai_features_unavailable": "AI features are currently unavailable. Some functionality may be limited.",
+  "tools_features": "Tools & Features",
+  "successfully_signed_in_with": "Successfully signed in with",
+  "authentication_failed": "Authentication failed. Please try again.",
+  "manage_customer_communications": "Manage customer communications.",
+  "unread_messages_count": "unread messages",
+  "footer_tagline": "TrueCraft Marketplace Assistant - Crafted for Artisans, Powered by AI"
 }

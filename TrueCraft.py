@@ -38,12 +38,12 @@ if 'code' in query_params and 'state' in query_params:
     
     # Handle the OAuth callback
     if auth_manager.handle_oauth_callback(provider, code, state, redirect_uri):
-        st.success(f"Successfully signed in with {provider.title()}!")
+        st.success(f"{t('successfully_signed_in_with')} {provider.title()}!")
         # Clear query parameters and refresh
         st.query_params.clear()
         st.rerun()
     else:
-        st.error("Authentication failed. Please try again.")
+        st.error(t('authentication_failed'))
         st.query_params.clear()
 
 
@@ -77,7 +77,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 # Sidebar with permanent user profile
 with st.sidebar:
     # Language selector at top
-    st.markdown("### 🌐 Language / Idioma")
+    st.markdown(f"### 🌐 {t('language')}")
     i18n.language_selector("main_language_selector")
     st.divider()
     
@@ -157,52 +157,52 @@ with col3:
 col4, col5, col6 = st.columns(3)
 
 with col4:
-    st.subheader("📊 Analytics")
-    st.markdown("Get detailed performance insights and track your sales trends.")
-    if st.button("View Analytics", use_container_width=True):
+    st.subheader(f"📊 {t('analytics')}")
+    st.markdown(t('analytics_desc'))
+    if st.button(t('view_analytics'), use_container_width=True):
         st.switch_page("pages/3_Analytics.py")
 
 with col5:
-    st.subheader("💬 Messages")
+    st.subheader(f"💬 {t('messages')}")
     unread_count = db_manager.get_unread_message_count()
     if unread_count > 0:
-        st.markdown(f"Manage customer communications. **{unread_count} unread messages**")
+        st.markdown(f"{t('manage_customer_communications')} **{unread_count} {t('unread_messages_count')}**")
     else:
-        st.markdown("Manage all your customer communications in one place.")
-    if st.button("View Messages", use_container_width=True):
+        st.markdown(t('messages_desc'))
+    if st.button(t('view_messages'), use_container_width=True):
         st.switch_page("pages/4_Messages.py")
 
 with col6:
-    st.subheader("🆘 Support")
-    st.markdown("Get help, and access guides, and troubleshoot any issues.")
-    if st.button("Get Support", use_container_width=True):
+    st.subheader(f"🆘 {t('support')}")
+    st.markdown(t('support_desc'))
+    if st.button(t('get_support'), use_container_width=True):
         st.switch_page("pages/5_Support.py")
 
 # Third row - Advanced AI Features
-st.markdown("### 🚀 Advanced AI Features")
+st.markdown(f"### 🚀 {t('advanced_ai_features')}")
 col7, col8, col9 = st.columns(3)
 
 with col7:
-    st.subheader("🎙️ Voice Onboarding")
-    st.markdown("Complete your artisan profile using AI-powered voice guidance in your language.")
-    if st.button("Start Voice Setup", use_container_width=True, type="primary"):
+    st.subheader(f"🎙️ {t('voice_onboarding')}")
+    st.markdown(t('voice_onboarding_desc'))
+    if st.button(t('start_voice_setup'), use_container_width=True, type="primary"):
         st.switch_page("pages/6_Voice_Onboarding.py")
 
 with col8:
-    st.subheader("🌱 Sustainability Hub")
-    st.markdown("Assess your environmental impact and get sustainability certifications.")
-    if st.button("Sustainability Assessment", use_container_width=True):
-        st.info("🌿 Sustainability features are integrated into product creation and analytics!")
+    st.subheader(f"🌱 {t('sustainability_hub')}")
+    st.markdown(t('sustainability_desc'))
+    if st.button(t('sustainability_assessment'), use_container_width=True):
+        st.info(f"🌿 {t('sustainability_features_info')}")
 
 with col9:
-    st.subheader("🏛️ Cultural Heritage")
-    st.markdown("Preserve and showcase your cultural traditions and stories.")
-    if st.button("Cultural Storytelling", use_container_width=True):
-        st.info("🎨 Cultural storytelling is available in Voice Onboarding and Profile pages!")
+    st.subheader(f"🏛️ {t('cultural_heritage')}")
+    st.markdown(t('cultural_desc'))
+    if st.button(t('cultural_storytelling'), use_container_width=True):
+        st.info(f"🎨 {t('cultural_storytelling_info')}")
 
 # Quick stats
 st.divider()
-st.subheader("📈 Quick Overview")
+st.subheader(f"📈 {t('quick_overview')}")
 
 # Get current data
 products_df = db_manager.get_products()
@@ -210,19 +210,19 @@ profiles_df = db_manager.get_profiles()
 
 col1, col2, col3, col4 = st.columns(4)
 with col1:
-    st.metric("Total Products", len(products_df))
+    st.metric(t('total_products'), len(products_df))
 with col2:
-    st.metric("Active Profiles", len(profiles_df))
+    st.metric(t('active_profiles'), len(profiles_df))
 with col3:
     avg_price = products_df['price'].mean() if not products_df.empty else 0
-    st.metric("Average Price", f"${avg_price:.2f}")
+    st.metric(t('average_price'), f"${avg_price:.2f}")
 with col4:
     total_messages = db_manager.get_unread_message_count()
-    st.metric("Unread Messages", total_messages)
+    st.metric(t('unread_messages'), total_messages)
 
 # Recent activity
 if not products_df.empty:
-    st.subheader("🆕 Recent Products")
+    st.subheader(f"🆕 {t('recent_products')}")
     recent_products = products_df.sort_values('created_at', ascending=False).head(3)
     
     for _, product in recent_products.iterrows():
@@ -233,20 +233,20 @@ if not products_df.empty:
                 if image_data and not pd.isna(image_data) and str(image_data).strip():
                     st.image(str(image_data), width=100)
                 else:
-                    st.write("📷 No image")
+                    st.write(f"📷 {t('no_image')}")
             with col2:
-                st.write(f"**{product.get('name', 'Unknown')}**")
+                st.write(f"**{product.get('name', t('unknown'))}**")
                 price = product.get('price', 0)
                 price = float(price) if price is not None else 0.0
-                st.write(f"${price:.2f} | {product.get('category', 'Unknown')}")
-                st.write(f"Views: {product.get('views', 0)}")
+                st.write(f"${price:.2f} | {product.get('category', t('unknown'))}")
+                st.write(f"{t('views')}: {product.get('views', 0)}")
 else:
-    st.info("Welcome to TrueCraft! Start by creating your first product listing.")
+    st.info(t('welcome_message'))
 
 # Footer
 st.divider()
-st.markdown("""
+st.markdown(f"""
 <div style="text-align: center; padding: 2rem 0; color: #666;">
-    <p>🎨 TrueCraft Marketplace Assistant - Crafted for Artisans, Powered by AI</p>
+    <p>🎨 {t('footer_tagline')}</p>
 </div>
 """, unsafe_allow_html=True)

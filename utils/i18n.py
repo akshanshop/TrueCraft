@@ -18,15 +18,7 @@ class I18nManager:
             "en": "English",
             "es": "Español", 
             "fr": "Français",
-            "de": "Deutsch",
-            "it": "Italiano",
-            "pt": "Português",
-            "zh": "中文",
-            "ja": "日本語",
-            "ko": "한국어",
-            "hi": "हिंदी",
-            "ar": "العربية",
-            "ru": "Русский"
+            "de": "Deutsch"
         }
         self._load_translations()
     
