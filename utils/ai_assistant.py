@@ -567,6 +567,411 @@ class AIAssistant:
     
     # ===== ENHANCED AI BUSINESS TOOLS =====
     
+    def transcribe_audio(self, audio_file_path):
+        """Transcribe audio files for voice onboarding"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return {"text": "", "error": error_msg}
+        
+        if not self.client:
+            return {"text": "", "error": "AI assistance temporarily unavailable."}
+        
+        try:
+            with open(audio_file_path, "rb") as audio_file:
+                response = self.client.audio.transcriptions.create(
+                    model="whisper-1", 
+                    file=audio_file,
+                    language="auto"
+                )
+            return {"text": response.text, "error": None}
+        except Exception as e:
+            return {"text": "", "error": f"Audio transcription failed: {str(e)}"}
+    
+    def translate_text(self, text, target_language="English"):
+        """Translate text to support multiple languages"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return {"translated_text": text, "error": error_msg}
+        
+        if not self.client:
+            return {"translated_text": text, "error": "AI assistance temporarily unavailable."}
+        
+        prompt = f"""
+        Translate the following text to {target_language}. If the text is already in {target_language}, return it unchanged.
+        
+        Text to translate: "{text}"
+        
+        Return only the translated text without any additional commentary.
+        """
+        
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=500
+            )
+            content = response.choices[0].message.content
+            return {"translated_text": content.strip() if content else text, "error": None}
+        except Exception as e:
+            return {"translated_text": text, "error": f"Translation failed: {str(e)}"}
+    
+    def voice_onboarding_guide(self, step, user_input="", language="English"):
+        """AI-powered voice onboarding for artisans"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable."
+        
+        onboarding_steps = {
+            "welcome": "Welcome new artisan and explain the platform benefits",
+            "craft_expertise": "Ask about their craft, experience, and specialties",
+            "business_goals": "Understand their business objectives and target market",
+            "product_portfolio": "Guide them through describing their products",
+            "pricing_strategy": "Help them understand fair pricing principles",
+            "cultural_heritage": "Explore their cultural background and traditions",
+            "sustainability": "Discuss their sustainable practices and materials",
+            "market_positioning": "Help position their brand in the marketplace"
+        }
+        
+        step_description = onboarding_steps.get(step, "general guidance")
+        user_context = f"User response: {user_input}" if user_input else "Start this onboarding step"
+        
+        prompt = f"""
+        You are an AI onboarding assistant for TrueCraft, a platform dedicated to empowering artisans. 
+        
+        Current step: {step_description}
+        {user_context}
+        Language: {language}
+        
+        Provide warm, encouraging guidance that:
+        - Is culturally sensitive and respectful
+        - Emphasizes the value of their craftsmanship
+        - Asks thoughtful follow-up questions
+        - Provides practical next steps
+        - Celebrates their cultural heritage
+        - Is appropriate for voice interaction (conversational tone)
+        - Supports their journey as an artisan entrepreneur
+        
+        Keep responses concise but meaningful (2-3 sentences). Make them feel welcomed and valued.
+        """
+        
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=300
+            )
+            content = response.choices[0].message.content
+            return content.strip() if content else "Welcome to TrueCraft! Let's begin your journey."
+        except Exception as e:
+            return "Welcome to TrueCraft! Let's help you showcase your amazing craftsmanship to the world."
+    
+    def fair_price_analysis(self, product_data, market_context=None):
+        """Advanced fair pricing analysis with market research"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return {"fair_price_range": {"min": 0, "max": 0}, "market_analysis": error_msg, "ethical_factors": []}
+        
+        if not self.client:
+            return {"fair_price_range": {"min": 0, "max": 0}, "market_analysis": "AI assistance temporarily unavailable.", "ethical_factors": []}
+        
+        market_info = f"Market context: {market_context}" if market_context else ""
+        
+        prompt = f"""
+        Conduct a comprehensive fair pricing analysis for this artisan product:
+        
+        Product Details:
+        - Name: {product_data.get('name', 'Unknown')}
+        - Category: {product_data.get('category', 'Unknown')}
+        - Materials: {product_data.get('materials', 'Unknown')}
+        - Dimensions: {product_data.get('dimensions', 'Not specified')}
+        - Time to create: {product_data.get('creation_time', 'Not specified')}
+        - Skill level required: {product_data.get('skill_level', 'Not specified')}
+        
+        {market_info}
+        
+        Provide analysis in JSON format with:
+        - fair_price_range: {{"min": number, "max": number}}
+        - market_analysis: detailed explanation of pricing rationale
+        - ethical_factors: array of factors supporting fair compensation
+        - sustainability_premium: percentage suggesting premium for sustainable practices
+        - cultural_value_factor: multiplier for cultural significance
+        - time_investment_value: hourly rate consideration for artisan time
+        
+        Focus on ensuring artisans receive fair compensation for their skill, time, and cultural contribution.
+        """
+        
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                response_format={"type": "json_object"},
+                max_tokens=400
+            )
+            content = response.choices[0].message.content
+            return json.loads(content) if content else {}
+        except Exception as e:
+            return {"fair_price_range": {"min": 0, "max": 0}, "market_analysis": "Analysis temporarily unavailable.", "ethical_factors": []}
+    
+    def sustainability_assessment(self, product_data, business_practices=None):
+        """Assess and tag products for sustainability"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return {"sustainability_score": 0, "tags": [], "recommendations": []}
+        
+        if not self.client:
+            return {"sustainability_score": 0, "tags": [], "recommendations": []}
+        
+        practices_info = f"Business practices: {business_practices}" if business_practices else ""
+        
+        prompt = f"""
+        Assess the sustainability of this artisan product and business:
+        
+        Product Information:
+        - Materials: {product_data.get('materials', 'Unknown')}
+        - Production method: {product_data.get('production_method', 'Handmade')}
+        - Origin: {product_data.get('origin', 'Not specified')}
+        - Packaging: {product_data.get('packaging', 'Not specified')}
+        
+        {practices_info}
+        
+        Provide assessment in JSON format:
+        - sustainability_score: number 1-100
+        - tags: array of relevant sustainability tags
+        - recommendations: array of improvement suggestions
+        - certifications_applicable: array of potential certifications
+        - environmental_impact: brief description
+        - social_impact: brief description
+        
+        Focus on promoting sustainable and ethical practices in artisan businesses.
+        """
+        
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                response_format={"type": "json_object"},
+                max_tokens=400
+            )
+            content = response.choices[0].message.content
+            return json.loads(content) if content else {}
+        except Exception as e:
+            return {"sustainability_score": 0, "tags": [], "recommendations": []}
+    
+    def cultural_storytelling(self, artisan_data, cultural_context=None):
+        """Generate culturally-aware storytelling content"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable."
+        
+        cultural_info = f"Cultural context: {cultural_context}" if cultural_context else ""
+        
+        prompt = f"""
+        Create a compelling cultural story for this artisan that celebrates their heritage:
+        
+        Artisan Information:
+        - Name/Business: {artisan_data.get('name', 'Unknown')}
+        - Craft tradition: {artisan_data.get('craft', 'Unknown')}
+        - Cultural background: {artisan_data.get('culture', 'Not specified')}
+        - Years of experience: {artisan_data.get('experience', 'Not specified')}
+        - Traditional techniques: {artisan_data.get('techniques', 'Not specified')}
+        - Family heritage: {artisan_data.get('heritage', 'Not specified')}
+        
+        {cultural_info}
+        
+        Create a story that:
+        - Celebrates cultural heritage and traditions
+        - Explains the significance of their craft
+        - Connects past traditions with modern applications
+        - Shows respect for cultural authenticity
+        - Highlights the preservation of traditional skills
+        - Makes customers appreciate the cultural value
+        
+        Write in an engaging, respectful tone that honors the artisan's cultural background.
+        Length: 3-4 paragraphs.
+        """
+        
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=500
+            )
+            content = response.choices[0].message.content
+            return content.strip() if content else ""
+        except Exception as e:
+            return "Cultural storytelling temporarily unavailable."
+    
+    def financial_literacy_guidance(self, topic, artisan_level="beginner", context=None):
+        """Provide AI-driven financial literacy guidance for artisans"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return error_msg
+        
+        if not self.client:
+            return "AI assistance temporarily unavailable."
+        
+        context_info = f"Additional context: {context}" if context else ""
+        
+        prompt = f"""
+        Provide practical financial guidance for artisan entrepreneurs:
+        
+        Topic: {topic}
+        Experience level: {artisan_level}
+        {context_info}
+        
+        Create guidance that:
+        - Is specifically tailored for artisan/craft businesses
+        - Uses simple, non-jargon language
+        - Provides actionable steps
+        - Considers the unique challenges of creative businesses
+        - Includes relevant examples from craft/artisan context
+        - Emphasizes sustainable business growth
+        - Respects cultural approaches to business
+        
+        Cover practical aspects like pricing, cash flow, taxes, business planning, or investment.
+        Make it encouraging and accessible for creative professionals.
+        """
+        
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=400
+            )
+            content = response.choices[0].message.content
+            return content.strip() if content else ""
+        except Exception as e:
+            return "Financial guidance temporarily unavailable."
+    
+    def sdg_impact_assessment(self, business_data):
+        """Assess business impact against UN Sustainable Development Goals"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return {"sdg_contributions": [], "impact_score": 0, "recommendations": []}
+        
+        if not self.client:
+            return {"sdg_contributions": [], "impact_score": 0, "recommendations": []}
+        
+        prompt = f"""
+        Assess how this artisan business contributes to UN Sustainable Development Goals:
+        
+        Business Information:
+        - Business type: {business_data.get('business_type', 'Artisan craft')}
+        - Products: {business_data.get('products', 'Handmade items')}
+        - Materials used: {business_data.get('materials', 'Various')}
+        - Community involvement: {business_data.get('community', 'Local')}
+        - Employment provided: {business_data.get('employment', 'Self-employed')}
+        - Sustainability practices: {business_data.get('sustainability', 'Traditional methods')}
+        
+        Analyze contributions to relevant SDGs and provide in JSON format:
+        - sdg_contributions: array of objects with {{"goal_number": number, "goal_name": string, "contribution": string}}
+        - impact_score: overall score 1-100
+        - recommendations: array of ways to increase SDG impact
+        - priority_goals: array of most relevant SDG numbers for this business
+        
+        Focus on SDGs like Decent Work (8), Reduced Inequalities (10), Sustainable Consumption (12), Cultural Diversity.
+        """
+        
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                response_format={"type": "json_object"},
+                max_tokens=500
+            )
+            content = response.choices[0].message.content
+            return json.loads(content) if content else {}
+        except Exception as e:
+            return {"sdg_contributions": [], "impact_score": 0, "recommendations": []}
+    
+    def blockchain_authenticity_guidance(self, product_data):
+        """Provide guidance on blockchain-based authenticity verification"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return {"authenticity_plan": error_msg, "blockchain_benefits": []}
+        
+        if not self.client:
+            return {"authenticity_plan": "AI assistance temporarily unavailable.", "blockchain_benefits": []}
+        
+        prompt = f"""
+        Create a plan for blockchain-based authenticity verification for this artisan product:
+        
+        Product Details:
+        - Type: {product_data.get('type', 'Unknown')}
+        - Cultural significance: {product_data.get('cultural_significance', 'Not specified')}
+        - Unique characteristics: {product_data.get('unique_features', 'Handmade quality')}
+        - Production process: {product_data.get('process', 'Traditional methods')}
+        
+        Provide guidance in JSON format:
+        - authenticity_plan: step-by-step plan for creating digital certificates
+        - blockchain_benefits: array of benefits for this specific product type
+        - implementation_steps: array of practical steps to get started
+        - cost_considerations: rough estimate and factors
+        - customer_benefits: how this helps buyers trust the authenticity
+        
+        Explain in artisan-friendly language, avoiding technical jargon.
+        """
+        
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                response_format={"type": "json_object"},
+                max_tokens=400
+            )
+            content = response.choices[0].message.content
+            return json.loads(content) if content else {}
+        except Exception as e:
+            return {"authenticity_plan": "Guidance temporarily unavailable.", "blockchain_benefits": []}
+    
+    def ar_vr_experience_plan(self, craft_data):
+        """Plan AR/VR experiences for showcasing crafts"""
+        error_msg = self._check_enabled()
+        if error_msg:
+            return {"experience_plan": error_msg, "technical_requirements": []}
+        
+        if not self.client:
+            return {"experience_plan": "AI assistance temporarily unavailable.", "technical_requirements": []}
+        
+        prompt = f"""
+        Design an AR/VR experience plan for showcasing this craft:
+        
+        Craft Information:
+        - Type of craft: {craft_data.get('craft_type', 'Unknown')}
+        - Traditional techniques: {craft_data.get('techniques', 'Various')}
+        - Cultural context: {craft_data.get('culture', 'Not specified')}
+        - Workshop setup: {craft_data.get('workshop', 'Traditional workspace')}
+        - Key processes: {craft_data.get('processes', 'Handmade creation')}
+        
+        Create plan in JSON format:
+        - experience_plan: detailed description of the AR/VR experience
+        - technical_requirements: array of basic technical needs
+        - user_journey: step-by-step customer experience
+        - cultural_elements: ways to showcase cultural heritage
+        - educational_value: what customers will learn
+        - implementation_phases: gradual rollout plan
+        
+        Focus on authentic cultural representation and educational value.
+        """
+        
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                response_format={"type": "json_object"},
+                max_tokens=400
+            )
+            content = response.choices[0].message.content
+            return json.loads(content) if content else {}
+        except Exception as e:
+            return {"experience_plan": "Experience planning temporarily unavailable.", "technical_requirements": []}
+    
     def generate_seo_optimized_title(self, product_name, category, keywords=None):
         """Generate SEO-optimized product titles"""
         error_msg = self._check_enabled()
