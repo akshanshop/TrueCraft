@@ -156,5 +156,21 @@
   "ai_prompt_materials": "मुझे अपनी उत्पाद सूची में कौन सी सामग्री का उल्लेख करना चाहिए?",
   "ai_prompt_photography": "मैं अपनी उत्पाद फोटोग्राफी कैसे सुधार सकता हूं?",
   "ai_prompt_shipping": "हस्तनिर्मित वस्तुओं के लिए कौन से शिपिंग विकल्प सबसे अच्छे हैं?",
-  "ai_prompt_social": "अपने शिल्प के बारे में सोशल मीडिया पोस्ट लिखने में मेरी सहायता करें"
+  "ai_prompt_social": "अपने शिल्प के बारे में सोशल मीडिया पोस्ट लिखने में मेरी सहायता करें",
+  
+  "ai_content_generated": "AI सामग्री उत्पन्न की गई!",
+  "ai_generation_unavailable": "AI जेनरेशन वर्तमान में अनुपलब्ध है।",
+  "ai_improvement_unavailable": "AI टेक्स्ट सुधार वर्तमान में अनुपलब्ध है।",
+  "ai_suggestions_unavailable": "AI सुझाव वर्तमान में अनुपलब्ध हैं।",
+  "ai_templates_unavailable": "AI संदेश टेम्प्लेट वर्तमान में अनुपलब्ध हैं।",
+  "ai_review_templates_unavailable": "AI समीक्षा टेम्प्लेट वर्तमान में अनुपलब्ध हैं।",
+  "generation_failed": "जेनरेशन विफल",
+  "improvement_failed": "सुधार विफल",
+  "tips_unavailable": "सुझाव अनुपलब्ध",
+  "ai_unavailable_short": "AI अनुपलब्ध",
+  "generating": "जेनरेट कर रहा है...",
+  "improving": "सुधार रहा है...",
+  "analyzing": "विश्लेषण कर रहा है...",
+  "generated_success": "जेनरेट किया गया!",
+  "improved_success": "सुधारा गया!"
 }

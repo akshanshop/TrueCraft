@@ -57,7 +57,8 @@
   "unread_messages_count": "messages non lus",
   "advanced_ai_features": "Fonctionnalités Avancées IA",
   "ai_features_unavailable": "Les fonctionnalités IA ne sont pas disponibles actuellement. Certaines fonctionnalités peuvent être limitées.",
-  "views": "Vues",
+  "ai_unavailable": "Assistance IA temporairement indisponible. Veuillez configurer HUGGINGFACE_API_KEY pour activer les fonctionnalités IA.",
+  "ai_error": "Assistance IA temporairement indisponible. Veuillez réessayer plus tard.",
   "footer_tagline": "Assistant TrueCraft Marketplace - Conçu pour les Artisans, Alimenté par IA",
   
   "ai_assistant": "Assistant IA",
@@ -82,5 +83,21 @@
   "ai_prompt_materials": "Quels matériaux dois-je mentionner dans mes listes de produits ?",
   "ai_prompt_photography": "Comment puis-je améliorer la photographie de mes produits ?",
   "ai_prompt_shipping": "Quelles options d'expédition fonctionnent le mieux pour les articles faits main ?",
-  "ai_prompt_social": "Aidez-moi à écrire un post sur les réseaux sociaux à propos de mon artisanat"
+  "ai_prompt_social": "Aidez-moi à écrire un post sur les réseaux sociaux à propos de mon artisanat",
+  
+  "ai_content_generated": "Contenu IA généré !",
+  "ai_generation_unavailable": "La génération IA n'est actuellement pas disponible.",
+  "ai_improvement_unavailable": "L'amélioration de texte IA n'est actuellement pas disponible.",
+  "ai_suggestions_unavailable": "Les suggestions IA ne sont actuellement pas disponibles.",
+  "ai_templates_unavailable": "Les modèles de messages IA ne sont actuellement pas disponibles.",
+  "ai_review_templates_unavailable": "Les modèles d'avis IA ne sont actuellement pas disponibles.",
+  "generation_failed": "Génération échouée",
+  "improvement_failed": "Amélioration échouée",
+  "tips_unavailable": "Conseils indisponibles",
+  "ai_unavailable_short": "IA indisponible",
+  "generating": "Génération...",
+  "improving": "Amélioration...",
+  "analyzing": "Analyse...",
+  "generated_success": "Généré !",
+  "improved_success": "Amélioré !"
 }

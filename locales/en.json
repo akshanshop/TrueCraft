@@ -156,5 +156,32 @@
   "ai_prompt_materials": "What materials should I mention in my product listings?",
   "ai_prompt_photography": "How can I improve my product photography?",
   "ai_prompt_shipping": "What shipping options work best for handmade items?",
-  "ai_prompt_social": "Help me write a social media post about my craft"
+  "ai_prompt_social": "Help me write a social media post about my craft",
+  
+  "ai_content_generated": "AI content generated!",
+  "ai_generation_unavailable": "AI generation is currently unavailable.",
+  "ai_improvement_unavailable": "AI text improvement is currently unavailable.",
+  "ai_suggestions_unavailable": "AI suggestions are currently unavailable.",
+  "ai_templates_unavailable": "AI message templates are currently unavailable.",
+  "ai_review_templates_unavailable": "AI review templates are currently unavailable.",
+  "generation_failed": "Generation failed",
+  "improvement_failed": "Improvement failed",
+  "tips_unavailable": "Tips unavailable",
+  "ai_unavailable_short": "AI unavailable",
+  "generating": "Generating...",
+  "improving": "Improving...",
+  "analyzing": "Analyzing...",
+  "generated_success": "Generated!",
+  "improved_success": "Improved!",
+  
+  "ai_assist": "AI Assist",
+  "ai_assist_help": "Get AI writing assistance",
+  "improve": "Improve",
+  "improvement_focus": "Improvement focus",
+  "improvement_general": "general",
+  "improvement_clarity": "clarity",
+  "improvement_professional": "professional",
+  "improvement_engaging": "engaging",
+  "improvement_concise": "concise",
+  "improvement_grammar": "grammar"
 }

@@ -57,6 +57,8 @@
   "unread_messages_count": "mensajes no leídos",
   "advanced_ai_features": "Funciones Avanzadas de IA",
   "ai_features_unavailable": "Las funciones de IA no están disponibles actualmente. Algunas funcionalidades pueden estar limitadas.",
+  "ai_unavailable": "Asistencia IA temporalmente no disponible. Por favor, configure HUGGINGFACE_API_KEY para habilitar funciones IA.",
+  "ai_error": "Asistencia IA temporalmente no disponible. Por favor, inténtelo de nuevo más tarde.",
   "footer_tagline": "Asistente TrueCraft Marketplace - Hecho para Artesanos, Impulsado por IA",
   
   "ai_assistant": "Asistente IA",
@@ -81,5 +83,21 @@
   "ai_prompt_materials": "¿Qué materiales debo mencionar en mis listados de productos?",
   "ai_prompt_photography": "¿Cómo puedo mejorar la fotografía de mis productos?",
   "ai_prompt_shipping": "¿Qué opciones de envío funcionan mejor para artículos hechos a mano?",
-  "ai_prompt_social": "Ayúdame a escribir una publicación en redes sociales sobre mi artesanía"
+  "ai_prompt_social": "Ayúdame a escribir una publicación en redes sociales sobre mi artesanía",
+  
+  "ai_content_generated": "¡Contenido IA generado!",
+  "ai_generation_unavailable": "La generación IA no está disponible actualmente.",
+  "ai_improvement_unavailable": "La mejora de texto IA no está disponible actualmente.",
+  "ai_suggestions_unavailable": "Las sugerencias IA no están disponibles actualmente.",
+  "ai_templates_unavailable": "Las plantillas de mensajes IA no están disponibles actualmente.",
+  "ai_review_templates_unavailable": "Las plantillas de reseñas IA no están disponibles actualmente.",
+  "generation_failed": "Generación fallida",
+  "improvement_failed": "Mejora fallida",
+  "tips_unavailable": "Consejos no disponibles",
+  "ai_unavailable_short": "IA no disponible",
+  "generating": "Generando...",
+  "improving": "Mejorando...",
+  "analyzing": "Analizando...",
+  "generated_success": "¡Generado!",
+  "improved_success": "¡Mejorado!"
 }

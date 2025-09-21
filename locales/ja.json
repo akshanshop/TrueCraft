@@ -132,5 +132,22 @@
   "authentication_failed": "認証に失敗しました。もう一度お試しください。",
   "manage_customer_communications": "顧客コミュニケーションを管理。",
   "unread_messages_count": "未読メッセージ",
-  "footer_tagline": "TrueCraft マーケットプレイス アシスタント - 職人のために作られ、AIによって動かされる"
+  "footer_tagline": "TrueCraft マーケットプレイス アシスタント - 職人のために作られ、AIによって動かされる",
+  
+  "ai_assistant": "AIアシスタント",
+  "ai_assistant_title": "TrueCraft AIアシスタント",
+  "ai_assistant_description": "職人ビジネスについて何でもお聞きください - 商品説明、価格設定、マーケティング、または一般的なビジネスアドバイス！",
+  "ai_welcome_message": "👋 こんにちは！私はあなたのTrueCraft AIアシスタントです。商品説明、価格アドバイス、ビジネスのヒントなどをお手伝いできます。今日はどのようにお手伝いしましょうか？",
+  "quick_start": "💡 クイックスタート - トピックを選択するか、独自の質問を入力してください：",
+  "or_type_question": "**または以下に独自の質問を入力してください：**",
+  "chat_input_placeholder": "職人ビジネスについて何でもお聞きください...",
+  "ai_thinking": "AIが考えています...",
+  "ai_response_error": "申し訳ございませんが、現在回答の生成に問題があります。後でもう一度お試しください。",
+  "ai_technical_error": "申し訳ございませんが、技術的な問題が発生しています。後でもう一度お試しください。",
+  "ai_unavailable_error": "AI機能は現在利用できません。API設定を確認してください。",
+  "clear_chat": "🗑️ チャットをクリア",
+  "close_chat": "❌ チャットを閉じる",
+  "chat_with_ai": "💬 AIとチャット",
+  "ai_content_generated": "AIコンテンツが生成されました！",
+  "ai_assist_help": "AI執筆支援を受ける"
 }

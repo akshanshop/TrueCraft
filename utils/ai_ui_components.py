@@ -20,7 +20,7 @@ class AIUIComponents:
             self.ai_assistant = st.session_state.ai_assistant
         return self.ai_assistant
     
-    def inline_ai_button(self, target_key, ai_function, button_text="✨ AI Assist", help_text="Get AI writing assistance", **kwargs):
+    def inline_ai_button(self, target_key, ai_function, button_text=None, help_text=None, **kwargs):
         """
         Create an inline AI assistance button that populates a text field
         
@@ -31,26 +31,26 @@ class AIUIComponents:
             help_text: Tooltip text for the button
             **kwargs: Arguments to pass to the AI function
         """
-        if st.button(button_text, help=help_text, key=f"ai_btn_{target_key}"):
+        if st.button(button_text or ("✨ " + t("ai_assist")), help=help_text or t("ai_assist_help"), key=f"ai_btn_{target_key}"):
             ai_assistant = self._get_ai_assistant()
             if ai_assistant is None:
-                st.error("AI features are currently unavailable.")
+                st.error(t("ai_features_unavailable"))
                 return
             try:
-                with st.spinner("AI is writing..."):
+                with st.spinner(t("ai_thinking")):
                     # Add current language to kwargs if not present
                     if 'target_language' not in kwargs:
                         kwargs['target_language'] = i18n.get_language()
                     result = ai_function(**kwargs)
                     if result and result.strip():
                         st.session_state[target_key] = result
-                        st.success("AI content generated! 🎉")
+                        st.success("✨ " + t("ai_content_generated"))
                         st.rerun()
                     else:
-                        st.error("Failed to generate content. Please try again.")
+                        st.error(t("ai_response_error"))
             except Exception as e:
                 print(f"AI UI Error: {str(e)}")  # Log server-side for debugging
-                st.error("Failed to generate content. Please try again.")
+                st.error(t("ai_technical_error"))
     
     def text_improvement_widget(self, text_input, field_type="general"):
         """

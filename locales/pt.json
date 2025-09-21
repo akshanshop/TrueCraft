@@ -132,5 +132,22 @@
   "authentication_failed": "Autenticação falhou. Tente novamente.",
   "manage_customer_communications": "Gerenciar comunicações com clientes.",
   "unread_messages_count": "mensagens não lidas",
-  "footer_tagline": "Assistente do Marketplace TrueCraft - Criado para Artesãos, Alimentado por IA"
+  "footer_tagline": "Assistente do Marketplace TrueCraft - Criado para Artesãos, Alimentado por IA",
+  
+  "ai_assistant": "Assistente IA",
+  "ai_assistant_title": "Assistente IA TrueCraft",
+  "ai_assistant_description": "Pergunte-me qualquer coisa sobre seu negócio artesanal - descrições de produtos, preços, marketing ou conselhos gerais de negócios!",
+  "ai_welcome_message": "👋 Olá! Eu sou seu assistente IA TrueCraft. Posso ajudá-lo com descrições de produtos, conselhos de preços, dicas de negócios e muito mais. Como posso ajudá-lo hoje?",
+  "quick_start": "💡 Início Rápido - Escolha um tópico ou digite sua própria pergunta:",
+  "or_type_question": "**Ou digite sua própria pergunta abaixo:**",
+  "chat_input_placeholder": "Pergunte-me qualquer coisa sobre seu negócio artesanal...",
+  "ai_thinking": "IA está pensando...",
+  "ai_response_error": "Peço desculpas, mas estou tendo problemas para gerar uma resposta agora. Tente novamente mais tarde.",
+  "ai_technical_error": "Sinto muito, mas estou enfrentando dificuldades técnicas. Tente novamente mais tarde.",
+  "ai_unavailable_error": "Recursos de IA estão atualmente indisponíveis. Verifique sua configuração de API.",
+  "clear_chat": "🗑️ Limpar Chat",
+  "close_chat": "❌ Fechar Chat",
+  "chat_with_ai": "💬 Conversar com IA",
+  "ai_content_generated": "Conteúdo IA gerado!",
+  "ai_assist_help": "Obter assistência de escrita IA"
 }

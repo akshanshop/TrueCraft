@@ -57,5 +57,23 @@
   "unread_messages_count": "ungelesene Nachrichten",
   "advanced_ai_features": "Erweiterte KI-Funktionen",
   "ai_features_unavailable": "KI-Funktionen sind derzeit nicht verfügbar. Einige Funktionalitäten können eingeschränkt sein.",
-  "footer_tagline": "TrueCraft Marketplace Assistent - Für Handwerker geschaffen, von KI angetrieben"
+  "footer_tagline": "TrueCraft Marketplace Assistent - Für Handwerker geschaffen, von KI angetrieben",
+  
+  "ai_assistant": "KI-Assistent",
+  "ai_assistant_title": "TrueCraft KI-Assistent", 
+  "ai_assistant_description": "Fragen Sie mich alles über Ihr Handwerk-Business - Produktbeschreibungen, Preisgestaltung, Marketing oder allgemeine Geschäftstipps!",
+  "ai_welcome_message": "👋 Hallo! Ich bin Ihr TrueCraft KI-Assistent. Ich kann Ihnen bei Produktbeschreibungen, Preisberatung, Geschäftstipps und mehr helfen. Wie kann ich Ihnen heute assistieren?",
+  "quick_start": "💡 Schnellstart - Wählen Sie ein Thema oder stellen Sie Ihre eigene Frage:",
+  "or_type_question": "**Oder geben Sie Ihre eigene Frage unten ein:**",
+  "chat_input_placeholder": "Fragen Sie mich alles über Ihr Handwerk-Business...",
+  "ai_thinking": "KI denkt nach...",
+  "ai_response_error": "Entschuldigung, aber ich habe Probleme, eine Antwort zu generieren. Bitte versuchen Sie es später erneut.",
+  "ai_technical_error": "Es tut mir leid, aber ich erlebe technische Schwierigkeiten. Bitte versuchen Sie es später erneut.",
+  "ai_unavailable_error": "KI-Funktionen sind derzeit nicht verfügbar. Bitte überprüfen Sie Ihre API-Konfiguration.",
+  "clear_chat": "🗑️ Chat löschen",
+  "close_chat": "❌ Chat schließen", 
+  "chat_with_ai": "💬 Mit KI chatten",
+  "ai_content_generated": "KI-Inhalt generiert!",
+  "ai_assist": "KI-Hilfe",
+  "ai_assist_help": "KI-Schreibhilfe erhalten"
 }
