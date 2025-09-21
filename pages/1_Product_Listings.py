@@ -761,12 +761,12 @@ def render_browse_products():
                             st.write(f"👁️ {product['views']} views | ❤️ {product['favorites']} favorites")
                             
                             # Display rating summary
-                            rating_summary = get_product_rating_summary(product['id'])
+                            rating_summary = get_product_rating_summary(int(product['id']))  # Convert numpy.int64 to Python int
                             st.write(f"⭐ {rating_summary}")
                             
                             if st.button(f"View Details", key=f"view_{i}"):
                                 # Increment view count
-                                db_manager.increment_views(product['id'])
+                                db_manager.increment_views(int(product['id']))  # Convert numpy.int64 to Python int
                                 
                                 # Show product details
                                 with st.expander(f"Details - {product['name']}", expanded=True):
@@ -783,7 +783,7 @@ def render_browse_products():
                                     
                                     # Add Reviews Section
                                     st.divider()
-                                    display_reviews_section(product['id'], product['name'])
+                                    display_reviews_section(int(product['id']), product['name'])  # Convert numpy.int64 to Python int
                                     
                                     # Add Contact Seller Section
                                     st.divider()
@@ -851,12 +851,12 @@ def render_browse_products():
                             st.write(f"👁️ {product['views']} views | ❤️ {product['favorites']} favorites")
                             
                             # Display rating summary
-                            rating_summary = get_product_rating_summary(product['id'])
+                            rating_summary = get_product_rating_summary(int(product['id']))  # Convert numpy.int64 to Python int
                             st.write(f"⭐ {rating_summary}")
                             
                             if st.button(f"View Details", key=f"view_{i+1}"):
                                 # Increment view count
-                                db_manager.increment_views(product['id'])
+                                db_manager.increment_views(int(product['id']))  # Convert numpy.int64 to Python int
                                 
                                 # Show product details
                                 with st.expander(f"Details - {product['name']}", expanded=True):
@@ -873,7 +873,7 @@ def render_browse_products():
                                     
                                     # Add Reviews Section
                                     st.divider()
-                                    display_reviews_section(product['id'], product['name'])
+                                    display_reviews_section(int(product['id']), product['name'])  # Convert numpy.int64 to Python int
                                     
                                     # Add Contact Seller Section
                                     st.divider()

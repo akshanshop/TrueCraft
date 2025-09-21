@@ -252,7 +252,7 @@ def render_profile_create_edit(current_profile):
                 
                 # Save profile
                 if current_profile is not None:
-                    profile_id = current_profile['id']
+                    profile_id = int(current_profile['id'])  # Convert numpy.int64 to Python int
                     success = db_manager.update_profile(profile_id, profile_data)
                     message = "Profile updated successfully!"
                 else:
