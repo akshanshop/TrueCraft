@@ -243,7 +243,7 @@ class AIAssistant:
         content = self._generate_content(prompt, max_output_tokens=200, temperature=0.8)
         return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
     
-    def generate_custom_content(self, content_type, context, specific_request):
+    def generate_custom_content(self, content_type, context, specific_request, target_language=None):
         """Generate custom content based on user specifications"""
         
         error_msg = self._check_enabled()
@@ -270,7 +270,7 @@ class AIAssistant:
         Provide clear, well-structured content that the user can immediately use.
         """
         
-        content = self._generate_content(prompt, max_output_tokens=500, temperature=0.7)
+        content = self._generate_content(prompt, max_output_tokens=500, temperature=0.7, target_language=target_language)
         return content.strip() if content else "AI assistance temporarily unavailable. Please try again later."
     
     def analyze_product_image(self, image_data, mime_type=None):

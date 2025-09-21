@@ -136,19 +136,19 @@ with st.sidebar:
     
     # AI Assistant Chat Section in Sidebar - Just the button
     st.divider()
-    st.markdown("### 🤖 AI Assistant")
+    st.markdown(f"### 🤖 {t('ai_assistant')}")
     
     # Initialize chat messages in session state
     if 'messages' not in st.session_state:
         st.session_state.messages = [
-            {"role": "assistant", "content": "👋 Hello! I'm your TrueCraft AI assistant. I can help you with product descriptions, pricing advice, business tips, and more. How can I assist you today?"}
+            {"role": "assistant", "content": t('ai_welcome_message')}
         ]
     
     # Chat toggle button in sidebar
     if 'chat_open' not in st.session_state:
         st.session_state.chat_open = False
     
-    if st.button("💬 Chat with AI", type="primary", use_container_width=True):
+    if st.button(t('chat_with_ai'), type="primary", use_container_width=True):
         st.session_state.chat_open = not st.session_state.chat_open
     
 
@@ -269,23 +269,23 @@ else:
 # AI Assistant Chat Interface in Main Area
 if st.session_state.chat_open:
     st.divider()
-    st.markdown("## 🤖 TrueCraft AI Assistant")
-    st.markdown("Ask me anything about your artisan business - product descriptions, pricing, marketing, or general business advice!")
+    st.markdown(f"## 🤖 {t('ai_assistant_title')}")
+    st.markdown(t('ai_assistant_description'))
     
     # Default prompt options
     if len(st.session_state.messages) <= 1:
-        st.markdown("**💡 Quick Start - Choose a topic or type your own question:**")
+        st.markdown(t('quick_start'))
         
-        # Define default prompts for artisan business
+        # Define default prompts for artisan business using translations
         default_prompts = [
-            "How should I price my handmade products?",
-            "Write a compelling product description for my jewelry",
-            "What are the best marketing strategies for artisans?", 
-            "Help me create an engaging artisan profile bio",
-            "What materials should I mention in my product listings?",
-            "How can I improve my product photography?",
-            "What shipping options work best for handmade items?",
-            "Help me write a social media post about my craft"
+            t('ai_prompt_pricing'),
+            t('ai_prompt_description'),
+            t('ai_prompt_marketing'),
+            t('ai_prompt_profile'),
+            t('ai_prompt_materials'),
+            t('ai_prompt_photography'),
+            t('ai_prompt_shipping'),
+            t('ai_prompt_social')
         ]
         
         # Display default prompts in a grid
@@ -303,11 +303,14 @@ if st.session_state.chat_open:
                         ai_assistant = None
                     if ai_assistant and ai_assistant.enabled:
                         try:
-                            with st.spinner("AI is thinking..."):
+                            with st.spinner(t('ai_thinking')):
+                                # Get current language for multilingual response
+                                current_lang = i18n.get_language()
                                 response = ai_assistant.generate_custom_content(
                                     "conversational assistance",
                                     f"User is asking about their artisan business: {prompt}",
-                                    "Provide helpful, friendly advice about artisan business, crafts, product creation, pricing, marketing, or general business questions. Keep responses concise but informative. Be encouraging and supportive."
+                                    "Provide helpful, friendly advice about artisan business, crafts, product creation, pricing, marketing, or general business questions. Keep responses concise but informative. Be encouraging and supportive.",
+                                    target_language=current_lang
                                 )
                                 
                                 if response and response.strip():
@@ -315,21 +318,21 @@ if st.session_state.chat_open:
                                 else:
                                     st.session_state.messages.append({
                                         "role": "assistant", 
-                                        "content": "I apologize, but I'm having trouble generating a response right now. Please try again later."
+                                        "content": t('ai_response_error')
                                     })
                         except Exception as e:
                             st.session_state.messages.append({
                                 "role": "assistant", 
-                                "content": "I'm sorry, but I'm experiencing technical difficulties. Please try again later."
+                                "content": t('ai_technical_error')
                             })
                     else:
                         st.session_state.messages.append({
                             "role": "assistant", 
-                            "content": "AI features are currently unavailable. Please check your API configuration."
+                            "content": t('ai_unavailable_error')
                         })
                     st.rerun()
         
-        st.markdown("**Or type your own question below:**")
+        st.markdown(t('or_type_question'))
     
     # Create a container for chat messages
     chat_container = st.container(height=400)
@@ -340,7 +343,7 @@ if st.session_state.chat_open:
                 st.write(message["content"])
     
     # Chat input using Streamlit's built-in chat input
-    if prompt := st.chat_input("Ask me anything about your artisan business..."):
+    if prompt := st.chat_input(t('chat_input_placeholder')):
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": prompt})
         
@@ -351,38 +354,38 @@ if st.session_state.chat_open:
             ai_assistant = None
         if ai_assistant and ai_assistant.enabled:
             try:
-                with st.spinner("AI is thinking..."):
+                with st.spinner(t('ai_thinking')):
+                    # Get current language for multilingual response
+                    current_lang = i18n.get_language()
                     # Use the AI assistant to generate response
                     response = ai_assistant.generate_custom_content(
                         "conversational assistance",
                         f"User is asking about their artisan business: {prompt}",
-                        "Provide helpful, friendly advice about artisan business, crafts, product creation, pricing, marketing, or general business questions. Keep responses concise but informative. Be encouraging and supportive."
+                        "Provide helpful, friendly advice about artisan business, crafts, product creation, pricing, marketing, or general business questions. Keep responses concise but informative. Be encouraging and supportive.",
+                        target_language=current_lang
                     )
                     
                     if response and response.strip():
                         st.session_state.messages.append({"role": "assistant", "content": response})
                     else:
-                        error_msg = "I apologize, but I'm having trouble generating a response right now. Please try again later."
-                        st.session_state.messages.append({"role": "assistant", "content": error_msg})
+                        st.session_state.messages.append({"role": "assistant", "content": t('ai_response_error')})
             except Exception as e:
-                error_msg = "I'm sorry, but I'm experiencing technical difficulties. Please try again later."
-                st.session_state.messages.append({"role": "assistant", "content": error_msg})
+                st.session_state.messages.append({"role": "assistant", "content": t('ai_technical_error')})
         else:
-            error_msg = "AI features are currently unavailable. Please check your API configuration."
-            st.session_state.messages.append({"role": "assistant", "content": error_msg})
+            st.session_state.messages.append({"role": "assistant", "content": t('ai_unavailable_error')})
         st.rerun()
     
     # Chat controls
     col1, col2, col3 = st.columns([1, 1, 3])
     with col1:
-        if st.button("🗑️ Clear Chat", use_container_width=True):
+        if st.button(t('clear_chat'), use_container_width=True):
             st.session_state.messages = [
-                {"role": "assistant", "content": "👋 Hello! I'm your TrueCraft AI assistant. I can help you with product descriptions, pricing advice, business tips, and more. How can I assist you today?"}
+                {"role": "assistant", "content": t('ai_welcome_message')}
             ]
             st.rerun()
     
     with col2:
-        if st.button("❌ Close Chat", use_container_width=True):
+        if st.button(t('close_chat'), use_container_width=True):
             st.session_state.chat_open = False
             st.rerun()
 
