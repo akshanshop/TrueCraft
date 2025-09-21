@@ -236,9 +236,7 @@ def render_create_product():
                                        key="product_name_input")
             st.session_state['product_name'] = product_name
             
-            # Quick AI suggestions for product names
-            if product_name and len(product_name) > 5:
-                ai_ui.ai_suggestions_panel(product_name, "product_name")
+            # AI suggestions will be available outside the form
             
             category = st.selectbox("Category*", [
                 "Pottery & Ceramics",
