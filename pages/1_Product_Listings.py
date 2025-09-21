@@ -264,7 +264,7 @@ def render_create_product():
                                      key="dimensions_input")
             st.session_state['dimensions'] = dimensions
             
-            weight = st.text_input("Weight", placeholder="e.g., 0.5 lbs")
+            weight = st.number_input("Weight (lbs)", min_value=0.0, value=0.0, step=0.1, format="%.2f")
         
         # Image upload
         st.subheader("📷 Product Images")
