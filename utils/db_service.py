@@ -734,6 +734,52 @@ class DatabaseService:
         finally:
             session.close()
     
+    def get_average_rating(self, product_id: int) -> Dict[str, Any]:
+        """Get average rating for a product"""
+        if not self.db_available:
+            return {'average_rating': 0, 'total_reviews': 0, 'rating_distribution': {}}
+        
+        session = self.get_session()
+        if not session:
+            return {'average_rating': 0, 'total_reviews': 0, 'rating_distribution': {}}
+        
+        try:
+            from sqlalchemy import func, case
+            from .db_models import Review
+            
+            # Query for average rating and rating distribution
+            result = session.query(
+                func.coalesce(func.avg(Review.rating), 0).label('avg_rating'),
+                func.count(Review.rating).label('total_reviews'),
+                func.count(case((Review.rating == 5, 1))).label('five_star'),
+                func.count(case((Review.rating == 4, 1))).label('four_star'),
+                func.count(case((Review.rating == 3, 1))).label('three_star'),
+                func.count(case((Review.rating == 2, 1))).label('two_star'),
+                func.count(case((Review.rating == 1, 1))).label('one_star')
+            ).filter(
+                and_(Review.product_id == product_id, Review.approved == True)
+            ).first()
+            
+            if result:
+                return {
+                    'average_rating': float(result.avg_rating),
+                    'total_reviews': int(result.total_reviews),
+                    'rating_distribution': {
+                        '5': int(result.five_star),
+                        '4': int(result.four_star),
+                        '3': int(result.three_star),
+                        '2': int(result.two_star),
+                        '1': int(result.one_star)
+                    }
+                }
+            return {'average_rating': 0, 'total_reviews': 0, 'rating_distribution': {}}
+            
+        except Exception as e:
+            print(f"Error calculating average rating: {str(e)}")
+            return {'average_rating': 0, 'total_reviews': 0, 'rating_distribution': {}}
+        finally:
+            session.close()
+    
     # Helper methods for empty DataFrames
     def _empty_products_df(self) -> pd.DataFrame:
         """Return empty products DataFrame with expected columns"""
