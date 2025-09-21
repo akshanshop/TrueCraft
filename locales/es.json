@@ -57,5 +57,29 @@
   "unread_messages_count": "mensajes no leídos",
   "advanced_ai_features": "Funciones Avanzadas de IA",
   "ai_features_unavailable": "Las funciones de IA no están disponibles actualmente. Algunas funcionalidades pueden estar limitadas.",
-  "footer_tagline": "Asistente TrueCraft Marketplace - Hecho para Artesanos, Impulsado por IA"
+  "footer_tagline": "Asistente TrueCraft Marketplace - Hecho para Artesanos, Impulsado por IA",
+  
+  "ai_assistant": "Asistente IA",
+  "ai_assistant_title": "Asistente IA de TrueCraft",
+  "ai_assistant_description": "Pregúntame cualquier cosa sobre tu negocio artesanal: descripciones de productos, precios, marketing o consejos generales de negocio!",
+  "ai_welcome_message": "👋 ¡Hola! Soy tu asistente IA de TrueCraft. Puedo ayudarte con descripciones de productos, consejos de precios, tips de negocio y más. ¿Cómo puedo asistirte hoy?",
+  "quick_start": "💡 Inicio Rápido - Elige un tema o escribe tu propia pregunta:",
+  "or_type_question": "**O escribe tu propia pregunta abajo:**",
+  "chat_input_placeholder": "Pregúntame cualquier cosa sobre tu negocio artesanal...",
+  "ai_thinking": "IA está pensando...",
+  "ai_response_error": "Me disculpo, pero tengo problemas para generar una respuesta ahora. Por favor, inténtalo más tarde.",
+  "ai_technical_error": "Lo siento, pero estoy experimentando dificultades técnicas. Por favor, inténtalo más tarde.",
+  "ai_unavailable_error": "Las funciones de IA no están disponibles actualmente. Por favor, verifica tu configuración de API.",
+  "clear_chat": "🗑️ Limpiar Chat",
+  "close_chat": "❌ Cerrar Chat",
+  "chat_with_ai": "💬 Chatear con IA",
+  
+  "ai_prompt_pricing": "¿Cómo debo fijar el precio de mis productos hechos a mano?",
+  "ai_prompt_description": "Escribe una descripción atractiva para mis joyas",
+  "ai_prompt_marketing": "¿Cuáles son las mejores estrategias de marketing para artesanos?",
+  "ai_prompt_profile": "Ayúdame a crear una biografía atractiva de perfil artesanal",
+  "ai_prompt_materials": "¿Qué materiales debo mencionar en mis listados de productos?",
+  "ai_prompt_photography": "¿Cómo puedo mejorar la fotografía de mis productos?",
+  "ai_prompt_shipping": "¿Qué opciones de envío funcionan mejor para artículos hechos a mano?",
+  "ai_prompt_social": "Ayúdame a escribir una publicación en redes sociales sobre mi artesanía"
 }

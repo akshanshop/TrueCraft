@@ -58,5 +58,29 @@
   "advanced_ai_features": "Fonctionnalités Avancées IA",
   "ai_features_unavailable": "Les fonctionnalités IA ne sont pas disponibles actuellement. Certaines fonctionnalités peuvent être limitées.",
   "views": "Vues",
-  "footer_tagline": "Assistant TrueCraft Marketplace - Conçu pour les Artisans, Alimenté par IA"
+  "footer_tagline": "Assistant TrueCraft Marketplace - Conçu pour les Artisans, Alimenté par IA",
+  
+  "ai_assistant": "Assistant IA",
+  "ai_assistant_title": "Assistant IA TrueCraft",
+  "ai_assistant_description": "Demandez-moi tout sur votre entreprise artisanale - descriptions de produits, tarification, marketing ou conseils commerciaux généraux !",
+  "ai_welcome_message": "👋 Bonjour ! Je suis votre assistant IA TrueCraft. Je peux vous aider avec les descriptions de produits, les conseils de prix, les astuces commerciales et plus encore. Comment puis-je vous aider aujourd'hui ?",
+  "quick_start": "💡 Démarrage rapide - Choisissez un sujet ou tapez votre propre question :",
+  "or_type_question": "**Ou tapez votre propre question ci-dessous :**",
+  "chat_input_placeholder": "Demandez-moi tout sur votre entreprise artisanale...",
+  "ai_thinking": "L'IA réfléchit...",
+  "ai_response_error": "Je m'excuse, mais j'ai des difficultés à générer une réponse en ce moment. Veuillez réessayer plus tard.",
+  "ai_technical_error": "Je suis désolé, mais j'éprouve des difficultés techniques. Veuillez réessayer plus tard.",
+  "ai_unavailable_error": "Les fonctionnalités IA ne sont actuellement pas disponibles. Veuillez vérifier votre configuration API.",
+  "clear_chat": "🗑️ Effacer le Chat",
+  "close_chat": "❌ Fermer le Chat",
+  "chat_with_ai": "💬 Chatter avec l'IA",
+  
+  "ai_prompt_pricing": "Comment dois-je fixer le prix de mes produits faits main ?",
+  "ai_prompt_description": "Rédigez une description de produit convaincante pour mes bijoux",
+  "ai_prompt_marketing": "Quelles sont les meilleures stratégies marketing pour les artisans ?",
+  "ai_prompt_profile": "Aidez-moi à créer une biographie de profil d'artisan engageante",
+  "ai_prompt_materials": "Quels matériaux dois-je mentionner dans mes listes de produits ?",
+  "ai_prompt_photography": "Comment puis-je améliorer la photographie de mes produits ?",
+  "ai_prompt_shipping": "Quelles options d'expédition fonctionnent le mieux pour les articles faits main ?",
+  "ai_prompt_social": "Aidez-moi à écrire un post sur les réseaux sociaux à propos de mon artisanat"
 }
