@@ -28,7 +28,7 @@ ai_ui = AIUIComponents()
 
 def render_profile_create_edit(current_profile):
     """Render the profile creation/editing form"""
-    st.subheader("✏️ " + ("Edit" if current_profile else "Create") + " Your Profile")
+    st.subheader("✏️ " + ("Edit" if current_profile is not None else "Create") + " Your Profile")
     
     # AI-Powered Profile Creation Assistant
     ai_ui.ai_powered_form_section(
@@ -216,7 +216,7 @@ def render_profile_create_edit(current_profile):
         
         # Submit button
         submitted = st.form_submit_button(
-            "💾 " + ("Update" if current_profile else "Create") + " Profile", 
+            "💾 " + ("Update" if current_profile is not None else "Create") + " Profile", 
             use_container_width=True
         )
         
