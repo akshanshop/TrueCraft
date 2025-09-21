@@ -132,5 +132,29 @@
   "authentication_failed": "Authentication failed. Please try again.",
   "manage_customer_communications": "Manage customer communications.",
   "unread_messages_count": "unread messages",
-  "footer_tagline": "TrueCraft Marketplace Assistant - Crafted for Artisans, Powered by AI"
+  "footer_tagline": "TrueCraft Marketplace Assistant - Crafted for Artisans, Powered by AI",
+  
+  "ai_assistant": "AI Assistant",
+  "ai_assistant_title": "TrueCraft AI Assistant",
+  "ai_assistant_description": "Ask me anything about your artisan business - product descriptions, pricing, marketing, or general business advice!",
+  "ai_welcome_message": "👋 Hello! I'm your TrueCraft AI assistant. I can help you with product descriptions, pricing advice, business tips, and more. How can I assist you today?",
+  "quick_start": "💡 Quick Start - Choose a topic or type your own question:",
+  "or_type_question": "**Or type your own question below:**",
+  "chat_input_placeholder": "Ask me anything about your artisan business...",
+  "ai_thinking": "AI is thinking...",
+  "ai_response_error": "I apologize, but I'm having trouble generating a response right now. Please try again later.",
+  "ai_technical_error": "I'm sorry, but I'm experiencing technical difficulties. Please try again later.",
+  "ai_unavailable_error": "AI features are currently unavailable. Please check your API configuration.",
+  "clear_chat": "🗑️ Clear Chat",
+  "close_chat": "❌ Close Chat",
+  "chat_with_ai": "💬 Chat with AI",
+  
+  "ai_prompt_pricing": "How should I price my handmade products?",
+  "ai_prompt_description": "Write a compelling product description for my jewelry",
+  "ai_prompt_marketing": "What are the best marketing strategies for artisans?",
+  "ai_prompt_profile": "Help me create an engaging artisan profile bio",
+  "ai_prompt_materials": "What materials should I mention in my product listings?",
+  "ai_prompt_photography": "How can I improve my product photography?",
+  "ai_prompt_shipping": "What shipping options work best for handmade items?",
+  "ai_prompt_social": "Help me write a social media post about my craft"
 }
