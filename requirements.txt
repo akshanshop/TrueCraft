@@ -63,3 +63,15 @@ urllib3==2.5.0
 uv==0.8.19
 watchdog==6.0.0
 streamlit
+authlib
+pandas
+pillow
+plotly
+psycopg2-binary
+python-dotenv
+python-jose
+requests
+requests-oauthlib
+sqlalchemy
+streamlit
+streamlit-authenticator
